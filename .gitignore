@@ -1,0 +1,10 @@
+Hate_speach_env/
+models/
+data/
+backup data/
+src/results/
+src/wandb/
+__pycache__/
+.ipynb_checkpoints/
+*.zip
+*.rar
