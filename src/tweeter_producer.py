@@ -4,14 +4,27 @@ import json
 import time
 import os
 
-DATA_FILE = '../data/Final_Mega_Dataset.csv'  
-BOOKMARK_FILE = 'bookmark.txt'#to not create duplicate data from labeled data (merged file)
-KAFKA_TOPIC = 'twitter_raw'
-KAFKA_SERVER = '127.0.0.1:9093'
-SPEED = 0.2
-# ---------------------
+"""
+Twitter Stream Simulator
+Description: 
+    Reads the static CSV dataset and "replays" it as a live stream 
+    into the Kafka topic 'twitter_raw'.
+"""
 
-def get_start_index():
+# ------------------------------------------
+# CONFIGURATION
+# ------------------------------------------
+DATA_FILE    = '../data/Final_Mega_Dataset.csv'  
+BOOKMARK_FILE = 'bookmark.txt' # prevents duplicate data on restart
+KAFKA_TOPIC  = 'twitter_raw'
+KAFKA_SERVER = '127.0.0.1:9093'
+SPEED        = 0.2             # delay in seconds (lower = faster stream)
+
+# ------------------------------------------
+# BOOKMARK SYSTEM
+# ------------------------------------------
+def get_last_position():
+    """Reads the last sent index from disk to resume streaming."""
     if os.path.exists(BOOKMARK_FILE):
         try:
             with open(BOOKMARK_FILE, "r") as f:
@@ -20,84 +33,92 @@ def get_start_index():
             return -1
     return -1
 
-def save_bookmark(index):
+def save_position(index):
+    """Saves the current index to disk."""
     with open(BOOKMARK_FILE, "w") as f:
         f.write(str(index))
 
-#Setup Kafka
-print("Connecting to Kafka....")
+# ------------------------------------------
+# KAFKA CONNECTION
+# ------------------------------------------
+print("Connecting to Kafka...")
 try:
     producer = KafkaProducer(
         bootstrap_servers=KAFKA_SERVER,
         value_serializer=lambda v: json.dumps(v).encode('utf-8')
     )
-    print("Connected.")
+    print("Connected successfully.")
 except Exception as e:
-    print(f"ERROR : {e}")
+    print(f"Connection Error: {e}")
     exit(1)
 
-#Load and Inspect Data
+# ------------------------------------------
+# DATA LOADING & NORMALIZATION
+# ------------------------------------------
 if not os.path.exists(DATA_FILE):
-    print(f"ERROR: File not found: {DATA_FILE}")
+    print(f"Error: File not found: {DATA_FILE}")
     exit(1)
 
 print(f"Loading dataset: {DATA_FILE}...")
 df = pd.read_csv(DATA_FILE)
 
-# --- SMART COLUMN DETECTION (The Fix) ---
-#  normalizing the column names so the code never crashes.
+# smart column detection: handling different naming conventions
+# this ensures the script works whether the column is called 'tweet' or 'text'
 if 'tweet' in df.columns:
     df.rename(columns={'tweet': 'text'}, inplace=True)
 elif 'text' in df.columns:
     pass
 else:
-    #Your CSV must have a column named 'tweet' or 'text'
-    print(f"Found columns: {df.columns.tolist()}")
+    print(f"Error: Could not find text column. Found: {df.columns.tolist()}")
     exit(1)
 
-#find the Label Column
+# normalizing the label column
 if 'class' in df.columns:
     df.rename(columns={'class': 'label'}, inplace=True)
-elif 'label' in df.columns:
-    pass 
 elif 'manual_label' in df.columns:
     df.rename(columns={'manual_label': 'label'}, inplace=True)
-else:
-    print("ERROR: data must have a column named 'class', 'label', or 'manual_label'.")
-    exit(1)
 
-#  labels should be integer
+# data cleaning: ensure labels are integers and remove empty rows
 df = df.dropna(subset=['label'])
 df['label'] = df['label'].astype(int)
 
 total_rows = len(df)
-print(f"dataset loaded and fixed. Columns: {df.columns.tolist()}")
-print(f"Total Tweets: {total_rows}")
+print(f"Dataset loaded. Total tweets to stream: {total_rows}")
 
-# Stream 
-start_index = get_start_index()
-print(f"Streaming to '{KAFKA_TOPIC}'...")
+# ------------------------------------------
+# STREAMING LOOP
+# ------------------------------------------
+start_index = get_last_position()
+print(f"Resuming stream from index {start_index}...")
+print(f"Target Topic: '{KAFKA_TOPIC}'")
 
 try:
     for index, row in df.iterrows():
+        # skip rows we have already sent
         if index <= start_index:
             continue
 
+        # construct the message packet
         message = {
             'tweet_id': index,
-            'text': row['text'],      
-            'label': int(row['label']),
+            'text': str(row['text']),      
+            'label': int(row['label']), # sending the ground truth for debugging
             'source': 'Twitter',
             'video_id': 'N/A'
         }
 
+        # send to kafka
         producer.send(KAFKA_TOPIC, message)
-        save_bookmark(index)
-
-        if index % 100 == 0:
-            print(f"[Twitter] Sent: {str(row['text'])[:40]}...")
         
+        # save progress
+        save_position(index)
+
+        # print status every 100 messages to avoid cluttering the console
+        if index % 100 == 0:
+            print(f"[Twitter Stream] Sent: {str(row['text'])[:40]}...")
+        
+        # artificial delay to mimic real-time traffic
         time.sleep(SPEED)
 
 except KeyboardInterrupt:
-    print("\nStream stopped.")
+    print("\nStream stopped by user.")
