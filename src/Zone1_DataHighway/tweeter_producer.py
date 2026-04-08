@@ -14,7 +14,7 @@ Description:
 # ------------------------------------------
 # CONFIGURATION
 # ------------------------------------------
-DATA_FILE    = '../data/Final_Mega_Dataset.csv'  
+DATA_FILE    = r"../../data/Final_Mega_Dataset.csv"
 BOOKMARK_FILE = 'bookmark.txt' # prevents duplicate data on restart
 KAFKA_TOPIC  = 'twitter_raw'
 KAFKA_SERVER = '127.0.0.1:9093'
@@ -57,6 +57,7 @@ except Exception as e:
 # ------------------------------------------
 if not os.path.exists(DATA_FILE):
     print(f"Error: File not found: {DATA_FILE}")
+    print(DATA_FILE)
     exit(1)
 
 print(f"Loading dataset: {DATA_FILE}...")
@@ -100,7 +101,7 @@ try:
 
         # construct the message packet
         message = {
-            'tweet_id': index,
+            'tweet_id': str(index),
             'text': str(row['text']),      
             'label': int(row['label']), # sending the ground truth for debugging
             'source': 'Twitter',

@@ -3,7 +3,7 @@ import time
 from kafka import KafkaProducer
 import json
 import sys
-
+import re
 """
 YouTube Live Stream Ingestion
 Description: 
@@ -36,6 +36,9 @@ def extract_video_id(url_or_id):
         return url_or_id.split("youtu.be/")[1].split("?")[0]
     else:
         return url_or_id
+
+
+
 
 # ------------------------------------------
 # MAIN STREAMING FUNCTION
@@ -75,12 +78,19 @@ def start_yt_stream():
             for c in chat.get().sync_items():
                 
                 # construct the standard data packet
+              # construct the standard data packet
                 message = {
-                    'tweet_id': int(time.time() * 1000), # using timestamp as ID
+                    'tweet_id': str(c.id),                    # Official YouTube Unique ID
                     'text': c.message,
-                    'label': 2,           # default to 'Neutral' (2) since raw data is unlabeled
+                    'label': 2,                           # default to 'Neutral' (2)
                     'source': 'YouTube',
-                    'video_id': video_id  # helps filter by video in the dashboard
+                    'video_id': video_id,
+                    
+                    # --- NEW ENTITY TRACKING FIELDS ---
+                    'author_id': c.author.channelId,      # The permanent user ID
+                    'author_name': c.author.name,
+                    'is_moderator': c.author.isChatModerator,
+                    'is_sponsor': c.author.isChatSponsor
                 }
                 
                 # send to kafka

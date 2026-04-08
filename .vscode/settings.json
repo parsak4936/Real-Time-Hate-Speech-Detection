@@ -1,0 +1,12 @@
+{
+    "files.exclude": {
+        "**/.git": true,
+        "**/venv": true,
+        "**/__pycache__": true,
+        "**/*.csv": true,
+        "**/*.json": true
+    },
+    "python.analysis.exclude": [
+        "**/venv"
+    ]
+}

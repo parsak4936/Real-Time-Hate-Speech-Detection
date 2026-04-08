@@ -20,8 +20,8 @@ Date: February 2026
 # ------------------------------------------
 KAFKA_TOPICS = ['twitter_raw', 'youtube_live']
 KAFKA_SERVER = '127.0.0.1:9093'
-MODELS_DIR   = '../models'
-LOG_FILE     = '../data/stream_log.csv'
+MODELS_DIR   = '../../models'
+LOG_FILE     = '../../data/stream_log.csv'
 
 # kibana/elasticsearch settings
 ES_HOST  = "http://localhost:9200"
@@ -132,6 +132,10 @@ try:
                 'prediction': int(label_id),  # 0, 1, or 2
                 'label_text': label_text,     # "Hate", "Normal", "Offensive"
                 'confidence': float(confidence),
+                'author_id': data.get('author_id', 'UNKNOWN'),
+                'author_name': data.get('author_name', 'Anonymous'),
+                'is_moderator': bool(data.get('is_moderator', False)),
+                'is_sponsor': bool(data.get('is_sponsor', False)),
                 'timestamp': datetime.datetime.now().isoformat()
             }
             try:

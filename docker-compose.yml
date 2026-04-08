@@ -15,6 +15,12 @@ services:
       - bigdata-net
     volumes:
       - es_data:/usr/share/elasticsearch/data
+    healthcheck:
+      test: ['CMD-SHELL', 'curl -f http://localhost:9200/_cat/health || exit 1']
+      interval: 10s
+      timeout: 5s
+      retries: 12
+    restart: unless-stopped
 
   kibana:
     image: docker.elastic.co/kibana/kibana:8.10.2
@@ -26,24 +32,30 @@ services:
     networks:
       - bigdata-net
     depends_on:
-      - elasticsearch
+      elasticsearch:
+        condition: service_healthy
+    restart: unless-stopped
 
   zookeeper:
     image: zookeeper:3.9
     container_name: zookeeper
     ports:
-      - '2181:2181'
+      - "2181:2181"
     environment:
       ZOO_MY_ID: 1
     networks:
       - bigdata-net
+    healthcheck:
+      test: ['CMD', 'echo', 'ok']   # tiny placeholder
+      interval: 5s
+      retries: 5
+    restart: unless-stopped
 
   kafka:
     image: confluentinc/cp-kafka:7.5.0
     container_name: kafka
     ports:
-      - '9092:9092'
-      - '9093:9093'
+      - "9093:9093"          # external listener for host programs
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
@@ -52,28 +64,38 @@ services:
       KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka:9092,EXTERNAL://localhost:9093
       KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'true'
+      KAFKA_LOG_RETENTION_HOURS: 24
+      KAFKA_LOG_RETENTION_BYTES: 1073741824
     networks:
       - bigdata-net
     depends_on:
-      - zookeeper
+      zookeeper:
+        condition: service_healthy
+    healthcheck:
+      test: ['CMD', 'bash', '-c', "kafka-topics --bootstrap-server localhost:9093 --list || exit 1"]
+      interval: 10s
+      retries: 12
+    volumes:
+      - kafka_data:/var/lib/kafka/data
+    restart: unless-stopped
 
   spark-master:
-    image: apache/spark:3.4.1 
-    pull_policy: missing
+    image: apache/spark:3.4.1
     container_name: spark-master
     command: /opt/spark/bin/spark-class org.apache.spark.deploy.master.Master
     ports:
-      - '8080:8080'
-      - '9077:7077'  
+      - "8080:8080"
+      - "9077:7077"
     networks:
       - bigdata-net
     volumes:
       - ./src:/opt/spark/work-dir
-      - ./data:/opt/spark/data
+      - spark_meta:/opt/spark/data
+    restart: unless-stopped
 
   spark-worker:
-    image: apache/spark:3.4.1 
-    pull_policy: missing
+    image: apache/spark:3.4.1
     container_name: spark-worker
     command: /opt/spark/bin/spark-class org.apache.spark.deploy.worker.Worker spark://spark-master:7077
     networks:
@@ -82,11 +104,40 @@ services:
       - spark-master
     volumes:
       - ./src:/opt/spark/work-dir
-      - ./data:/opt/spark/data
+      - spark_meta:/opt/spark/data
+    restart: unless-stopped
+
+  # OPTIONAL: wrap your Python producer / processor in containers
+  # ------------------------------------------------------------
+  # youtube-producer:
+  #   build: ./youtube-producer          # Dockerfile that just runs the script
+  #   environment:
+  #     - KAFKA_SERVER=kafka:9092
+  #   depends_on:
+  #     kafka:
+  #       condition: service_healthy
+  #   networks:
+  #     - bigdata-net
+  #   restart: unless-stopped
+
+  # processor:
+  #   build: ./processor
+  #   environment:
+  #     - KAFKA_SERVER=kafka:9092
+  #     - ES_HOST=http://elasticsearch:9200
+  #   depends_on:
+  #     kafka:
+  #       condition: service_healthy
+  #     elasticsearch:
+  #       condition: service_healthy
+  #   networks:
+  #     - bigdata-net
+  #   restart: unless-stopped
 
 volumes:
   es_data:
-    driver: local
+  kafka_data:
+  spark_meta:
 
 networks:
   bigdata-net:
