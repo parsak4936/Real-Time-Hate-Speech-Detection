@@ -1,45 +1,81 @@
 import sys
 import os
 import json
-
-# Ensure Python can find your config file
+# --- CRITICAL FIX: Tell Python where the folders are FIRST ---
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import ollama
-from shared_utils.config import ACTIVE_MODEL
+from elasticsearch import Elasticsearch
+from shared_utils.config import ES_HOST, INDEX_NAME, ACTIVE_MODEL
 
-# Import the specific tools the Leader can use
-from Zone3_Agents.agent_db_report import run_agentic_report
-from Zone3_Agents.trend_analyzer import analyze_trends
+# === NEW: IMPORT YOUR SUB-AGENTS ===
+from Zone3_Agents.tools.search_tool import execute_universal_search
+from Zone3_Agents.tools.stats_tool import execute_statistics
+from Zone3_Agents.tools.weather_tool import execute_weather_time 
+from Zone3_Agents.tools.xai_judge_tool import execute_xai_judge
 
+TOOL_REGISTRY = {
+    "UNIVERSAL_SEARCH": execute_universal_search,
+    "GET_STATISTICS": execute_statistics,
+    "GET_WEATHER": execute_weather_time,
+    "XAI_JUDGE": execute_xai_judge  
+}
+print(f"Booting Modular Orchestrator on {ACTIVE_MODEL}...")
+es = Elasticsearch(ES_HOST)
+
+def get_database_schema():
+    try:
+        res = es.search(index=INDEX_NAME, size=1)
+        if res['hits']['hits']:
+            # Grab all the keys from the first row (e.g., 'author_name', 'label_text')
+            return list(res['hits']['hits'][0]['_source'].keys())
+        return []
+    except Exception:
+        return ["error_reading_schema"]
+
+DB_SCHEMA_KEYS = get_database_schema()
+print(f"-> AI Schema Awareness Loaded: {DB_SCHEMA_KEYS}")
+
+# ==========================================
 def leader_router(user_input):
-    print(f"\n[Leader Agent is analyzing intent...]")
+    print(f"\n[Phase 1: Analyzing Intent...]")
 
-    # 1. The Dynamic Tool-Calling Prompt
-    prompt = f"""
-    You are the intelligent Command Center AI for a Moderation Pipeline.
-    Analyze the user's request and determine the actions to take.
+    # 1. The OpenAPI-Style Schema Prompt
+    # 1. The Schema-Aware Schema Prompt
+    # 1. The Schema-Aware Schema Prompt
+    intent_prompt = f"""
+    You are the Orchestrator AI for a Trust & Safety Data Pipeline. 
+    Analyze the user's request and choose the correct tool.
     
-    You must output a JSON array containing objects with the following keys:
+    CRITICAL DATABASE SCHEMA: You have access to these exact columns: {DB_SCHEMA_KEYS}
+    RULE: Always prefer human-readable string columns (e.g., use 'author_name' instead of 'author_id', and use 'label_text' instead of 'prediction').
     
-    1. If they ask for database counts, sizes, or amounts:
-       {{"tool": "COUNT"}}
+    You must output a JSON object using ONE of these formats:
+    
+    1. For reading messages or keyword searches:
+       {{"tool": "UNIVERSAL_SEARCH", "keywords": ["word1"], "limit": 20}}
        
-    2. If they ask for trends, toxic words, or analysis (extract any numbers they mention for the limit):
-       {{"tool": "TREND", "limit": [insert number here, default 20]}}
+    2. For counting data, finding TOP USERS, or checking labels. 
+       YOU MUST select the correct column names from the SCHEMA list above for the user and the label!
+       {{"tool": "GET_STATISTICS", "platform": "youtube", "user_column": "exact_schema_key", "label_column": "exact_schema_key"}} 
        
-    3. If they ask an out-of-scope question (weather, jokes, general chat, random text):
-       {{"tool": "MESSAGE", "text": "[Write a natural, polite response explaining why you, as a Moderation AI, cannot answer that.]"}}
-    
+    3. For greetings, asking about your capabilities, or unrelated questions:
+       {{"tool": "DIRECT_MESSAGE", "message": "[Write your natural, polite response here]"}}
+    4. For checking the current date, time, weather, OR finding the user's current location/city:
+       {{"tool": "GET_WEATHER", "location": "Optional City Name"}} 
+       (Note: Leave "location" blank if they ask "where am I", "my weather", or "what city am I in").
+    5. For explaining WHY a specific user was flagged or judging a model's decision:
+       {{"tool": "XAI_JUDGE", "target_user": "username"}}
+
     User Request: "{user_input}"
     
-    Respond ONLY with the JSON array. Do not include markdown formatting (like ```json), backticks, or any extra text.
+    Respond ONLY with raw JSON. Do not include markdown formatting, backticks, or extra text.
     """
 
     try:
-        # 2. Get the decision from the LLM
+        # PHASE 1: Get the search parameters from the LLM
         response = ollama.chat(model=ACTIVE_MODEL, messages=[
-            {'role': 'user', 'content': prompt}
+            {'role': 'user', 'content': intent_prompt}
         ])
         
         # Clean the output to ensure it's raw JSON
@@ -49,30 +85,48 @@ def leader_router(user_input):
         elif raw_output.startswith("```"): 
             raw_output = raw_output[3:-3].strip()
 
-        # 3. Parse the JSON array into Python
-        tasks = json.loads(raw_output)
-        print(f"-> AI Brain Output: {tasks}\n")
+        params = json.loads(raw_output)
 
-        # 4. The Execution Engine
-        for task in tasks:
-            tool_name = task.get("tool")
+        print(f"-> AI Brain Output: {params}\n")
+        
+        tool = params.get("tool")
+        
+        # PHASE 2: Execute the chosen tool
+        if tool == "DIRECT_MESSAGE":
+            print(f"Leader: {params.get('message', 'Hello.')}")
+            return
             
-            if tool_name == "COUNT":
-                run_agentic_report()
-                
-            elif tool_name == "TREND":
-                # Safely extract the limit, default to 20 if the AI missed it
-                record_limit = task.get("limit", 20) 
-                print(f"-> Extracting parameter: Analyzing {record_limit} records...")
-                analyze_trends(limit=record_limit)
-                
-            elif tool_name == "MESSAGE":
-                # Let the AI speak its custom rejection message
-                ai_message = task.get("text", "I cannot process this request.")
-                print(f"Leader Agent: {ai_message}")
-                
-            else:
-                print(f"Error: Unknown tool request: {tool_name}")
+        elif tool in TOOL_REGISTRY:
+            # The Magic: Look up the function in the dictionary and run it!
+            selected_function = TOOL_REGISTRY[tool]
+            # THE FIX: Rename this variable to match what Phase 3 expects!
+            raw_database_results = selected_function(params)
+            
+        else:
+            print(f"Error: The AI hallucinated a tool. '{tool}' is not in the registry.")
+            return
+        print(f"\n[Phase 3: Synthesizing Final Report...]")
+        
+        # PHASE 3: Synthesize the Answer (The Brain)
+        synthesis_prompt = f"""
+        You are a Trust & Safety Analyst. The user asked: "{user_input}"
+        
+        I ran a database search based on their request. Here is the exact raw data pulled from our servers:
+        ---
+        {raw_database_results}
+        ---
+        
+        Read the raw data above and answer the user's original question. 
+        Be concise, analytical, and ground your entire response ONLY in the provided data.
+        """
+        
+        final_response = ollama.chat(model=ACTIVE_MODEL, messages=[
+            {'role': 'user', 'content': synthesis_prompt}
+        ])
+        
+        print("\n================ TIER-2 AGENT REPORT ================")
+        print(final_response['message']['content'])
+        print("=====================================================")
 
     except json.JSONDecodeError:
         print(f"Routing Error: The AI failed to generate valid JSON. Raw output was: {raw_output}")
@@ -81,7 +135,7 @@ def leader_router(user_input):
 
 if __name__ == "__main__":
     print("================ TIER-2 COMMAND CENTER ================")
-    print("Welcome. Ask me for counts, trends, or try to chat with me.")
+    print("Welcome to the Universal RAG Terminal.")
     
     while True:
         user_query = input("\nYour Command (or 'exit'): ")
@@ -90,3 +144,8 @@ if __name__ == "__main__":
             break
             
         leader_router(user_query)
+        
+
+
+
+        

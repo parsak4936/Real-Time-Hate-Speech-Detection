@@ -1,46 +1,38 @@
 import sys
 import os
 
-# This line ensures Python can find your 'shared_utils' folder 
-# no matter where you run the script from.
+# THE FIX: Step back one folder so Python can see 'shared_utils'
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-import ollama
 from elasticsearch import Elasticsearch
-from shared_utils.config import ES_HOST, INDEX_NAME, ACTIVE_MODEL
+from shared_utils.config import ES_HOST, INDEX_NAME
 
-# 1. Connect to the Database
-print(f"Connecting to Elasticsearch at {ES_HOST}...")
 es = Elasticsearch(ES_HOST)
 
-def run_simple_test():
-    try:
-        # 2. Get the exact count of documents in the database
-        res = es.count(index=INDEX_NAME)
-        total_data_count = res['count']
-        print(f"Success! Found {total_data_count} tweets in the database.\n")
-
-        # 3. Create the prompt for the AI
-        prompt = (
-            f"I am building an AI moderation pipeline for my thesis. "
-            f"My database currently has {total_data_count} tweets processed in it. "
-            f"Please write a short, one-sentence confirmation saying the system is online and state the current database size."
-        )
-
-        print(f"Sending data to AI model: {ACTIVE_MODEL}...")
-
-        # 4. Send to the AI using your config variable
-        response = ollama.chat(model=ACTIVE_MODEL, messages=[
-            {'role': 'user', 'content': prompt}
-        ])
-
-        # 5. Print the final result
-        print("\n--- AI Status Report ---")
-        print(response['message']['content'])
-
-    except Exception as e:
-        print(f"\nError: {e}")
-        print("Hint: Make sure Elasticsearch is running in Docker!")
-
-if __name__ == "__main__":
-    run_simple_test()
+print("Fetching one raw row from Elasticsearch...\n")
+try:
+    res = es.search(index=INDEX_NAME, size=1)
+    raw_data = res['hits']['hits'][0]['_source']
+    
+    print("=== YOUR EXACT DATABASE KEYS ===")
+    for key, value in raw_data.items():
+        print(f"- {key}: {value} (Type: {type(value).__name__})")
+        
+except Exception as e:
+    print(f"Error: {e}")
+    
+    '''
+    === YOUR EXACT DATABASE KEYS ===
+- tweet_id: ChwKGkNQYS1wT2FWMVk4REZkYkh3Z1FkWHBZY2Rn (Type: str)
+- text: :person-turqouise-waving: (Type: str)
+- source: YouTube (Type: str)
+- video_id: mAoDkS1ZBw0 (Type: str)
+- prediction: 2 (Type: int)
+- label_text: Normal (Type: str)
+- confidence: 0.9520664811134338 (Type: float)
+- author_id: UCBqVeCljogaG1o74XtNG7tg (Type: str)
+- author_name: @RichG20lndonesiaBaliMajorBests (Type: str)
+- is_moderator: False (Type: bool)
+- is_sponsor: False (Type: bool)
+- timestamp: 2026-03-31T11:21:36.234420 (Type: str)
+    '''
