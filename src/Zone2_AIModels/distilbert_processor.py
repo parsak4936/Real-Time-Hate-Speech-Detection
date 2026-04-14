@@ -11,14 +11,13 @@ from transformers import DistilBertTokenizer, DistilBertForSequenceClassificatio
 from elasticsearch import Elasticsearch  
 
 # --- PATH RESOLUTION & CONFIG IMPORT ---
-# Dynamically find the src directory to import shared configs
+# Dynamically find the src directory (ONE level up from Zone2_AIModels)
 current_dir = os.path.dirname(os.path.abspath(__file__))
-src_dir = os.path.abspath(os.path.join(current_dir, "../../"))
+src_dir = os.path.abspath(os.path.join(current_dir, "../"))  # <--- Change is right here!
 if src_dir not in sys.path:
     sys.path.append(src_dir)
 
 from shared_utils.config import ES_HOST, INDEX_NAME, KAFKA_BROKERS, KAFKA_TOPICS
-
 """
 Real-Time Hate Speech Detection Pipeline
 Omni-Processor: Universal Schema & Latency Tracking

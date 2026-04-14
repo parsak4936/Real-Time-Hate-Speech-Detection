@@ -16,8 +16,7 @@ load_dotenv(BASE_DIR / ".env")
 ES_HOST       = os.getenv("ES_HOST",       "http://localhost:9200")
 INDEX_NAME    = os.getenv("INDEX_NAME",    "real_time_analysis")
 KAFKA_BROKERS = os.getenv("KAFKA_BROKERS", "127.0.0.1:9093")
-KAFKA_TOPICS  = os.getenv("KAFKA_TOPICS",  "twitter_raw,youtube_live").split(",")
-
+KAFKA_TOPICS = os.getenv("KAFKA_TOPICS", "universal_stream").split(",")
 # ----------------------------------------------------------------------
 # Model / Task Selection – change ONE env var to switch everything
 # ----------------------------------------------------------------------
