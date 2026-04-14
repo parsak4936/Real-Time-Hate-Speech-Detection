@@ -1,5 +1,7 @@
 import json
 import os
+import sys
+import time
 import torch
 import numpy as np
 import pandas as pd
@@ -8,98 +10,95 @@ from kafka import KafkaConsumer
 from transformers import DistilBertTokenizer, DistilBertForSequenceClassification
 from elasticsearch import Elasticsearch  
 
+# --- PATH RESOLUTION & CONFIG IMPORT ---
+# Dynamically find the src directory to import shared configs
+current_dir = os.path.dirname(os.path.abspath(__file__))
+src_dir = os.path.abspath(os.path.join(current_dir, "../../"))
+if src_dir not in sys.path:
+    sys.path.append(src_dir)
+
+from shared_utils.config import ES_HOST, INDEX_NAME, KAFKA_BROKERS, KAFKA_TOPICS
+
 """
 Real-Time Hate Speech Detection Pipeline
-Big Data Management Project -> Parsa Kazemi (560 180) - University of Messina
-Model: DistilBERT (Fine-tuned on Merged Dataset -> Davidson 2017 - Hatexplain - ToxiGen)
-Date: February 2026
+Omni-Processor: Universal Schema & Latency Tracking
 """
 
 # ------------------------------------------
-# CONFIGURATION
+# LOCAL CONFIGURATION
 # ------------------------------------------
-KAFKA_TOPICS = ['twitter_raw', 'youtube_live']
-KAFKA_SERVER = '127.0.0.1:9093'
-MODELS_DIR   = '../../models'
-LOG_FILE     = '../../data/stream_log.csv'
-
-# kibana/elasticsearch settings
-ES_HOST  = "http://localhost:9200"
-ES_INDEX = "real_time_analysis"
+MODELS_DIR   = os.path.join(src_dir, '../models')
+LOG_FILE     = os.path.join(src_dir, '../data/stream_log.csv')
 
 # ------------------------------------------
 # 1. CONNECT TO ELASTICSEARCH (KIBANA)
 # ------------------------------------------
-print("---- STARTING PROCESSOR ----")
+print("---- STARTING OMNI-PROCESSOR ----")
 es = Elasticsearch(ES_HOST)
 
 try:
     if es.ping():
-        print(f"Connected to Kibana at {ES_HOST}")
+        print(f"-> Connected to Kibana at {ES_HOST} | Index: {INDEX_NAME}")
     else:
-        print(f"Could not find Elasticsearch (Dashboard will be disabled)")
+        print(f"-> Could not find Elasticsearch (Dashboard will be disabled)")
+        es = None
 except Exception as e:
-    print(f"Connection Error: {e}")
+    print(f"-> Connection Error: {e}")
     es = None
 
 # ------------------------------------------
 # 2. LOAD THE TRAINED MODEL
 # ------------------------------------------
-print("Loading BERT Model...")
+print("-> Loading DistilBERT Model...")
 try:
-    # loading the model we saved in the previous notebook
     tokenizer = DistilBertTokenizer.from_pretrained(os.path.join(MODELS_DIR, 'bert_final'))
     model_bert = DistilBertForSequenceClassification.from_pretrained(os.path.join(MODELS_DIR, 'bert_final'))
-    
-    # setting to eval mode disables dropout, making predictions deterministic and faster
     model_bert.eval()
-    print("BERT Model Loaded successfully.")
+    print("-> BERT Model Loaded successfully.")
 except Exception as e:
-    print(f"Error loading model: {e}")
-    # we exit because the system cannot function without the brain
+    print(f"-> [FATAL] Error loading model: {e}")
     exit(1)
 
 # ------------------------------------------
-# PREDICTION FUNCTION
+# PREDICTION FUNCTION (WITH LATENCY TRACKING)
 # ------------------------------------------
 def get_bert_prediction(text):
+    start_time = time.time()
+    
     text = str(text)
-    # tokenize the input just like we did during training
     inputs = tokenizer(text, return_tensors="pt", truncation=True, padding=True, max_length=128)
     
     with torch.no_grad():
         outputs = model_bert(**inputs)
     
-    # convert raw logits to probabilities using softmax
     probs = torch.nn.functional.softmax(outputs.logits, dim=-1).numpy()[0]
     pred_label = np.argmax(probs)
     
+    calc_time_ms = (time.time() - start_time) * 1000
     labels_map = {0: "HATE", 1: "OFFENSIVE", 2: "Normal"}
     
-    return pred_label, labels_map[pred_label], probs
+    return pred_label, labels_map[pred_label], probs, calc_time_ms
 
 # ------------------------------------------
 # KAFKA SETUP
 # ------------------------------------------
-# creating the listener that sits on the message bus
 consumer = KafkaConsumer(
-    *KAFKA_TOPICS,  # unpacks the list to listen to multiple topics
-    bootstrap_servers=KAFKA_SERVER,
-    auto_offset_reset='latest',  # only listen to new messages, ignore old ones
+    *KAFKA_TOPICS,
+    bootstrap_servers=KAFKA_BROKERS,
+    auto_offset_reset='latest',
     value_deserializer=lambda x: json.loads(x.decode('utf-8'))
 )
 
 # ------------------------------------------
 # LOGGING SETUP
 # ------------------------------------------
-# create the csv header if the file doesn't exist
 if not os.path.exists(LOG_FILE):
-    pd.DataFrame(columns=['timestamp','source','video_id','text','pred_label','pred_text','confidence']).to_csv(LOG_FILE, index=False)
+    # Updated CSV Headers to match new schema
+    pd.DataFrame(columns=['timestamp', 'source_platform', 'env_domain', 'thread_id', 'text', 'model_label', 'model_confidence', 'latency_ms']).to_csv(LOG_FILE, index=False)
 
-# print a clean table header for the console output
-print("-" * 100)
-print(f"{'SOURCE':<10} | {'PREDICTION':<15} | {'CONFIDENCE':<10} | {'TEXT'}")
-print("-" * 100)
+print("-" * 120)
+print(f"{'DOMAIN':<12} | {'SOURCE':<8} | {'PREDICTION':<12} | {'CONF.':<6} | {'LATENCY':<8} | {'TEXT'}")
+print("-" * 120)
 
 # ------------------------------------------
 # MAIN LOOP (THE PIPELINE)
@@ -108,48 +107,69 @@ try:
     for message in consumer:
         data = message.value
         
-        # extracting fields safely
-        text = data.get('text', '')
-        source = data.get('source', 'Unknown')
-        video_id = data.get('video_id', 'N/A')
+        # --- 1. EXTRACT FROM UNIVERSAL SCHEMA ---
+        payload_text = data.get('payload_text', '') 
+        source_platform = data.get('source_platform', 'Unknown')
+        env_domain = data.get('env_domain', 'General')
+        env_strictness = data.get('env_strictness', 'medium')
         
-        # 1. AI Processing
-        label_id, label_text, probabilities = get_bert_prediction(text)
+        platform_meta = data.get('platform_metadata', {})
+        
+        # Ensure we have a valid Thread ID regardless of platform
+        thread_id = platform_meta.get('video_id') or platform_meta.get('subreddit') or "N/A"
+        
+        # --- 2. AI PROCESSING ---
+        label_id, label_text, probabilities, latency_ms = get_bert_prediction(payload_text)
         confidence = probabilities[label_id]
         
-        # 2. Console Visualization
-        # simple logic to format the output for readability
-        label_display = f"| [{label_text}] |"
-        print(f"{source:<10} | {label_display:<25} | {confidence:.0%}       | {text[:50]}...")
+        # --- 3. CONSOLE VISUALIZATION ---
+        label_display = f"[{label_text}]"
+        print(f"[{env_domain[:10].upper():<10}] | {source_platform[:8]:<8} | {label_display:<12} | {confidence:.0%}    | {latency_ms:6.1f}ms | {payload_text[:40]}...")
         
-        # 3. Dashboard Indexing (Elasticsearch)
+        # --- 4. DATABASE INDEXING (THE NEW SCHEMA) ---
         if es:
             doc = {
-                'tweet_id': data.get('tweet_id'),
-                'text': text,
-                'source': source,
-                'video_id': video_id,
-                'prediction': int(label_id),  # 0, 1, or 2
-                'label_text': label_text,     # "Hate", "Normal", "Offensive"
-                'confidence': float(confidence),
-                'author_id': data.get('author_id', 'UNKNOWN'),
-                'author_name': data.get('author_name', 'Anonymous'),
-                'is_moderator': bool(data.get('is_moderator', False)),
-                'is_sponsor': bool(data.get('is_sponsor', False)),
-                'timestamp': datetime.datetime.now().isoformat()
+                # A. Core
+                "message_id": platform_meta.get("tweet_id", "UNKNOWN"),
+                "text": payload_text,
+                "timestamp": datetime.datetime.now().isoformat(),
+                
+                # B. Context
+                "source_platform": source_platform,
+                "env_domain": env_domain,
+                "env_strictness": env_strictness,
+                "thread_id": thread_id,
+                "thread_title": platform_meta.get("video_title", "Unknown"),
+                "has_media": False,
+                
+                # C. Entity
+                "author_id": platform_meta.get("author_id", "UNKNOWN"),
+                "author_name": platform_meta.get("author_name", "Anonymous"),
+                "is_moderator": platform_meta.get("is_moderator", False),
+                "is_sponsor": platform_meta.get("is_sponsor", False),
+                
+                # D. Intelligence (Tier 1 - Local Model)
+                "model_prediction": int(label_id),
+                "model_label": label_text,
+                "model_confidence": float(confidence),
+                "processing_time_ms": round(latency_ms, 2),
+                
+                # E. Intelligence (Tier 2 - Agent Overlay)
+                "agent_reviewed": False,
+                "agent_model_used": None,
+                "agent_final_decision": None,
+                "agent_explanation": None
             }
             try:
-                # sending the json document to kibana
-                es.index(index=ES_INDEX, document=doc)
+                es.index(index=INDEX_NAME, document=doc)
             except Exception as e:
                 print(f"Kibana Error: {e}")
 
-        # 4. Audit Logging (CSV)
+        # --- 5. AUDIT LOGGING ---
         with open(LOG_FILE, 'a', encoding='utf-8') as f:
-            clean_text = text.replace('\n', ' ').replace(',', ' ')
+            clean_text = payload_text.replace('\n', ' ').replace(',', ' ')
             timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            # writing raw string is faster than using pandas for single rows
-            f.write(f"{timestamp},{source},{video_id},{clean_text},{label_id},{label_text},{confidence:.4f}\n")
+            f.write(f"{timestamp},{source_platform},{env_domain},{thread_id},{clean_text},{label_text},{confidence:.4f},{latency_ms:.2f}\n")
 
 except KeyboardInterrupt:
-    print("\nProcessor stopped by user.")
+    print("\nProcessor stopped safely.")
