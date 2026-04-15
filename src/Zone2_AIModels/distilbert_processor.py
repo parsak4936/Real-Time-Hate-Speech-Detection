@@ -84,7 +84,7 @@ def get_bert_prediction(text):
 consumer = KafkaConsumer(
     *KAFKA_TOPICS,
     bootstrap_servers=KAFKA_BROKERS,
-    auto_offset_reset='latest',
+    auto_offset_reset='earliest',
     value_deserializer=lambda x: json.loads(x.decode('utf-8'))
 )
 

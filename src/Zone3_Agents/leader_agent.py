@@ -48,7 +48,7 @@ def leader_router(user_input):
     Analyze the user's request and choose the correct tool.
     
     CRITICAL DATABASE SCHEMA: You have access to these exact columns: {DB_SCHEMA_KEYS}
-    RULE: Always prefer human-readable string columns (e.g., use 'author_name' instead of 'author_id', and use 'label_text' instead of 'prediction').
+    RULE: Always prefer human-readable string columns (e.g., use 'author_name' instead of 'author_id').
     
     You must output a JSON object using ONE of these formats:
     

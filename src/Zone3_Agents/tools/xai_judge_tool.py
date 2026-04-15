@@ -50,6 +50,8 @@ def execute_xai_judge(params):
         RULES:
         - If strictness is 'low' (Gaming), aggressive slang and team names (like 'Nigma') are permitted.
         - If strictness is 'high' (Politics), zero tolerance.
+        and these were only examples, there might be more and more catagories, from music and entertainment to medical and so on,
+        so consider a wide veriaty of catagories,
         
         TASK:
         1. Validate: Correct, False Positive, or False Negative?

@@ -19,7 +19,21 @@ def execute_universal_search(params):
         extracted_data = []
         for hit in hits:
             source = hit['_source']
-            extracted_data.append(f"[{source.get('source', 'Unknown')}] User: {source.get('author_name', 'Anon')} | Label: {source.get('label_text', 'Unknown')} | Text: {source.get('text', '')}")
+            
+            # Use Universal Schema fields
+            platform = source.get('source_platform', 'Unknown')
+            domain = source.get('env_domain', 'General')
+            author = source.get('author_name', 'Anon')
+            
+            # If the Tier-2 AI reviewed it, show that decision! Otherwise, show DistilBERT's label.
+            if source.get('agent_reviewed', False):
+                label = f"XAI OVERRIDE: {source.get('agent_final_decision')}"
+            else:
+                label = f"DistilBERT: {source.get('model_label', 'Unknown')}"
+                
+            text = source.get('text', '')
+            extracted_data.append(f"[{platform} | {domain}] User: {author} | Label: [{label}] | Text: {text}")
+            
         return "\n".join(extracted_data)
     except Exception as e:
         return f"Database search failed: {e}"
