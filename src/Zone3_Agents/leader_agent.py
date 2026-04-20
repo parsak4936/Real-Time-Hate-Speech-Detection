@@ -40,32 +40,43 @@ print(f"-> AI Schema Awareness Loaded: {DB_SCHEMA_KEYS}")
 def leader_router(user_input):
     print(f"\n[Phase 1: Analyzing Intent...]")
 
-    # 1. The OpenAPI-Style Schema Prompt
-    # 1. The Schema-Aware Schema Prompt
-    # 1. The Schema-Aware Schema Prompt
     intent_prompt = f"""
     You are the Orchestrator AI for a Trust & Safety Data Pipeline. 
     Analyze the user's request and choose the correct tool.
     
     CRITICAL DATABASE SCHEMA: You have access to these exact columns: {DB_SCHEMA_KEYS}
-    RULE: Always prefer human-readable string columns (e.g., use 'author_name' instead of 'author_id').
+    
+    YOUR VOCABULARY & DATABASE MAPPING:
+    * "First AI", "Static", "DistilBERT", "hate speech", or "flagged" = map to the `model_label` column (Values are usually "HATE", "OFFENSIVE", or "Normal").
+    * "LLM", "Tier-2", "Reviewed", "Overturned", "False Positive" = map to the `agent_final_decision` column.
+    
+    CRITICAL SEARCH RULES:
+    - ONLY use "keywords" if the user is looking for a specific word typed by a user in the chat (e.g., "kill", "stupid"). 
+    - DO NOT put label names (like "hate speech", "false positive") in the "keywords" list! 
+    - If they ask for false positives, set "label": "False Positive" and "reviewed_only": true.
+    - If they ask for hate speech, set "label": "HATE".
     
     You must output a JSON object using ONE of these formats:
     
-    1. For reading messages or keyword searches:
-       {{"tool": "UNIVERSAL_SEARCH", "keywords": ["word1"], "limit": 20}}
+    1. For reading messages, searching history, or finding examples of overrides/false positives:
+       {{"tool": "UNIVERSAL_SEARCH", "author": "optional_username", "label": "False Positive", "reviewed_only": true, "limit": 5}}
+       - ONLY include "keywords" if they explicitly ask to search for a specific chat word.
+       - Use "author" if they want to read messages from a specific user.
        
-    2. For counting data, finding TOP USERS, or checking labels. 
-       YOU MUST select the correct column names from the SCHEMA list above for the user and the label!
-       {{"tool": "GET_STATISTICS", "platform": "youtube", "user_column": "exact_schema_key", "label_column": "exact_schema_key"}} 
+    2. For counting data, statistics, breakdowns, or finding TOP USERS:
+       {{"tool": "GET_STATISTICS", "target_user": "optional_username", "target_label": "optional_label"}} 
+       - Use "target_user" if they ask for stats/breakdown on ONE specific person.
+       - Use "target_label" (e.g., "HATE", "OFFENSIVE", "False Positive") if they ask "who has the most hate messages" or want counts of a specific type.
+       - If they want overall stats, just use {{"tool": "GET_STATISTICS", "platform": "all"}}
+
+    3. For investigating a SPECIFIC user, running an audit, or judging a single user's behavior:
+       {{"tool": "XAI_JUDGE", "target_user": "exact_username_here"}}
+
+    4. For weather/time/location:
+       {{"tool": "GET_WEATHER"}} 
        
-    3. For greetings, asking about your capabilities, or unrelated questions:
-       {{"tool": "DIRECT_MESSAGE", "message": "[Write your natural, polite response here]"}}
-    4. For checking the current date, time, weather, OR finding the user's current location/city:
-       {{"tool": "GET_WEATHER", "location": "Optional City Name"}} 
-       (Note: Leave "location" blank if they ask "where am I", "my weather", or "what city am I in").
-    5. For explaining WHY a specific user was flagged or judging a model's decision:
-       {{"tool": "XAI_JUDGE", "target_user": "username"}}
+    5. For general conversation:
+       {{"tool": "DIRECT_MESSAGE", "message": "..."}}
 
     User Request: "{user_input}"
     
@@ -80,9 +91,9 @@ def leader_router(user_input):
         
         # Clean the output to ensure it's raw JSON
         raw_output = response['message']['content'].strip()
-        if raw_output.startswith("```json"): 
+        if raw_output.startswith("`" + "``json"): 
             raw_output = raw_output[7:-3].strip()
-        elif raw_output.startswith("```"): 
+        elif raw_output.startswith("`" + "``"): 
             raw_output = raw_output[3:-3].strip()
 
         params = json.loads(raw_output)
@@ -97,17 +108,16 @@ def leader_router(user_input):
             return
             
         elif tool in TOOL_REGISTRY:
-            # The Magic: Look up the function in the dictionary and run it!
             selected_function = TOOL_REGISTRY[tool]
-            # THE FIX: Rename this variable to match what Phase 3 expects!
             raw_database_results = selected_function(params)
             
         else:
             print(f"Error: The AI hallucinated a tool. '{tool}' is not in the registry.")
             return
+            
         print(f"\n[Phase 3: Synthesizing Final Report...]")
         
-        # PHASE 3: Synthesize the Answer (The Brain)
+# PHASE 3: Synthesize the Answer (The Brain)
         synthesis_prompt = f"""
         You are a Trust & Safety Analyst. The user asked: "{user_input}"
         
@@ -117,6 +127,8 @@ def leader_router(user_input):
         ---
         
         Read the raw data above and answer the user's original question. 
+        CRITICAL RULE: Our database uses "Fuzzy Matching" to automatically correct human typos. If the user asks about a specific username, and the raw data returns a slightly differently spelled username, you MUST assume the user made a typo and treat the returned data as the correct match. Do not say the user is missing!
+        
         Be concise, analytical, and ground your entire response ONLY in the provided data.
         """
         
@@ -144,8 +156,3 @@ if __name__ == "__main__":
             break
             
         leader_router(user_query)
-        
-
-
-
-        

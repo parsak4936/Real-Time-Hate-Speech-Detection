@@ -15,7 +15,7 @@ def execute_xai_judge(params):
         query = {
             "query": {"match": {"author_name": target_user}},
             "sort": [{"timestamp": {"order": "desc"}}],
-            "size": 1
+            "size": 20
         }
         res = es.search(index=INDEX_NAME, body=query)
         
@@ -37,25 +37,24 @@ def execute_xai_judge(params):
         # 2. LOCAL EXPLAINABILITY (Simulated SHAP/Captum logic)
         # In a real setup, you'd run SHAP library here. 
         # For the Agent, we provide the raw text for 'LLM-as-a-Judge' to analyze.
-        
-       # 3. LLM-AS-A-JUDGE: Context-Aware Evaluation
+        # 3. LLM-AS-A-JUDGE: Advanced Forensic Evaluation
         judge_prompt = f"""
-        [ROLE: XAI CONTEXT JUDGE]
-        Evaluate the following prediction made by DistilBERT.
+        [ROLE: XAI CONTEXT JUDGE - TRUST & SAFETY ADVISOR]
+        Evaluate the following prediction made by a static DistilBERT model.
         
         TEXT TO ANALYZE: "{raw_text}"
         PREDICTION: {original_prediction} (Confidence: {confidence:.2%})
         DOMAIN: {domain} | STRICTNESS: {strictness}
         
-        RULES:
-        - If strictness is 'low' (Gaming), aggressive slang and team names (like 'Nigma') are permitted.
-        - If strictness is 'high' (Politics), zero tolerance.
-        and these were only examples, there might be more and more catagories, from music and entertainment to medical and so on,
-        so consider a wide veriaty of catagories,
+        ADVANCED FORENSIC RULES:
+        1. Sarcasm & In-Game Events: If the domain is Gaming, analyze if the text represents in-game actions, celebrations, or sarcastic trash talk (e.g., "kill him", "you psycho"). Override DistilBERT if it is standard gameplay rhetoric.
+        2. Evasion & Dogwhistles: Hunt for leetspeak (e.g., "n1gg3r"), symbol replacement, or known political dogwhistles (e.g., using innocent words like "skittles" to target groups). Expose the true intent.
+        3. Cultural Context: Factor in regional/cultural slang. Words that are severe slurs in high-strictness US politics may be standard colloquialisms or endearments in low-strictness international gaming.
+        4. Instigator/Troll Detection: If DistilBERT labeled this 'Normal', but the text is highly manipulative, passive-aggressive, or clearly baiting another user into an argument, rule it a False Negative.
         
         TASK:
-        1. Validate: Correct, False Positive, or False Negative?
-        2. Explain: Why, based on context?
+        1. Validate: Is DistilBERT's prediction Correct, a False Positive, or a False Negative?
+        2. Explain: Detail exactly why. You MUST reference the forensic rules above (sarcasm, evasion, culture, or instigation) if they apply to the text.
         
         OUTPUT FORMAT: Output ONLY valid JSON: {{"decision": "...", "explanation": "..."}}
         """
