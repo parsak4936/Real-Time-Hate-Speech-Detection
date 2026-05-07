@@ -47,29 +47,29 @@ def leader_router(user_input):
     CRITICAL DATABASE SCHEMA: You have access to these exact columns: {DB_SCHEMA_KEYS}
     
     YOUR VOCABULARY & DATABASE MAPPING:
-    * "First AI", "Static", "DistilBERT", "hate speech", or "flagged" = map to the `model_label` column (Values are usually "HATE", "OFFENSIVE", or "Normal").
-    * "LLM", "Tier-2", "Reviewed", "Overturned", "False Positive" = map to the `agent_final_decision` column.
+    * "First AI", "Static", "DistilBERT", "hate speech", or "flagged" = map to `model_label` (Values are usually "HATE", "OFFENSIVE", or "Normal").
+    * "LLM", "Tier-2", "Reviewed", "Overturned", "False Positive" = map to `agent_final_decision`.
+    * "judged by agent", "reviewed by agent", "checked by AI", "agent_review" = map to `agent_reviewed` (Values MUST be boolean: true or false).
+    * "time", "speed", "latency" = map to `processing_time_ms` or `agent_latency_seconds`.
     
     CRITICAL SEARCH RULES:
-    - ONLY use "keywords" if the user is looking for a specific word typed by a user in the chat (e.g., "kill", "stupid"). 
-    - DO NOT put label names (like "hate speech", "false positive") in the "keywords" list! 
-    - If they ask for false positives, set "label": "False Positive" and "reviewed_only": true.
-    - If they ask for hate speech, set "label": "HATE".
+    - ONLY use "keywords" if the user is looking for a specific chat word. 
+    - DO NOT put label names (like "hate speech") in the "keywords" list! 
     
     You must output a JSON object using ONE of these formats:
     
-    1. For reading messages, searching history, or finding examples of overrides/false positives:
-       {{"tool": "UNIVERSAL_SEARCH", "author": "optional_username", "label": "False Positive", "reviewed_only": true, "limit": 5}}
-       - ONLY include "keywords" if they explicitly ask to search for a specific chat word.
-       - Use "author" if they want to read messages from a specific user.
+    1. For reading messages, searching history, or finding examples:
+       {{"tool": "UNIVERSAL_SEARCH", "filters": {{"agent_final_decision": "False Positive"}}, "limit": 5}}
        
-    2. For counting data, statistics, breakdowns, or finding TOP USERS:
-       {{"tool": "GET_STATISTICS", "target_user": "optional_username", "target_label": "optional_label"}} 
-       - Use "target_user" if they ask for stats/breakdown on ONE specific person.
-       - Use "target_label" (e.g., "HATE", "OFFENSIVE", "False Positive") if they ask "who has the most hate messages" or want counts of a specific type.
-       - If they want overall stats, just use {{"tool": "GET_STATISTICS", "platform": "all"}}
+    2. For counting data, statistics, breakdowns, or finding totals based on ANY condition:
+       {{"tool": "GET_STATISTICS", "filters": {{"exact_schema_key": value}}}} 
+       - You MUST map the user's request directly to the CRITICAL DATABASE SCHEMA keys.
+       - Example A: "how many entries are reviewed" -> {{"tool": "GET_STATISTICS", "filters": {{"agent_reviewed": true}}}}
+       - Example B: "how many from youtube" -> {{"tool": "GET_STATISTICS", "filters": {{"source_platform": "youtube"}}}}
+       - Example C: "how many false positives" -> {{"tool": "GET_STATISTICS", "filters": {{"agent_final_decision": "False Positive"}}}}
+       - For global overall stats (no filters), leave it empty: {{"tool": "GET_STATISTICS", "filters": {{}}}}
 
-    3. For investigating a SPECIFIC user, running an audit, or judging a single user's behavior:
+    3. For investigating a SPECIFIC user or running an audit:
        {{"tool": "XAI_JUDGE", "target_user": "exact_username_here"}}
 
     4. For weather/time/location:
@@ -117,7 +117,7 @@ def leader_router(user_input):
             
         print(f"\n[Phase 3: Synthesizing Final Report...]")
         
-# PHASE 3: Synthesize the Answer (The Brain)
+        # PHASE 3: Synthesize the Answer (The Brain)
         synthesis_prompt = f"""
         You are a Trust & Safety Analyst. The user asked: "{user_input}"
         

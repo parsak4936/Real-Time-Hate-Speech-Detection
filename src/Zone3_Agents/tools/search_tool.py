@@ -6,7 +6,14 @@ es = Elasticsearch(ES_HOST)
 def execute_universal_search(params):
     print(f"-> [Search Agent] Searching with params: {params}")
     must_clauses = []
-    
+    # --- THE NEW DYNAMIC FILTER ENGINE ---
+    filters = params.get("filters", {})
+    for column_name, value in filters.items():
+        if isinstance(value, bool):
+            must_clauses.append({"term": {column_name: value}})
+        else:
+            must_clauses.append({"match": {column_name: value}})
+    # ---------------------------------------
     # 1. Search by chat keywords (Original Logic)
     if params.get("keywords"):
         must_clauses.append({"match": {"text": " ".join(params["keywords"])}})

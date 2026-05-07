@@ -1,0 +1,460 @@
+env_domain,text,model_label,agent_final_decision,human_ground_truth,env_strictness,processing_time_ms,agent_latency_seconds
+Politics/News,TRYING TO INFLUENCE ANOTHER COUNTRY ELECTIONS IS A HIGH CRIME!!!!,HATE,False Positive,Normal,high,128.22,4.74
+Gaming,awie would be better off working with the enemy,HATE,False Positive,Normal,low,80.45,6.91
+Gaming,"Most adults are tired of that, viewbotz",HATE,False Positive,Normal,low,73.01,6.67
+Politics/News,As a Catholic we know that heathen is going to hell!,HATE,Correct,HATE,high,72.6,12.73
+News,This is an opportunity for Nigeria to Cash-out from the US-IRAN war because of high oil Prices. Nigeria shouldn't have Business with Recession.,HATE,False Positive,Normal,high,31.67,4.81
+News,This is an opportunity for Nigeria to Cash-out from the US-IRAN war because of high oil Prices. Nigeria shouldn't have Business with Recession.,HATE,False Positive,Normal,high,41.28,5.37
+Gaming/Esports,lifeboy saboon lagao fast kam karte hai bhai,HATE,False Positive,Normal,low,24.14,10.43
+Gaming/Esports,lifeboy saboon lagao fast kam karte hai bhai,HATE,False Positive,Normal,low,31.54,5.13
+Gaming/Esports,lifeboy saboon lagao fast kam karte hai bhai,HATE,False Positive,Normal,low,30.65,6.63
+Gaming/Esports,lifeboy saboon lagao fast kam karte hai bhai,HATE,False Positive,Normal,low,33.08,11.61
+Gaming/Esports,lifeboy saboon lagao fast kam karte hai bhai,HATE,False Positive,Normal,low,30.34,5.4
+News,"Have you ever thought, IF TRUE, why have your authorities not been able to nail him on ONE thing? ..even ONE! I reiterate and insist that ALL of you don't have functioning BRAINS.. walai!",HATE,False Positive,OFFENSIVE,high,38.11,4.08
+Gaming/Survival,You will not win the raid with welyn at all. He needs to be kicked completely,HATE,False Positive,Normal,low,30.1,6.99
+Gaming/Survival,they're burning hutch at the stake,HATE,False Positive,Normal,low,22.19,4.64
+Gaming/Survival,YOU SHOULD DO A LIVE DRAFT FOR TEAMS,HATE,False Positive,Normal,low,23.03,3.47
+Gaming/Survival,Hutch goat,HATE,False Positive,Normal,low,21.07,4.53
+Gaming/Survival,"Hutch and Sym are a problem, kick them before the Pros handle it at a meeting",HATE,False Positive,Normal,low,23.58,5.73
+Gaming/Survival,Hutch should be flying!,HATE,False Positive,Normal,low,24.14,4.74
+Gaming/Survival,Welyn is extremely goated,HATE,False Positive,Normal,low,25.03,4.26
+Gaming/Survival,Be happy your not fighting Team China :face-green-smiling::face-purple-crying: they are beyond organized ,HATE,False Positive,Normal,low,28.55,6.78
+Gaming/Survival,Mutch is terrible,HATE,False Positive,OFFENSIVE,low,37.28,5.84
+Gaming/Survival,How much money should we give him to ban camsoda,HATE,False Positive,Normal,low,37.36,4.83
+Gaming/Survival,How are they inside the walls??? 3rd time today,HATE,False Positive,Normal,low,28.53,5.28
+Gaming/Survival,Crackheads Unite!!!,HATE,False Positive,Normal,low,25.54,15.73
+Gaming/Survival,You need to hide guns and scrap from hutch. ,HATE,False Positive,Normal,low,35.99,3.6
+Gaming/Survival,Crackheads are an issue,HATE,False Positive,Normal,low,27.4,4.39
+Gaming/Survival,WAR ON CRACKHEADS,HATE,False Positive,Normal,low,30.11,10.06
+Gaming/Survival,you dont deserve a kit,HATE,False Positive,Normal,low,29.21,6.56
+Gaming/Survival,"it becomes serious, when they act maliciously toward their ""friends"".",HATE,False Positive,Normal,low,34.56,6.04
+Gaming/Survival,Hutch is a liability!!!!,HATE,False Positive,Normal,low,36.79,4.75
+Gaming/Survival,Hutch Killed Jennifer. She is pizzed,HATE,False Positive,Normal,low,31.18,6.4
+Gaming/Survival,hutch is cool but hes kinda booboo at rust ngl just wastes material and cries when its gone because of his actions lol,HATE,False Positive,Normal,low,42.56,3.94
+Gaming/Survival,They are gaslighting,HATE,False Positive,Normal,low,25.57,8.63
+Gaming/Survival,EGG PEOPLE!,HATE,False Positive,Normal,low,21.16,7.6
+Gaming/Survival,HUTCH IS A LIABILITY,HATE,False Positive,Normal,low,22.41,7.74
+Gaming/Survival,HUTCH IS SLOW AND STUPID,HATE,False Positive,OFFENSIVE,low,23.01,4.69
+Gaming/Survival,get them in line,HATE,False Positive,Normal,low,27.79,3.47
+Gaming/Survival,HUTCH IS A LIABILITY,HATE,False Positive,Normal,low,25.6,8.58
+Gaming/Survival,HUTCH IS A LIABILITY,HATE,False Positive,Normal,low,23,3.27
+Gaming/Survival,He been hanging out with the crackheads,HATE,False Positive,OFFENSIVE,low,26,9.27
+Gaming/Survival,Hutch hates Arabs ,HATE,correct,HATE,low,25.74,3.79
+Gaming/Survival,Peanut that 1v1 last night with the bow was goated ,HATE,False Positive,Normal,low,29.02,4.77
+Gaming,anyone shting on gingy needs 2 stuff.,Normal,Correct,Normal,low,78.05,7.79
+Gaming,Please stop ,Normal,Correct,Normal,low,71.5,5.92
+Politics/News,I don't think Vance pays attention to anything that comes out of his stupid mouth,Normal,False Negative,OFFENSIVE,high,113.57,7.26
+Gaming,viewbots i dont even say gingy hate just trolling you relax looool,Normal,False Negative,OFFENSIVE,low,131.92,6.76
+Gaming,STOP ,Normal,Correct,Normal,low,89.21,6.21
+Gaming,go bet gingy's scrap please,Normal,Correct,Normal,low,83.78,6.14
+Politics/News,"the us could learn a lot from a lot of ""SANE"" countries",Normal,Correct,Normal,high,67.16,7.43
+Gaming,Good to know you were one of the fucking losers in her chat giving her a hard time Chrisbrooks,Normal,False Negative,OFFENSIVE,low,104.91,4.9
+Music,Depressing music,Normal,Correct,Normal,medium,53.38,5.09
+Gaming,Yep definetly im gingy..sure,Normal,Correct,Normal,low,67.86,5.8
+Politics/News,The pope is too soft on crime I will never get over that:grinning_squinting_face::melting_face:,Normal,Correct,Normal,high,71.98,8.11
+Gaming,viewbots is gingy lol,Normal,Correct,Normal,low,89.84,4.79
+Gaming,brother you got bopped give awie his stuff back hes solo,Normal,Correct,Normal,low,88.58,3.58
+Gaming,NO HAPPY HAPPY HAPPY,Normal,Correct,Normal,low,43.1,7.46
+Politics/News,Vance is NO Catholic!,Normal,Correct,Normal,high,95.35,4.98
+Gaming,yep working with the enemy awie is,Normal,Correct,Normal,low,52.96,7.85
+Music,me achi hu tum kese ho,Normal,Correct,Normal,medium,54.08,2.58
+Politics/News,@jester99sch_ohio it’s 2am! sounds silly but i find it comforting to listen to meidas before bed ,Normal,Correct,Normal,high,68.55,3.72
+Gaming,Damn p is still live ,Normal,Correct,Normal,low,51.78,5.54
+Gaming,Goop goop goop,Normal,Correct,Normal,low,139.71,4.69
+Gaming,gingy is out,Normal,Correct,Normal,low,57.41,3.57
+Politics/News,due to the floor crossings there are those who view Carney's majority to be false bcz those reps aren't in the party they were elected for,Normal,Correct,Normal,high,87.43,3.46
+Gaming,Awie got her getbacks LOL,Normal,Correct,Normal,low,36,4.6
+Gaming,Your stomach ,Normal,Correct,Normal,low,37.04,4.98
+Gaming,You were hearing the beetles in your skin,Normal,correct,Normal,low,29.21,5.53
+Gaming,is Gingy done playing?,Normal,correct,Normal,low,28.58,7.65
+Gaming,Gingy is forced to hide scrap because she lives with a gambling addict,Normal,Correct,Normal,low,40.87,5.07
+Gaming,Are they being raided? ,Normal,Correct,Normal,low,33.19,4.46
+Gaming,bann gingy,Normal,Correct,Normal,low,97.22,8.34
+Politics/News,the Jesus pic is of Trump Resurrecting Epstein,Normal,Correct,OFFENSIVE,high,34.16,11.05
+Politics/News,here we goooooooooooooooo,Normal,Correct,Normal,high,39.69,2.57
+Politics/News,the Jesus pic is of Trump Resurrecting Epstein ,Normal,False Negative,OFFENSIVE,high,32.93,7.16
+Gaming,Gingy the scrap squirrel,Normal,Correct,Normal,low,33.8,3.06
+Gaming,Is gingy done playing rust?,Normal,Correct,Normal,low,53.16,4.9
+Gaming,Little bit of goop ,Normal,Correct,Normal,low,25.99,3.81
+Gaming,and why is he older than you ? isn't that creepy ?,Normal,False Negative,OFFENSIVE,low,209.54,11.51
+Gaming,rip hutch and gingy,Normal,Correct,Normal,low,22.05,7.4
+Gaming,Gingy,Normal,Correct,Normal,low,22.3,12.93
+Gaming,Gingy,Normal,Correct,Normal,low,22.15,5.99
+Gaming,goop,Normal,Correct,Normal,low,25.1,3.96
+Gaming,Gingy,Normal,Correct,Normal,low,23.56,6.8
+Gaming,Gingy,Normal,Correct,Normal,low,22.03,3.18
+Gaming,gingy,Normal,Correct,Normal,low,26.61,3.99
+Politics/News,@jester99sch_ohio to hot to soon,Normal,Correct,Normal,high,23.68,5.9
+Gaming,nuts,Normal,Correct,Normal,low,25.1,6.3
+Gaming,Gingy,Normal,Correct,Normal,low,37.59,7.38
+News,"If you call Abati SAN, he will accept it. ",Normal,Correct,Normal,high,29,4.51
+Gaming,mfers out here raiding bases without anyone to defend them?,Normal,Correct,Normal,low,39.11,6.76
+Music,Shreyaa tum ig pe ho ,Normal,Correct,Normal,medium,25.05,3.81
+Gaming,bros a menace rn,Normal,Correct,Normal,low,21.99,8.69
+Gaming,bro is a MENACE ,Normal,correct,Normal,low,35.55,5.13
+Gaming,just murdering the whole server,Normal,Correct,Normal,low,31.81,5.67
+Gaming,lol Peanut is just murdering everyone,Normal,Correct,Normal,low,31.22,9.07
+Gaming,domt need shade in the money trees when your ballz frozen,Normal,Correct,Normal,low,34.25,4.62
+Gaming,Oh wait I’m stupid,Normal,Correct,Normal,low,30.01,6.4
+Gaming,sic sempre furries,Normal,False Negative,OFFENSIVE,low,29.28,6.29
+News,They are just flying from the frying pan to the fire :fire::fire:. Sorry for the ADC!,Normal,Correct,Normal,high,35.14,5.82
+News,HYPING UR GUEST ARISE DONT U KNOW UR GUESTS WELL BEFORE INVITIBG THEM,Normal,Correct,Normal,high,32,11.18
+Music,damn it,Normal,Correct,Normal,medium,23.01,4.95
+Gaming/Esports,:face-fuchsia-wide-eyes::face-fuchsia-wide-eyes::face-fuchsia-wide-eyes::face-fuchsia-wide-eyes::face-fuchsia-wide-eyes::face-fuchsia-wide-eyes::face-fuchsia-wide-eyes::face-fuchsia-wide-eyes::face-fuchsia-wide-eyes::eyes-purple-crying::eyes-purple-crying::eyes-purple-crying::face-fuchsia-wide-eyes::face-fuchsia-wide-eyes::eyes-purple-crying::eyes-purple-crying::eyes-purple-crying::eyes-purple-crying::eyes-purple-crying:,Normal,Correct,Normal,low,75.55,4.3
+News,"Petroleum subsidy removal - no impact Oil prices spike, more revenue accrued - no impact. Nigerians must remove the vampire government in 2027",Normal,False Negative,Normal,high,37.62,14.98
+Gaming/Esports,!!! @insaneaimxx !!!,Normal,Correct,Normal,low,22.99,6.44
+News,"Mitun Sanga,he better not be true,even the Arise TV owners will hate this stations every man here will disappear",Normal,False Negative,Normal,high,30.99,6.17
+Gaming/Esports,the use of abusive language won't be tolerated:virtualhug:,Normal,Correct,Normal,low,27.84,8.24
+Music,omgggg,Normal,Correct,Normal,medium,22.62,4.77
+Gaming/Esports,:face-red-droopy-eyes::cat-orange-whistling::face-fuchsia-wide-eyes:,Normal,Correct,Normal,low,29.27,8.67
+News,Nigeria  is a Crime scene :clapper_board: ,Normal,False Negative,Normal,high,23.66,6.61
+Music,where are you from,Normal,Correct,Normal,medium,21.38,7.97
+News,They will tell you Nigeria is not making a dime from the Iran war,Normal,Correct,Normal,high,26.71,3.67
+News,Nigeria is a failed nation,Normal,False Negative,HATE,high,26.06,10.4
+News,a failed nation is a failed nation,Normal,Correct,Normal,high,23.1,3.42
+Gaming/Esports,!winner bestfriend,Normal,Correct,Normal,low,32.43,4.63
+News,WHAT IMPACT HAS THE REMOVAL OF SUBSIDIES HAD ON THE LIVES OF NIGERIANS?,Normal,Correct,Normal,high,39.33,2.93
+News,Empty,Normal,Correct,Normal,high,27.54,4.13
+Gaming/Esports,!winner proest,Normal,Correct,Normal,low,22.58,4.45
+News,now them will use Iran war to defend their failures,Normal,Correct,Normal,high,23,4.88
+News,The dullest finance minister,Normal,Correct,Normal,high,30.23,4.93
+Music,paisaaa So you're going to say dirty things like that :alien:,Normal,Correct,Normal,medium,35.64,9.39
+Gaming/Esports,fahhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhyyyyy,Normal,Correct,Normal,low,31.54,4.41
+News,"George, I agree with you,Tinubu is not sincere with subsidy money",Normal,Correct,Normal,high,33.51,4.76
+Gaming/Esports,booooooþtttþt,Normal,JSON Parsing Error,Normal,low,27,7.14
+News,Realist ...but Tinubu gave Chagoury that ruined Nigeria with Abacha a GCON and you applauded. You see why you are cursed abi? :face_with_tears_of_joy:,Normal,Correct,Normal,high,47.01,6.01
+News,Realist ...but Tinubu gave Chagoury that ruined Nigeria with Abacha a GCON and you applauded. You see why you are cursed abi? :face_with_tears_of_joy:,Normal,correct,Normal,high,47.01,6.72
+News,Realist ...but Tinubu gave Chagoury that ruined Nigeria with Abacha a GCON and you applauded. You see why you are cursed abi? :face_with_tears_of_joy:,Normal,JSON Parsing Error,Normal,high,39.04,5.69
+News,"They are all disgruntled people claiming to be forming a new Nigeria... Never, No No O... we are not going back to the era of corruption.",Normal,Correct,Normal,high,37.11,3.26
+Gaming/Esports,Aaj Tum khud hi Jude Ho,Normal,Correct,Normal,low,30.64,4.79
+News,"@Soyebaba, your points of view are spot on. Emmanuel Effeni knows Abati is corrupt, which is why he used to throw jabs at him. Unfortunately, Abati is sinking the Arise station.",Normal,Correct,Normal,high,32.01,10.99
+Gaming/Survival,this is their plan people….,Normal,Correct,Normal,low,23.72,3.2
+Gaming/Survival,W GINGY ,Normal,Correct,Normal,low,20.23,3.83
+Gaming/Survival,YOU HAVE FUEL,Normal,Correct,Normal,low,21.53,4.79
+Gaming/Survival,a whole ass cargo ship,Normal,Correct,Normal,low,21,9.43
+Gaming/Survival,YOU HAVE FUEL,Normal,Correct,Normal,low,22.4,5.42
+Gaming/Survival,Hutch needs to go all he does is waste resources,Normal,False Negative,OFFENSIVE,low,29.93,4.85
+Gaming/Survival,DPOitdoors you have no job lol,Normal,False Negative,OFFENSIVE,low,30.63,7.65
+Gaming/Survival,Gingy eats cats,Normal,Correct,Normal,low,34.31,7.38
+Gaming/Survival,NEED CLOAKZY PEANUT AND HUTCH ON A TEAM,Normal,Correct,Normal,low,37.79,6.33
+Gaming/Survival,Hutch does waste so much shit ,Normal,Correct,Normal,low,35.51,5.38
+Gaming/Survival,they're going to attack the concert!!!,Normal,Correct,Normal,low,34.48,4.67
+Gaming/Survival,Gingy > Mutch ,Normal,Correct,Normal,low,22.74,5.3
+Gaming/Survival,W GINGY ,Normal,correct,Normal,low,22.05,6.81
+Gaming/Survival,audacity to say he's joking,Normal,Correct,Normal,low,24.13,10.84
+Gaming/Survival,Sounds like you need farm run,Normal,Correct,Normal,low,23.23,4.3
+Gaming/Survival,Watch the eggs fucking smoke them ,Normal,Correct,Normal,low,23.72,5.59
+Gaming/Survival,yall gotta chill with the hutch hate:rolling_on_the_floor_laughing:,Normal,Correct,Normal,low,24.6,10.16
+Gaming/Survival,W GINGY,Normal,Correct,Normal,low,23.07,8.38
+Gaming/Survival,whatyoutalkinabit,Normal,Correct,Normal,low,44.37,5.77
+Gaming/Survival,Cant win because all loot is gone,Normal,Correct,Normal,low,29.01,5.06
+Gaming/Survival,Lock it in P ,Normal,correct,Normal,low,21.58,5.68
+Gaming/Survival,W GINGY,Normal,Correct,Normal,low,27.41,5.75
+Gaming/Survival,you guys are so oblivious,Normal,False Negative,Normal,low,38.99,4.22
+Gaming/Survival,you need to get jenny a camper,Normal,Correct,Normal,low,24.38,4.4
+Gaming/Survival,PAKCED DAY,Normal,Correct,Normal,low,24,5.49
+Gaming/Survival,hutch hates cats,Normal,Correct,Normal,low,22.01,7.69
+Gaming/Survival,He’s a bum,Normal,False Negative,OFFENSIVE,low,21.99,4.41
+Gaming/Survival,Hutch is judas ,Normal,correct,Normal,low,20.65,7.93
+Gaming/Survival,W GINGY,Normal,Correct,Normal,low,22.41,5.62
+Gaming/Survival,HUTCH IS THE ENEMY,Normal,Correct,Normal,low,26.01,4.71
+Gaming/Survival,let hutch have his own team so he doesnt mess with your stuff ez,Normal,Correct,Normal,low,24.56,7.03
+Gaming/Survival,PROMOTE GINGY,Normal,Correct,Normal,low,22.58,4.28
+Gaming/Survival,Give hutch to the angry mob!!,Normal,Correct,Normal,low,43.13,6.41
+Gaming/Survival,GINGY > HUTCH,Normal,Correct,Normal,low,22.08,5.69
+Gaming/Survival,HUTCH IS BONELESSS,Normal,Correct,Normal,low,23.55,5.43
+Gaming/Survival,Keep rogue and get rid of hutch. ,Normal,Correct,Normal,low,31.14,6.33
+Gaming/Survival,kick gingy,Normal,Correct,Normal,low,33.53,7.56
+Gaming/Survival,He doesn’t contribute,Normal,False Negative,Normal,low,31.9,10.3
+Gaming/Survival,CLOAKZY DID 4/11,Normal,Correct,Normal,low,31.73,8.76
+Gaming/Survival,HUTCH <<<<<< GINGY,Normal,Correct,Normal,low,30.85,5.52
+Gaming/Survival,HUTCH IS THE ENEMY,Normal,Correct,Normal,low,34.08,4.53
+Gaming/Survival,HUTCH IS JUDAS,Normal,Correct,Normal,low,27.95,4.41
+Gaming/Survival,Pick up awie,Normal,Correct,Normal,low,25.17,4.67
+Gaming/Survival,"Dezignful and frexs is also on, gingy might get on tonight so what r u going to do tonight",Normal,Correct,Normal,low,25.3,4.59
+Gaming/Survival,kick him,Normal,Correct,Normal,low,20.99,3.64
+Gaming/Survival,HUTCH IS A LEACH,Normal,False Negative,OFFENSIVE,low,24.64,9.54
+Gaming/Survival,Cloakzy did 4/11,Normal,Correct,Normal,low,22.03,6.49
+Gaming/Survival,Tell him to grab a switch from the tree,Normal,Correct,Normal,low,27.08,4.21
+Gaming/Survival,kick him,Normal,Correct,Normal,low,33.58,5.61
+Gaming/Survival,Hutch is a Leech,Normal,False Negative,OFFENSIVE,low,21.76,10.1
+Gaming/Survival,HUTCH IS THE ENEMY,Normal,Correct,Normal,low,22.41,4.12
+Gaming/Survival,YOUR MISPRONOUNCING ROGUE,Normal,Correct,Normal,low,222.58,6.24
+Gaming/Survival,L MUTCH,Normal,Correct,Normal,low,22.04,4.86
+Gaming/Survival,I DONT HATE HUTCH:rolling_on_the_floor_laughing:,Normal,Correct,Normal,low,24.01,3.94
+Gaming/Survival,Boot Hutch,Normal,Correct,Normal,low,21.54,7.91
+Gaming/Survival,Kick him,Normal,Correct,Normal,low,25,3.12
+Gaming/Survival,HUTCH LOST SO MCH SHIT TODAY,Normal,Correct,Normal,low,23.03,5.5
+Gaming/Survival,HES A PEA BRAIN,Normal,Correct,Normal,low,22.59,9.57
+Gaming/Survival,Hutch is a leech,Normal,False Negative,OFFENSIVE,low,22.14,5.4
+Gaming/Survival,Get rid of hutch!!!,Normal,Correct,Normal,low,23.98,8.34
+Gaming/Survival,L mutch,Normal,Correct,Normal,low,21.08,4.79
+Gaming/Survival,HUTCH IS THE ENEMY,Normal,Correct,Normal,low,21.87,3.92
+Gaming/Survival,Hutch sucks,Normal,False Negative,OFFENSIVE,low,23.02,6.33
+Gaming/Survival,HUTCH IS LAME,Normal,False Negative,OFFENSIVE,low,27.13,6.56
+Gaming/Survival,KICK HUNCH,Normal,Correct,Normal,low,33.59,3.78
+Gaming/Survival,yes get rid of hutch,Normal,Correct,Normal,low,33.17,4.37
+Gaming/Survival,We have to kick hutch ,Normal,Correct,Normal,low,31.22,6.57
+Gaming/Survival,"Don't hate me, top 8 me",Normal,Correct,Normal,low,38.8,5.05
+Gaming/Survival,hate rogue,Normal,Correct,Normal,low,41.7,3.59
+Gaming/Survival,WE HATE HUTCH,Normal,False Negative,OFFENSIVE,low,23.64,5.12
+Gaming/Survival,HUTCH IS THE ENEMY,Normal,Correct,Normal,low,36.77,4.43
+Gaming/Survival,everybody praying right now that theyll be on the nuts team,Normal,Correct,Normal,low,35.2,6.45
+Gaming/Survival,rid of hutch,Normal,Correct,Normal,low,27.53,4.46
+Gaming/Survival,GET RID OF HUTCH,Normal,Correct,Normal,low,21.99,4.24
+Gaming/Survival,drown Hutch,Normal,Correct,Normal,low,24.02,4.9
+Gaming/Survival,we hate hutch,Normal,False Negative,OFFENSIVE,low,23.75,7.16
+Gaming/Survival,you need people that play when you do. change to 10,Normal,Correct,Normal,low,32,7.88
+Gaming/Survival,we hate hutch,Normal,False Negative,OFFENSIVE,low,22.69,8.07
+Gaming/Survival,HUTCH FUCK SO MUCH LOST SO MUCH SHI KICK HUTCH,Normal,False Negative,OFFENSIVE,low,22.56,5.44
+Gaming/Survival,we hate hutch,Normal,False Negative,OFFENSIVE,low,26.4,8.53
+Gaming/Survival,"BAN BUTCH, HE COUNTS AS 5 PEOPLE!!!!",Normal,Correct,Normal,low,25.06,6.73
+Gaming/Survival,NO MORE HUTCH HES A PIG,Normal,False Negative,OFFENSIVE,low,25.58,7.54
+Gaming/Survival,NAW HUTCH WAS GOING CRZAY CAUSE HE LOST A BUNCH OF SHIT SO HE ROBBED AND KILLED HER THEMN HE BLEW UP HER CAMPER,Normal,Correct,Normal,low,29.05,10.52
+Gaming/Survival,Why was Awie banned from teams? They could join her,Normal,Correct,Normal,low,23.04,5.52
+Gaming/Survival,i vote sym hes a weeb,Normal,Correct,Normal,low,22.53,6.67
+Gaming/Survival,where tf are the baddies at tho,Normal,Correct,Normal,low,22,5.41
+Gaming/Survival,kick rogue for gingy ,Normal,Correct,Normal,low,27.05,7.15
+Gaming/Survival,HUTCH IS THE ENEMY,Normal,Correct,Normal,low,31.97,3.42
+Gaming/Survival,zergging,Normal,Correct,Normal,low,38.31,4.27
+Gaming/Survival,Cloakzy made 04/26,Normal,Correct,Normal,low,33.25,8.27
+Gaming/Survival,dezignful and frex,Normal,Correct,Normal,low,148.46,8.06
+Gaming/Survival,What do you mean HANGLID??,Normal,Correct,Normal,low,26.05,6.33
+Gaming/Survival,Crack warriors champions of the rock,Normal,Correct,Normal,low,21.99,4.12
+Gaming/Survival,would be wise to not have hutch on next team,Normal,Correct,Normal,low,32.42,8.95
+Gaming/Survival,"PEANUT!!! Your Kick mods suck. imagine talking like you do, fkin daads in the a55 and all that, and gettin banned for a butt emoji that Kick allows. I would've donated by now, but they ruined it",Normal,False Negative,OFFENSIVE,low,47.04,4.24
+Gaming/Survival,Hell yeah,Normal,Correct,Normal,low,22.61,3.71
+Gaming/Survival,Can we get a wipe with 1 or 2 rust pros per group,Normal,Correct,Normal,low,32.52,4.43
+Gaming/Survival,pizz in me pokect,Normal,Correct,Normal,low,36.01,9.33
+Gaming/Survival,People who give peanut money are insane ,Normal,Correct,Normal,low,51.83,8.04
+Gaming/Survival,you need armour,Normal,Correct,Normal,low,21.99,4.07
+Gaming/Survival,WELYN CHILL SHE IS JUSTIFIED,Normal,Correct,Normal,low,38.42,4.8
+Gaming/Survival,YOU GUYS NEED TO START RUNNING MILL TUNS!!!!!,Normal,Correct,Normal,low,35.98,4.39
+Gaming/Survival,tell them to get back soon to change and get ready for the concert,Normal,Correct,Normal,low,42.01,3.75
+Gaming/Survival,this chat is nothing but meta holy crap y'all need to touch grass,Normal,Correct,Normal,low,44.94,5.39
+Gaming/Survival,u dont need walls on cargo,Normal,Correct,Normal,low,38.21,4.63
+Gaming/Survival,your not in there team mr peanut,Normal,Correct,Normal,low,30.94,4.59
+Gaming/Survival,This is insane haha,Normal,Correct,Normal,low,28.41,4.85
+Gaming/Survival,No loot,Normal,Correct,Normal,low,32.22,5.52
+Gaming/Survival,CRACK WAR,Normal,Correct,Normal,low,31.86,7.2
+Gaming/Survival,can you mute Rogue plz,Normal,Correct,Normal,low,44.11,5.33
+Gaming/Survival,damnit hutch ruined the lockers too,Normal,Correct,Normal,low,35,4.6
+Gaming/Survival,"cam used gun, coconut should get to use gun for a raid",Normal,Correct,Normal,low,51,9.67
+Gaming/Survival,Glad these are just peanuts friends and not randoms blowing their money,Normal,Correct,Normal,low,45.2,9.81
+Gaming/Survival,Forget the chickens watch out for the snake!!,Normal,Correct,Normal,low,34.85,4.32
+Gaming/Survival,camsoda is in your bade dipshit,Normal,False Negative,OFFENSIVE,low,42.48,2.69
+Gaming/Survival,dont bring backpack,Normal,Correct,Normal,low,33.16,8.36
+Gaming/Survival, CRACK WAR,Normal,Correct,Normal,low,26.52,8.6
+Gaming/Survival,@chumoss2215 you sound insane,Normal,False Negative,OFFENSIVE,low,32.56,10.79
+Gaming/Survival,hutch declared war with the Crack heads,Normal,Correct,Normal,low,30.12,5.52
+Gaming/Survival,cracky is backy,Normal,Correct,Normal,low,31.39,5.13
+Gaming/Survival,Murder,Normal,Correct,Normal,low,29.89,7.18
+Gaming/Survival,gingys chickens,Normal,correct,Normal,low,55.56,5.05
+Gaming/Survival,Let’s gooo ,Normal,Correct,Normal,low,26.02,4.84
+Gaming/Survival,at war with the crack ya now too,Normal,Correct,Normal,low,29.14,3.61
+Gaming/Survival,ask symphunny why is was caught in a cheat discord please,Normal,False Negative,Normal,low,32.79,6.33
+Gaming/Survival,They’re trying to act like they’re working hard,Normal,Correct,Normal,low,26.51,4.94
+Gaming/Survival,Lady chicken beater!!,Normal,Correct,Normal,low,26.02,6.88
+Gaming/Survival,HUTCH IS THE ENEMY,Normal,Correct,Normal,low,38.78,5.34
+Gaming/Survival,GINGYS CHICKENS,Normal,Correct,Normal,low,28.58,4.61
+Gaming/Survival,not gingys chicken!,Normal,Correct,Normal,low,32.46,4.8
+Gaming/Survival,God Bless AMERICA (FYI Im not American),Normal,Correct,Normal,low,43.85,5.16
+Gaming/Survival,you should doordash hutch a big arch for all his trouble..,Normal,correct,Normal,low,38.25,5.94
+Gaming/Survival,Dam spend your money on your kids…. ,Normal,False Negative,Normal,low,25.99,8.82
+Gaming/Survival,no if he bans cam soda they will quit,Normal,Correct,Normal,low,28.03,12.66
+Gaming/Survival,go to thelocker,Normal,Correct,Normal,low,27.51,8.87
+Gaming/Survival, WHERES GINGY,Normal,Correct,Normal,low,26,7.21
+Gaming/Survival,An entire night of Hutch fucked up cuz he cant be humble,Normal,False Negative,OFFENSIVE,low,30,13.58
+Gaming/Survival,HUTCH IS THE ENEMY,Normal,Correct,Normal,low,27,4.34
+Gaming/Survival,cloakzy trying to gang up on awie again too,Normal,correct,Normal,low,31,4.48
+Gaming/Survival,What about cam using a gun Mr nut,Normal,Correct,Normal,low,27.19,5.5
+Gaming/Survival,so what are we gonna do about cam using a mini gun to kill hutch??,Normal,Correct,Normal,low,38.77,3.3
+Gaming/Survival,Keep up the Grind Peanut :saluting_face:...Husband and Father of 3 live watching you every evening brother. Been a bit hectic lately and I have been stressed but tuning into your streams helps me get away and reset mysellf  LETS GOOO GOD BLESS AMERICA  ,Normal,Correct,Normal,low,71.01,3.97
+Gaming/Survival,They killed Habibi and the Mayor,Normal,Correct,Normal,low,28.52,3.53
+Gaming/Survival,wsggggggggggggggggggg peanut,Normal,Correct,Normal,low,30.02,5.66
+Gaming/Survival,Lockers are empty ,Normal,Correct,Normal,low,29.34,8.09
+Gaming/Survival,This team is too many ,Normal,Correct,Normal,low,35.53,5.04
+Gaming/Survival,"NO, HE'S A BAD TEAMMATE",Normal,Correct,Normal,low,35.5,6.31
+Gaming/Survival,WHO NEEDS ENEMIES WITH FRIENDS LIKE TAXI AND CLOAKSY. WILLING YO STALK AND HARASS THE GIRL IN THE FRIEND GROUP,Normal,False Negative,OFFENSIVE,low,45.01,4.05
+Gaming/Survival,Hutch has lost the group more loot than anyone that has raided you,Normal,Correct,Normal,low,33.01,4.59
+Gaming/Survival,because your so much better god peanut,Normal,Correct,Normal,low,32.54,6.88
+Gaming/Survival,lagging,Normal,Correct,Normal,low,47.24,4.32
+Gaming/Survival,HUTCH IS A TRAITOR,Normal,Correct,Normal,low,33.56,7.37
+Gaming/Survival,It's been so bad because Hutch is bad mhm mhm,Normal,Correct,Normal,low,35.06,4.74
+Gaming/Survival,Lagging ,Normal,Correct,Normal,low,31.1,8.48
+Gaming/Survival,Fat people make rash decisions,Normal,False Negative,HATE,low,37.74,5.04
+Gaming/Survival,he got Cracky's sent on you,Normal,Correct,Normal,low,41.56,6.55
+Gaming/Survival,hutch IS a liar,Normal,False Negative,OFFENSIVE,low,34.72,3.89
+Gaming/Survival,where the baddies at though,Normal,Correct,Normal,low,30.02,7.79
+Gaming/Survival,PILOT :face-fuchsia-tongue-out::face-green-smiling::cat-orange-whistling:,Normal,Correct,Normal,low,35.56,4.6
+Gaming/Survival,"stalking gingy, making her cry, bc of a game? cloaksy, taxi, cam, yall are going to feel it. irl",Normal,False Negative,OFFENSIVE,low,40.99,6.77
+Gaming/Survival,A HAZARD,Normal,Correct,Normal,low,25.56,4.41
+Gaming/Survival,L HUTCH what a LOSER,Normal,False Negative,OFFENSIVE,low,34,8.01
+Gaming/Survival,HELL YEAH ,Normal,Correct,Normal,low,41.53,4.82
+Gaming/Survival,pengin,Normal,Correct,Normal,low,29.47,4.2
+Gaming/Survival,He lost hella,Normal,Correct,Normal,low,29.99,4.12
+Gaming/Survival,JENNIFER IS PISSED OFF,Normal,Correct,Normal,low,31.28,9.18
+Gaming/Survival,xDD veterans donating their minimum wage salary to a multi millionaire streamer who plays games for a living LMAOOOOOOOO but you do you i guess brochacho,Normal,Correct,Normal,low,59.98,9.48
+Gaming/Survival,Giving money to a millionaire what would the world do without you,Normal,False Negative,Normal,low,34.48,4.37
+Gaming/Survival,HUTCH IS THE ENEMY,Normal,Correct,Normal,low,45.17,4.6
+Gaming/Survival,dude coconut is insane,Normal,Correct,Normal,low,37.07,5.76
+Gaming/Survival,Give him hell boys,Normal,Correct,Normal,low,85.79,4.55
+Gaming/Survival,JUSTICE FOR CRACKY 4/13,Normal,Correct,Normal,low,35.21,5.62
+Gaming/Survival,JENNIFER IS PISSED OFF,Normal,Correct,Normal,low,23.57,4.92
+Gaming/Survival,Cam won’t get banned because taxi and Cloakzy will cry nonstop :face-green-smiling:,Normal,False Negative,OFFENSIVE,low,33.34,10.62
+Gaming/Survival,Jennifer was killed by Hutch. She is pizzed!!!!!!!!!!,Normal,Correct,Normal,low,45.55,5.88
+Gaming/Survival,Hutch is working for Cloakzy ,Normal,Correct,Normal,low,27.01,8.98
+Gaming/Survival,YOU GUYS GRIND ALL NIGHT AMD HUTCH LOSES IT ALL THE NEXT DAY,Normal,Correct,OFFENSIVE,low,45.82,5.32
+Gaming/Survival,HES TERRIBLE,Normal,Correct,Normal,low,30.32,6.22
+Gaming/Survival,JUST BAN CAMSODA FOR THE MALICIOUS BS,Normal,False Negative,OFFENSIVE,low,40.49,6.4
+Gaming/Survival,its worse when its heli instead of his pants,Normal,Correct,Normal,low,41.07,6.01
+Gaming/Survival,HE SUCKS,Normal,Correct,OFFENSIVE,low,25.52,7.5
+Gaming/Survival,Jennifer pissed off,Normal,correct,Normal,low,30,5.34
+Gaming/Survival,Pigs can’t fly ,Normal,Correct,Normal,low,25,7.2
+Gaming/Survival,Poor weight balance ,Normal,Correct,Normal,low,27,2.93
+Gaming/Survival,He is such an idiot ,Normal,False Negative,OFFENSIVE,low,34.36,6.21
+Gaming/Survival,KICK HIM ,Normal,Correct,Normal,low,46.14,7.02
+Gaming/Survival,Ban hutch from using anything other than a pickaxe or hatchet. no guns no amor,Normal,False Negative,Normal,low,114.61,11.29
+Gaming/Survival,Cloakzy Did 4/11 ….. HUTCH DID 4/13,Normal,Correct,Normal,low,28.04,5.47
+Gaming/Survival,ban slurzy,Normal,Correct,Normal,low,22.01,5.16
+Gaming/Survival,Get rid of hutch,Normal,Correct,Normal,low,21,2.91
+Gaming/Survival,CLOAKZY DID 4/11,Normal,Correct,Normal,low,21.05,9.64
+Gaming/Survival,cocos head from a scrapy is crazy,Normal,Correct,Normal,low,21.03,4.75
+Gaming/Survival,Hutch is TERRIBLE,Normal,Correct,OFFENSIVE,low,35.01,3.71
+Gaming/Survival,He never farms materials . only waste what’s not his. Throw him out ,Normal,False Negative,Normal,low,23.01,4.79
+Gaming/Survival,send him to another team and use him as a saboteur without his own knowledge,Normal,Correct,Normal,low,27.03,6.73
+Gaming/Survival,SUNNITS,Normal,Correct,Normal,low,21.47,5.03
+Gaming/Survival,GET RID OF HUTCH,Normal,Correct,Normal,low,27.28,11.65
+Gaming/Survival,no resources either,Normal,Correct,Normal,low,20.59,5.25
+Gaming/Survival,HUTCH:face-green-smiling::face-green-smiling::face-green-smiling::face-fuchsia-wide-eyes:,Normal,Correct,Normal,low,42.31,5.75
+Gaming/Survival,Trade hunch,Normal,Correct,Normal,low,29.84,3.57
+Gaming/Survival,Trump is using Hutch to blockade the straight of Hormuz ,Normal,Correct,Normal,low,28.84,7.58
+Gaming/Survival,BAN THE CHEATER,Normal,Correct,Normal,low,24.05,4.76
+Gaming/Survival,Jennifer is pissed off,Normal,Correct,Normal,low,21.99,7.73
+Gaming/Survival,Hutch is a sponge and a douche!!!!,Normal,False Negative,OFFENSIVE,low,25.01,3.3
+Gaming/Survival,He never farms materials only waste what’s not his. Throw him out ,Normal,False Negative,OFFENSIVE,low,26.23,4.4
+Gaming/Survival,He never farms materials only waste what’s not his. Throw him out ,Normal,False Negative,OFFENSIVE,low,31.48,5.01
+Gaming/Survival,ahahaha he sucks,Normal,Correct,OFFENSIVE,low,22.07,4.72
+Gaming/Survival,BOTH die,Normal,Correct,Normal,low,21,4.99
+Gaming/Survival,Ban him,Normal,False Negative,Normal,low,21.02,4.2
+Gaming/Survival,papa meat was talking shit about you,Normal,False Negative,OFFENSIVE,low,21.02,4.53
+Gaming/Survival,drownd,Normal,Correct,Normal,low,36.57,3.32
+Gaming/Survival,HUTCH IS THE ENEMY,Normal,correct,Normal,low,20.05,3.81
+Gaming/Survival,hehe,Normal,Correct,Normal,low,21.61,3.13
+Gaming/Survival,boneless pizza,Normal,Correct,Normal,low,24,5.18
+Gaming/Survival,cloakzy wants to kill awie,Normal,Correct,Normal,low,27.17,4.84
+Gaming/Survival,Hutch kill3d Habibi,Normal,Correct,Normal,low,31.16,3.7
+Gaming/Survival,sym got hella clips for you,Normal,Correct,Normal,low,34.16,4.91
+Gaming/Survival,:_BungusMac:,Normal,Correct,Normal,low,21.56,3.5
+Gaming/Survival,Jennifer pissed off,Normal,Correct,Normal,low,27.11,6.64
+Gaming/Survival,Haha but we need the hutch clips boys ,Normal,Correct,Normal,low,22,7.66
+Gaming/Survival,BONELESSS,Normal,Correct,Normal,low,20.02,7.75
+Gaming/Survival,BONELESS!,Normal,Correct,Normal,low,20.57,3.22
+Gaming/Survival,Boneeeeelleeeessss,Normal,Correct,Normal,low,23.56,6.79
+Gaming/Survival,HUTCH IS A CRACK HEAD NOW,Normal,False Negative,OFFENSIVE,low,35.01,4.64
+Gaming/Survival,hutch has lost so much shit todday,Normal,Correct,Normal,low,34.59,6.18
+Gaming/Survival,CLOAKZY DID 4/11,Normal,Correct,Normal,low,24.02,6.5
+Gaming/Survival,NO CONTEXT HE WAS TROLLNG ,Normal,Correct,Normal,low,20.55,9.13
+Gaming/Survival,ban the cheating rust pro.,Normal,Correct,Normal,low,21.01,8.06
+Gaming/Survival,crack war,Normal,Correct,Normal,low,20.21,10.08
+Gaming/Survival,HUTCH IS BAD,Normal,correct,OFFENSIVE,low,31.04,3.53
+Gaming/Survival,hutch is such a crybaby dude is not coping with Rust at all,Normal,False Negative,OFFENSIVE,low,24.01,5.37
+Gaming/Survival,BAN HIM ,Normal,Correct,Normal,low,22.17,8.05
+Gaming/Survival,BANNN HIM!!!!!!,Normal,Correct,Normal,low,21.06,7.87
+Gaming/Survival,ban him,Normal,Correct,Normal,low,20.02,9.54
+Gaming/Survival,FUCKING BAN HIM,Normal,False Negative,Normal,low,23,5.34
+Gaming/Survival,BUM SODA,Normal,Correct,Normal,low,19.55,17.37
+Gaming/Survival,Rust is like drugs,Normal,Correct,Normal,low,20.02,10.69
+Gaming/Survival,nut terrors,Normal,Correct,Normal,low,22.26,5.56
+Gaming/Survival,TYPICAL RUST,Normal,Correct,Normal,low,20.37,4.35
+Gaming/Survival,Trade Hutch for Cloakzy,Normal,Correct,Normal,low,20.04,7.56
+Gaming/Survival,HE TEA BAGGED YOUR CORPSE,Normal,False Negative,Normal,low,42,9.08
+Gaming/Survival,HUTCH IS THE ENEMY,Normal,Correct,Normal,low,20.01,4.61
+Gaming/Survival,HUTCH IS THE ENEMY,Normal,Correct,Normal,low,23.43,5.6
+Gaming/Survival,Sucks when your friend takes their addiction out on you,Normal,Correct,Normal,low,24.58,3.8
+Gaming/Survival,Rust is a helluva drug,Normal,Correct,Normal,low,24.04,4.86
+Gaming/Survival,Ban him from the knights of the bungus,Normal,Correct,Normal,low,24.53,4.72
+Gaming/Survival,kick him!!,Normal,False Negative,Normal,low,22,5.94
+Gaming/Survival,drugs are bad mkay,Normal,Correct,Normal,low,37,6.23
+Gaming/Survival,STIR CRAZYYYYT,Normal,correct,Normal,low,31.22,5.8
+Gaming/Survival,HUTCH IS THE ENEMY,Normal,Correct,Normal,low,31.07,4.74
+Gaming/Survival,Wutch,Normal,Correct,Normal,low,38.71,7.77
+Gaming/Survival,killing the king huh,Normal,Correct,Normal,low,52.61,3.72
+Gaming/Survival,omg evil hutch ,Normal,Correct,Normal,low,30,6.31
+Gaming/Survival,overly aggressive,Normal,Correct,Normal,low,26.83,5.47
+Gaming/Survival,when you gonna mix tequila with voodoo,Normal,Correct,Normal,low,26.01,9.17
+Gaming/Survival,hutch is evil now,Normal,Correct,Normal,low,29.81,7.22
+Gaming/Survival,Psychopath,Normal,False Negative,OFFENSIVE,low,32.22,5.62
+Gaming/Survival,the rock killing was the ultimate,Normal,Correct,Normal,low,28.01,7.26
+Gaming/Survival,Kick him,Normal,Correct,Normal,low,25.05,3.42
+Gaming/Survival,unhinged Hutch,Normal,Correct,Normal,low,25.53,10.24
+Gaming,Gingys just out here trying to help the team. Doing the boring shit that nobody else wants to do so the boys can have fun. Stop giving her a hard time and let her have fun and learn the game.,OFFENSIVE,False Positive,OFFENSIVE,low,284.08,5.81
+Politics/News,Yep Popok. Tucker Carlson hosted his Fox show from Hungary in 2021 to promote Orban racist polices. Orban was then keynote speaker at CPAC Dallas in 2022 to normalize policies. Not hiding their agenda,OFFENSIVE,False Positive,Normal,high,140.95,7.29
+Gaming,"Nah Gingy is still playing, hes quite done with incels shit talking in her chat tho",OFFENSIVE,False Positive,Normal,low,188.56,11.03
+Gaming,"I have work in a hour, morning shit is better with you Peanut",OFFENSIVE,False Positive,OFFENSIVE,low,39.58,4.84
+Gaming,mossing the voodoo,OFFENSIVE,False Positive,Normal,low,28.99,6.58
+Politics/News,Hah!!!,OFFENSIVE,False Positive,Normal,high,31.6,3.13
+Gaming,these bases holy shit,OFFENSIVE,False Positive,Normal,low,41.33,3.62
+Gaming,stole that shit immediately ,OFFENSIVE,False Positive,Normal,low,26.32,6.44
+Gaming,BASETRADE DUMB DUMB,OFFENSIVE,False Positive,OFFENSIVE,low,25.99,9.91
+Music,sanviiii:face-fuchsia-tongue-out:,OFFENSIVE,False Positive,Normal,medium,32.21,4.5
+News,which buffer is this one talking about. Just speaking English without saying anything meaningful. Who are you fooling with your poor sophistry,OFFENSIVE,Correct,OFFENSIVE,high,34.12,4.85
+News,Dumb ass,OFFENSIVE,Correct,OFFENSIVE,high,20.15,4.75
+News,"You wake up in the morning to insult a man who if put one side of a scale, you, your father, your ancestors going back 2 Millenia IF put on the other side, WILL NOT BUDGE THE SCALE... keep mute pls!",OFFENSIVE,correct,OFFENSIVE,high,36.58,8.33
+Gaming/Esports,:face-fuchsia-tongue-out::face-fuchsia-tongue-out::face-fuchsia-tongue-out::face-fuchsia-tongue-out:,OFFENSIVE,False Positive,Normal,low,33.13,5.11
+News,"You wake up in the morning to insult a man who if put one side of a scale, you, your father, your ancestors going back 2 Millenia IF put on the other side, WILL NOT BUDGE THE SCALE... keep mute pls!",OFFENSIVE,Correct,OFFENSIVE,high,40.14,5.31
+News,"You wake up in the morning to insult a man who if put one side of a scale, you, your father, your ancestors going back 2 Millenia IF put on the other side, WILL NOT BUDGE THE SCALE... keep mute pls!",OFFENSIVE,Correct,OFFENSIVE,high,39.29,7.94
+News,I repeat: I have NEVER seen a BUNCH of people as brainless as Agbado :ear_of_corn: urchins and apc databoys. These guys are dullards beyond redemption.. :crying_face::crying_face:,OFFENSIVE,correct,OFFENSIVE,high,83.13,4.63
+Gaming/Esports,5k likes ho gaye,OFFENSIVE,False Positive,Normal,low,31.74,10.3
+News,I repeat: I have NEVER seen a BUNCH of people as brainless as Agbado :ear_of_corn: urchins and apc databoys. These guys are dullards beyond redemption.. :crying_face::crying_face:,OFFENSIVE,Correct,OFFENSIVE,high,74.34,5.05
+News,"Obi- Baba, corruption sit inside his soul, from the Abacha days, bought his UK home, 1million pounds when he served Abacha through the Apapa port, governor without local government, bastard fellow.",OFFENSIVE,Correct,OFFENSIVE,high,85.71,4.61
+Gaming/Survival, let's goooooo,OFFENSIVE,False Positive,Normal,low,28.74,4.45
+Gaming/Survival,damn,OFFENSIVE,False Positive,Normal,low,29.43,5.11
+Gaming/Survival,the cloakzy raid?,OFFENSIVE,False Positive,Normal,low,32.87,7.35
+Gaming/Survival,fucking eggs,OFFENSIVE,False Positive,Normal,low,26.35,4.01
+Gaming/Survival,HUTCH AINT GOING NO WHERE MORONS,OFFENSIVE,Correct,OFFENSIVE,low,27,7.1
+Gaming/Survival,FAF :thumbs_up::thumbs_up::thumbs_up:,OFFENSIVE,False Positive,Normal,low,25.3,4.92
+Gaming/Survival,"Agreed , hutch is fakr phony loser",OFFENSIVE,Correct,OFFENSIVE,low,23.05,5.38
+Gaming/Survival,We hate hutch!!!!,OFFENSIVE,False Positive,OFFENSIVE,low,28.6,7.93
+Gaming/Survival,AWWWWW CRYASS HUTCH WHINING AGAIN,OFFENSIVE,False Positive,Normal,low,22.47,11.95
+Gaming/Survival,Stfu about hitch hutch stays ,OFFENSIVE,Correct,OFFENSIVE,low,50.79,3.89
+Gaming/Survival,TRADE HUTCH YESSSSSSSSS!!!!!!!!,OFFENSIVE,False Positive,Normal,low,26.65,4.5
+Gaming/Survival,"sort out Jennifer, Hutch pissed her off",OFFENSIVE,False Positive,Normal,low,33.49,5.49
+Gaming/Survival,YEAH THE FUCKERY IS CUZ WELYN IS A TRAITOR HE GAVE JENNIFER AUTH ON THE TERRETS,OFFENSIVE,False Positive,Normal,low,35.02,7.32
+Gaming/Survival,What would be your crack dealer name?,OFFENSIVE,False Positive,Normal,low,37.53,6.62
+Gaming/Survival,Fuck this game ,OFFENSIVE,Correct,OFFENSIVE,low,22.04,3.75
+Gaming/Survival,nnnnnnnnnnnnoooooooooooottttttttt aaaaaagggggggggggaaaaiiiiiiiinnnnnnnnnnnn,OFFENSIVE,False Positive,Normal,low,29.02,6.77
+Gaming/Survival,Veteran here we support you ! Here’s to your voodoo funds ! Cheers ! Hope you see this :folded_hands::saluting_face:,OFFENSIVE,False Positive,Normal,low,55.82,5.81
+Gaming/Survival,At war with crackheads btw,OFFENSIVE,False Positive,Normal,low,33,9.03
+Gaming/Survival,gingy is probably getting a restraining order from cloaksy and taxi. they been stalking her all week,OFFENSIVE,correct,OFFENSIVE,low,35,8.64
+Gaming/Survival,HUTCH STARTED WAR W THE CRACKHEADS,OFFENSIVE,False Positive,Normal,low,37.83,5.98
+Gaming/Survival,Your all assholes,OFFENSIVE,Correct,OFFENSIVE,low,26,6.13
+Gaming/Survival,Bro your shit is gone ,OFFENSIVE,False Positive,Normal,low,23.52,6.12
+Gaming/Survival,hutches laugh da a hahah,OFFENSIVE,False Positive,Normal,low,43.82,5.22
+Gaming/Survival,Brain fart :dashing_away: ,OFFENSIVE,False Positive,Normal,low,23.77,175.3
+Gaming/Survival,And spend your money however the hell you want to. ,OFFENSIVE,False Positive,Normal,low,30.58,7.4
+Gaming/Survival,HELLLO GOOD SIR!,OFFENSIVE,False Positive,Normal,low,34.74,6.43
+Gaming/Survival,Damn ,OFFENSIVE,False Positive,Normal,low,41.16,8.84
+Gaming/Survival,CAM BETTER GET BANNED OR ITS ONLY GONNA ESCALATE FOR TAXI AND CLOAKZY. STALKING A GIRL AINT IT CHIEF,OFFENSIVE,correct,OFFENSIVE,low,33.01,7.06
+Gaming/Survival,Hutch’s ego is too big to be that ass,OFFENSIVE,False Positive,Normal,low,65.93,8.25
+Gaming/Survival,Veteran here we support you peanut ! Here’s to the voodoo funds,OFFENSIVE,False Positive,Normal,low,53,5.26
+Gaming/Survival,That CAMSODA GUY…. UGH ,OFFENSIVE,False Positive,Normal,low,63.34,9.02
+Gaming/Survival,jacyfisher1670 STFU,OFFENSIVE,Correct,OFFENSIVE,low,29.02,6.05
+Gaming/Survival,he also fucked up jen cena,OFFENSIVE,False Positive,Normal,low,24.42,6.23
+Gaming/Survival,WATCHING CLIPS AT THE BEGGINING IS GREAT,OFFENSIVE,False Positive,Normal,low,24.01,207.17
+Gaming/Survival,ban the creep femboy,OFFENSIVE,correct,OFFENSIVE,low,22.74,7.25
+Gaming/Survival,lets goooo,OFFENSIVE,False Positive,Normal,low,20.54,3.55
+Gaming/Survival,fucking hutch ,OFFENSIVE,correct,OFFENSIVE,low,20.02,2.8
+Gaming/Survival,Throwinggggg,OFFENSIVE,False Positive,Normal,low,25.64,7.08
+Gaming/Survival,lol @ unblur the weiners,OFFENSIVE,False Positive,Normal,low,27.56,8.75
+Gaming/Survival,:_LetsGo::_LetsGo::_LetsGo::_LetsGo:,OFFENSIVE,False Positive,Normal,low,32.69,3.27
+Gaming/Survival,@TheBurntPeanut Hutch made a deal with Cloakzy to kill Awie,OFFENSIVE,False Positive,Normal,low,42.48,4.43
+Gaming/Survival,ban csm and bring in spoonkid!!!,OFFENSIVE,False Positive,Normal,low,24.99,5.33
+Gaming/Survival,propose an shes gonna take yo money,OFFENSIVE,False Positive,Normal,low,22.79,5.21
+Gaming/Survival,is this even a rust server if it isn't a spoonkid around?,OFFENSIVE,False Positive,Normal,low,24,6.66
+Gaming/Survival,NO THERE ISNT. ITS CALLED A FUCKING MINIGUN,OFFENSIVE,False Positive,Normal,low,32.82,14.89
+Gaming/Survival,Hutch fucked up earlier,OFFENSIVE,False Positive,Normal,low,24.01,10.21
+Gaming/Survival,:face-fuchsia-tongue-out::face-fuchsia-tongue-out:,OFFENSIVE,False Positive,Normal,low,22.57,4.31
+Gaming/Survival,:face-fuchsia-wide-eyes:,OFFENSIVE,False Positive,Normal,low,21.02,5.39
+Gaming/Survival,helllll yerahhhh,OFFENSIVE,False Positive,Normal,low,27,4.95
+Gaming/Survival,corny ass hutch,OFFENSIVE,Correct,OFFENSIVE,low,37.64,10.56

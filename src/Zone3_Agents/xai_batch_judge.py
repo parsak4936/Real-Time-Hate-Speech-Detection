@@ -18,7 +18,7 @@ es = Elasticsearch(ES_HOST)
 # =====================================================================
 
 # 1. How many records should it check at once? (Put 10000 for "All")
-BATCH_SIZE = 6 
+BATCH_SIZE = 60
 
 # 2. What confidence level should it target? 
 # (0.90 means < 90%. Change to 1.01 to check literally everything)
@@ -99,11 +99,12 @@ def run_configurable_batch_auditor():
             
             OUTPUT FORMAT: Output ONLY valid JSON: {{"decision": "...", "explanation": "..."}}
             """
-
+            start_time = time.time()
             # Call the LLM
             response = ollama.chat(model=ACTIVE_MODEL, messages=[{'role': 'user', 'content': judge_prompt}])
             raw_output = response['message']['content'].strip()
-            
+            latency = time.time() - start_time
+            print(f"-> Agent Inference Time: {latency:.2f} seconds")
             # Clean JSON formatting (Bypassing markdown UI bugs)
             if raw_output.startswith("`" + "``json"): raw_output = raw_output[7:-3].strip()
             elif raw_output.startswith("`" + "``"): raw_output = raw_output[3:-3].strip()
@@ -126,7 +127,8 @@ def run_configurable_batch_auditor():
                         "agent_reviewed": True,
                         "agent_model_used": ACTIVE_MODEL,
                         "agent_final_decision": final_decision,
-                        "agent_explanation": explanation
+                        "agent_explanation": explanation,
+                        "agent_latency_seconds": round(latency, 2) # <-- NEW LINE
                     }
                 })
                 print("-> [SAVED TO DATABASE]")

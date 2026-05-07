@@ -4,57 +4,66 @@ from shared_utils.config import ES_HOST, INDEX_NAME
 es = Elasticsearch(ES_HOST)
 
 def execute_statistics(params):
-    # UPDATED: This print statement will prove you are running the new code
     print(f"-> [Stats Agent] Running aggregations with params: {params}")
     try:
         must_clauses = []
+        context_str = []
         
-        # Filter 1: Platform Bypass
-        platform = params.get("platform")
-        if platform and platform.lower() not in ["all", "any", "none"]:
-            must_clauses.append({"match": {"source_platform": platform}})
+        # --- THE PURE DYNAMIC FILTER ENGINE ---
+        # No more hardcoded platforms or users. Everything flows through here.
+        filters = params.get("filters", {})
+        for column_name, value in filters.items():
+            context_str.append(f"{column_name} = {value}")
             
-        # NEW Filter 2: Specific User Targeting (With @ symbol safeguard)
-# NEW Filter 2: Specific User Targeting (With @ symbol safeguard)
-        target_user = params.get("target_user")
-        if target_user:
-            clean_user = target_user.replace("@", "")
-            must_clauses.append({"match": {"author_name": clean_user}}) # <--- THE FIX
-            
-        # NEW Filter 3: Specific Label Targeting (e.g., 'HATE' or 'False Positive')
-        target_label = params.get("target_label")
-        if target_label:
-            must_clauses.append({
-                "bool": {
-                    "should": [
-                        {"term": {"model_label.keyword": target_label}},
-                        {"term": {"agent_final_decision.keyword": target_label}}
-                    ]
-                }
-            })
+            if isinstance(value, bool):
+                must_clauses.append({"term": {column_name: value}})
+            else:
+                # If it's the author name, strip the @ just in case
+                if column_name == "author_name" and isinstance(value, str):
+                    value = value.replace("@", "")
+                must_clauses.append({"match": {column_name: value}})
 
         # Run Aggregations on the FILTERED dataset
+       # Run Aggregations on the FILTERED dataset
         res = es.search(
             index=INDEX_NAME, 
             size=0, 
-            track_total_hits=True,  # <-- Keeps counting past 10,000
+            track_total_hits=True,
             query={"bool": {"must": must_clauses}} if must_clauses else {"match_all": {}}, 
             aggregations={
                 "platform_breakdown": {"terms": {"field": "source_platform.keyword"}},
                 "domain_breakdown": {"terms": {"field": "env_domain.keyword"}}, 
                 "label_breakdown": {"terms": {"field": "model_label.keyword"}}, 
                 "xai_override_breakdown": {"terms": {"field": "agent_final_decision.keyword"}}, 
-                "top_users": {"terms": {"field": "author_name.keyword", "size": 10}} 
+                "top_users": {"terms": {"field": "author_name.keyword", "size": 10}},
+                
+                # --- NEW: PERFORMANCE METRICS ENGINE ---
+                "avg_tier1_speed": {"avg": {"field": "processing_time_ms"}},
+                "avg_tier2_speed": {"avg": {"field": "agent_latency_seconds"}}
             }
         )
         
         total = res['hits']['total']['value']
         aggs = res['aggregations']
         
-        # Dynamic Context Header based on filters
-        context_str = []
-        if target_user: context_str.append(f"User: {target_user}")
-        if target_label: context_str.append(f"Filtered for Label: {target_label}")
+        # Dynamic Context Header 
+        header = f"--- Data Context: {' | '.join(context_str) if context_str else 'Global Database'} ---\n"
+        
+        stats = f"{header}Total Records matching criteria: {total}\n"
+        
+        # --- NEW: PRINT PERFORMANCE METRICS ---
+        stats += "\n--- Performance Metrics ---\n"
+        t1_avg = aggs.get('avg_tier1_speed', {}).get('value')
+        t2_avg = aggs.get('avg_tier2_speed', {}).get('value')
+        if t1_avg: stats += f"- Average Tier-1 Latency: {t1_avg:.2f} ms\n"
+        if t2_avg: stats += f"- Average Tier-2 Latency: {t2_avg:.2f} seconds\n"
+        
+        stats += "\n--- Platforms ---\n"
+        
+        total = res['hits']['total']['value']
+        aggs = res['aggregations']
+        
+        # Dynamic Context Header 
         header = f"--- Data Context: {' | '.join(context_str) if context_str else 'Global Database'} ---\n"
         
         stats = f"{header}Total Records matching criteria: {total}\n"
