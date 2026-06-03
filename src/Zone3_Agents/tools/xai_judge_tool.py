@@ -1,92 +1,81 @@
-import json
-import ollama
+"""
+XAI Judge — interactive, single-record version invoked by the Leader Agent
+when an analyst asks to audit a specific user. Mirrors the forensic logic
+of xai_batch_judge but runs on the user's most recent message and writes
+the verdict straight back to Elasticsearch.
+"""
+
 from elasticsearch import Elasticsearch
+
 from shared_utils.config import ES_HOST, INDEX_NAME, ACTIVE_MODEL
+from shared_utils.llm import ollama_chat_json
+from shared_utils.prompts import build_judge_prompt
 
 es = Elasticsearch(ES_HOST)
 
+
 def execute_xai_judge(params):
     target_user = params.get("target_user")
-    print(f"-> [XAI Agent] Running SHAP-style attribution for user: {target_user}")
+    print(f"-> [XAI Agent] Running forensic attribution for user: {target_user}")
 
-  # 1. RETRIEVAL: Get the flagged record from the database
     try:
-        # NEW: Sort to get their most recent message
         query = {
             "query": {"match": {"author_name": target_user}},
             "sort": [{"timestamp": {"order": "desc"}}],
-            "size": 20
+            "size": 20,
         }
         res = es.search(index=INDEX_NAME, body=query)
-        
-        if not res['hits']['hits']:
+
+        if not res["hits"]["hits"]:
             return f"Error: No records found for user {target_user}."
-        
-        # NEW: Grab doc_id so we can update it later
-        hit = res['hits']['hits'][0]
-        doc_id = hit['_id']
-        source = hit['_source']
-        
-        # --- NEW UNIVERSAL SCHEMA FIELDS ---
-        raw_text = source.get('text', '')
-        original_prediction = source.get('model_label', 'Unknown')
-        confidence = source.get('model_confidence', 0)
-        domain = source.get('env_domain', 'General')
-        strictness = source.get('env_strictness', 'medium')
 
-        # 2. LOCAL EXPLAINABILITY (Simulated SHAP/Captum logic)
-        # In a real setup, you'd run SHAP library here. 
-        # For the Agent, we provide the raw text for 'LLM-as-a-Judge' to analyze.
-        # 3. LLM-AS-A-JUDGE: Advanced Forensic Evaluation
-        judge_prompt = f"""
-        [ROLE: XAI CONTEXT JUDGE - TRUST & SAFETY ADVISOR]
-        Evaluate the following prediction made by a static DistilBERT model.
-        
-        TEXT TO ANALYZE: "{raw_text}"
-        PREDICTION: {original_prediction} (Confidence: {confidence:.2%})
-        DOMAIN: {domain} | STRICTNESS: {strictness}
-        
-        ADVANCED FORENSIC RULES:
-        1. Sarcasm & In-Game Events: If the domain is Gaming, analyze if the text represents in-game actions, celebrations, or sarcastic trash talk (e.g., "kill him", "you psycho"). Override DistilBERT if it is standard gameplay rhetoric.
-        2. Evasion & Dogwhistles: Hunt for leetspeak (e.g., "n1gg3r"), symbol replacement, or known political dogwhistles (e.g., using innocent words like "skittles" to target groups). Expose the true intent.
-        3. Cultural Context: Factor in regional/cultural slang. Words that are severe slurs in high-strictness US politics may be standard colloquialisms or endearments in low-strictness international gaming.
-        4. Instigator/Troll Detection: If DistilBERT labeled this 'Normal', but the text is highly manipulative, passive-aggressive, or clearly baiting another user into an argument, rule it a False Negative.
-        
-        TASK:
-        1. Validate: Is DistilBERT's prediction Correct, a False Positive, or a False Negative?
-        2. Explain: Detail exactly why. You MUST reference the forensic rules above (sarcasm, evasion, culture, or instigation) if they apply to the text.
-        
-        OUTPUT FORMAT: Output ONLY valid JSON: {{"decision": "...", "explanation": "..."}}
-        """
-        
-        response = ollama.chat(model=ACTIVE_MODEL, messages=[{'role': 'user', 'content': judge_prompt}])
-        raw_output = response['message']['content'].strip()
+        hit = res["hits"]["hits"][0]
+        doc_id = hit["_id"]
+        source = hit["_source"]
 
-# 4. Clean markdown and parse JSON
-        if raw_output.startswith("```json"): 
-            raw_output = raw_output[7:-3].strip()
-        elif raw_output.startswith("```"): 
-            raw_output = raw_output[3:-3].strip()
-        
-        try:
-            result = json.loads(raw_output)
+        raw_text = source.get("text", "")
+        original_prediction = source.get("model_label", "Unknown")
+        confidence = source.get("model_confidence", 0)
+        domain = source.get("env_domain", "General")
+        strictness = source.get("env_strictness", "medium")
+        subgenre = source.get("env_subgenre", "")
+
+        prompt = build_judge_prompt(
+            raw_text=raw_text,
+            original_prediction=original_prediction,
+            confidence=confidence,
+            domain=domain,
+            strictness=strictness,
+            subgenre=subgenre,
+        )
+
+        result = ollama_chat_json(prompt)
+        if result is None:
+            final_decision = "Parsing Error"
+            explanation = "LLM produced unparseable JSON twice in a row."
+        else:
             final_decision = result.get("decision", "Unknown")
             explanation = result.get("explanation", "No explanation.")
-        except Exception as e:
-            final_decision = "Parsing Error"
-            explanation = raw_output 
 
-        # 5. DATABASE OVERWRITE (Tier 2 Overlay)
-        es.update(index=INDEX_NAME, id=doc_id, body={
-            "doc": {
-                "agent_reviewed": True,
-                "agent_model_used": ACTIVE_MODEL,
-                "agent_final_decision": final_decision,
-                "agent_explanation": explanation
-            }
-        })
+        es.update(
+            index=INDEX_NAME,
+            id=doc_id,
+            body={
+                "doc": {
+                    "agent_reviewed": True,
+                    "agent_model_used": ACTIVE_MODEL,
+                    "agent_final_decision": final_decision,
+                    "agent_explanation": explanation,
+                }
+            },
+        )
 
-        return f"--- XAI REPORT FOR '{target_user}' ---\nVerdict: {final_decision}\nReason: {explanation}\n(Database Updated Successfully)"
+        return (
+            f"--- XAI REPORT FOR '{target_user}' ---\n"
+            f"Verdict: {final_decision}\n"
+            f"Reason: {explanation}\n"
+            f"(Database Updated Successfully)"
+        )
 
     except Exception as e:
         return f"XAI Tool Failure: {str(e)}"
