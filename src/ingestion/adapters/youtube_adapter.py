@@ -7,7 +7,7 @@ env_strictness, then forwards live-chat messages to Kafka under the
 Universal Schema.
 
 This adapter is intentionally a "dumb fetcher" — every intelligence step
-(domain classification, judge) lives downstream.
+(domain discovery, strictness reasoning, judge) lives downstream.
 """
 
 import json
@@ -87,12 +87,17 @@ def start_youtube_pipeline(url):
         return
 
     print("\n-> [YouTube Adapter] Requesting Context Resolution from XAI Agent...")
-    domain_context, strictness, subgenre = resolve_environment("YouTube", raw_meta)
+    env = resolve_environment("YouTube", raw_meta)
 
+    domain = env["env_domain"]
+    subgenre = env["env_subgenre"]
+    strictness = env["env_strictness"]
     subgenre_display = f"/{subgenre}" if subgenre else ""
+
     print(
         f"-> [YouTube Adapter] Context Locked: "
-        f"[{domain_context.upper()}{subgenre_display}] | Strictness: [{strictness.upper()}]"
+        f"[{domain.upper()}{subgenre_display}] | Strictness: [{strictness.upper()}] | "
+        f"Match: {env['env_domain_match']} | LLM raw proposal: {env['env_domain_raw']!r}"
     )
 
     try:
@@ -106,7 +111,7 @@ def start_youtube_pipeline(url):
 
     try:
         chat = pytchat.create(video_id=video_id)
-        time.sleep(2)  # give the socket time to connect
+        time.sleep(2)  # let the socket connect
 
         if not chat.is_alive():
             print("\n[WARNING] Chat connection failed immediately.")
@@ -127,9 +132,12 @@ def start_youtube_pipeline(url):
                     message = {
                         "payload_text": c.message,
                         "source_platform": "YouTube",
-                        "env_domain": domain_context,
-                        "env_subgenre": subgenre,
-                        "env_strictness": strictness,
+                        "env_domain":               env["env_domain"],
+                        "env_domain_raw":           env["env_domain_raw"],
+                        "env_domain_match":         env["env_domain_match"],
+                        "env_subgenre":             env["env_subgenre"],
+                        "env_strictness":           env["env_strictness"],
+                        "env_strictness_reasoning": env["env_strictness_reasoning"],
                         "platform_metadata": {
                             "video_id": video_id,
                             "video_title": raw_meta["title"],
@@ -142,11 +150,11 @@ def start_youtube_pipeline(url):
                         },
                     }
                     producer.send(KAFKA_TOPIC, message)
-                    print(f"[{domain_context.upper()}{subgenre_display}] {c.author.name}: {c.message}")
+                    print(f"[{domain.upper()}{subgenre_display}] {c.author.name}: {c.message}")
             else:
                 empty_loops += 1
                 if empty_loops % 10 == 0:
-                    print(f"[{domain_context.upper()}{subgenre_display}] ... [Waiting for chat messages] ...")
+                    print(f"[{domain.upper()}{subgenre_display}] ... [Waiting for chat messages] ...")
 
             time.sleep(0.5)
 
@@ -154,6 +162,16 @@ def start_youtube_pipeline(url):
         print("\n-> [YouTube Adapter] Stream safely terminated.")
     except Exception as e:
         print(f"-> [YouTube Adapter] Stream Error: {e}")
+    finally:
+        # CRITICAL: flush the Kafka producer's async buffer before exiting.
+        # Otherwise short runs (Ctrl+C soon after start) lose pending messages.
+        try:
+            print("-> [YouTube Adapter] Flushing Kafka producer buffer...")
+            producer.flush(timeout=10)
+            producer.close(timeout=5)
+            print("-> [YouTube Adapter] Producer closed.")
+        except Exception as e:
+            print(f"-> [YouTube Adapter] Producer flush failed: {e}")
 
 
 if __name__ == "__main__":

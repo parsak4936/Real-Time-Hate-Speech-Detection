@@ -8,3 +8,8 @@ __pycache__/
 .ipynb_checkpoints/
 *.zip
 *.rar
+# pending_taxonomy.log lives under data/ which is already ignored, but call it
+# out so the operator knows to commit a SNAPSHOT manually before pruning.
+
+# Saved analyst chat conversations (may contain sensitive moderation data).
+chat_history/

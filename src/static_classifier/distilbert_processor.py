@@ -80,6 +80,8 @@ consumer = KafkaConsumer(
     *KAFKA_TOPICS,
     bootstrap_servers=KAFKA_BROKERS,
     auto_offset_reset="earliest",
+    enable_auto_commit=True,
+    group_id="moderation_processor",
     value_deserializer=lambda x: json.loads(x.decode("utf-8")),
 )
 
@@ -115,8 +117,11 @@ try:
         payload_text = data.get("payload_text", "")
         source_platform = data.get("source_platform", "Unknown")
         env_domain = data.get("env_domain", "General")
+        env_domain_raw = data.get("env_domain_raw", "") or ""
+        env_domain_match = data.get("env_domain_match", "unknown")
         env_subgenre = data.get("env_subgenre", "") or ""
         env_strictness = data.get("env_strictness", "medium")
+        env_strictness_reasoning = data.get("env_strictness_reasoning", "") or ""
 
         platform_meta = data.get("platform_metadata", {})
         thread_id = platform_meta.get("video_id") or platform_meta.get("subreddit") or "N/A"
@@ -140,8 +145,11 @@ try:
 
                 "source_platform": source_platform,
                 "env_domain": env_domain,
+                "env_domain_raw": env_domain_raw,
+                "env_domain_match": env_domain_match,
                 "env_subgenre": env_subgenre,
                 "env_strictness": env_strictness,
+                "env_strictness_reasoning": env_strictness_reasoning,
                 "thread_id": thread_id,
                 "thread_title": platform_meta.get("video_title", "Unknown"),
                 "has_media": False,

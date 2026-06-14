@@ -2,10 +2,13 @@
 Universal Search tool — full-text + filtered retrieval from Elasticsearch
 for the Leader Agent.
 
-Filter semantics mirror stats_tool: string filters hit the .keyword
-subfield for exact-phrase match, booleans use `term`. The author_name
-field still uses fuzzy match (analyst typos) and the chat-keyword search
-still uses tokenised match on `text` (intentional).
+Filter semantics (post-index-template):
+  - Pure keyword fields (env_domain, model_label, source_platform, etc.)
+    use `term` directly. NO `.keyword` suffix — those subfields don't
+    exist with the explicit mapping.
+  - Text + keyword multi-fields (text, author_name, env_domain_raw,
+    thread_title) use `.keyword` for exact match, base field for tokenised.
+  - Booleans use `term`.
 """
 
 from elasticsearch import Elasticsearch
@@ -14,6 +17,9 @@ from shared_utils.config import ES_HOST, INDEX_NAME
 
 es = Elasticsearch(ES_HOST)
 
+# Fields mapped as text+keyword multi-field — exact-match on the .keyword subfield.
+_TEXT_KEYWORD_FIELDS = {"text", "author_name", "env_domain_raw", "thread_title"}
+
 
 def _filter_clause(column_name, value):
     if isinstance(value, bool):
@@ -21,7 +27,9 @@ def _filter_clause(column_name, value):
     if isinstance(value, (int, float)):
         return {"term": {column_name: value}}
     if isinstance(value, str):
-        return {"term": {f"{column_name}.keyword": value}}
+        if column_name in _TEXT_KEYWORD_FIELDS:
+            return {"term": {f"{column_name}.keyword": value}}
+        return {"term": {column_name: value}}
     return {"match": {column_name: value}}
 
 
@@ -48,8 +56,8 @@ def execute_universal_search(params):
         must_clauses.append({
             "bool": {
                 "should": [
-                    {"term": {"model_label.keyword": params["label"]}},
-                    {"term": {"agent_final_decision.keyword": params["label"]}},
+                    {"term": {"model_label": params["label"]}},
+                    {"term": {"agent_final_decision": params["label"]}},
                 ]
             }
         })

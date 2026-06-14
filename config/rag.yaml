@@ -1,0 +1,45 @@
+# ---------------------------------------------------------------------------
+# Retrieval-Augmented Moderation (RAG) config.
+# ---------------------------------------------------------------------------
+#
+# The Tier-2 judge can be enriched with semantically-similar past cases
+# retrieved from a vector database. This file is the operator-editable
+# control panel for that retrieval. The judge prompt itself never sees this
+# file — the values here only control where retrieval happens and what
+# embedding model produces the vectors.
+#
+# To enable RAG at runtime, set the env var RAG_ENABLED=1 (or edit the
+# default in src/shared_utils/config.py). When False (default), the live
+# pipeline ignores this file entirely.
+# ---------------------------------------------------------------------------
+
+# Connection — matches the qdrant service in docker-compose.yml.
+qdrant:
+  host: localhost
+  port: 6333
+  collection: moderation_records   # one Qdrant collection per project
+
+# Embedding model.
+#
+# Default is a small, fast, multilingual-leaning model that runs on CPU
+# without complaint. The thesis can swap to any sentence-transformers model
+# by editing this line — the rest of the code does not need to change.
+#
+# Alternatives worth measuring later:
+#   - sentence-transformers/all-mpnet-base-v2     (better quality, slower)
+#   - intfloat/multilingual-e5-small              (better for non-English chat)
+#   - BAAI/bge-small-en-v1.5                      (top of MTEB English leaderboard)
+embedding:
+  model_name: sentence-transformers/all-MiniLM-L6-v2
+  dim: 384                # must match the model's output dimensionality
+  device: cpu             # "auto" | "cpu" | "cuda". Forced to cpu — the GTX 1650
+                          # CUDA driver stalls torch.cuda.is_available() on this
+                          # machine, hanging the embedder. CPU is fast enough at
+                          # our scale (~hundreds of records in seconds).
+  batch_size: 32          # used by build_rag_index.py for bulk embedding
+
+# Retrieval behaviour.
+retrieval:
+  top_k: 5                       # how many precedents to fetch per judge call
+  similarity_threshold: 0.55     # discard matches below this cosine score (0..1)
+  exclude_self: true             # never return the record being judged itself

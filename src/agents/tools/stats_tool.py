@@ -1,11 +1,12 @@
 """
 Statistics tool — runs Elasticsearch aggregations for the Leader Agent.
 
-Filter semantics:
-  - Boolean values use a `term` query (exact match).
-  - String values use a `term` query against the `.keyword` subfield so
-    that e.g. {"agent_final_decision": "False Positive"} matches the
-    exact phrase rather than tokenising to "false" OR "positive".
+Filter / aggregation semantics (post-index-template):
+  - Pure keyword fields (env_domain, model_label, source_platform, etc.)
+    use the bare field name. NO `.keyword` suffix.
+  - Text + keyword multi-fields (author_name, env_domain_raw, thread_title,
+    text) use `.keyword` for exact-match aggregation / filter.
+  - Booleans use `term`.
 """
 
 from elasticsearch import Elasticsearch
@@ -13,6 +14,8 @@ from elasticsearch import Elasticsearch
 from shared_utils.config import ES_HOST, INDEX_NAME
 
 es = Elasticsearch(ES_HOST)
+
+_TEXT_KEYWORD_FIELDS = {"text", "author_name", "env_domain_raw", "thread_title"}
 
 
 def _filter_clause(column_name, value):
@@ -24,7 +27,9 @@ def _filter_clause(column_name, value):
     if isinstance(value, str):
         if column_name == "author_name":
             value = value.replace("@", "")
-        return {"term": {f"{column_name}.keyword": value}}
+        if column_name in _TEXT_KEYWORD_FIELDS:
+            return {"term": {f"{column_name}.keyword": value}}
+        return {"term": {column_name: value}}
     return {"match": {column_name: value}}
 
 
@@ -45,14 +50,14 @@ def execute_statistics(params):
             track_total_hits=True,
             query={"bool": {"must": must_clauses}} if must_clauses else {"match_all": {}},
             aggregations={
-                "platform_breakdown": {"terms": {"field": "source_platform.keyword"}},
-                "domain_breakdown": {"terms": {"field": "env_domain.keyword"}},
-                "subgenre_breakdown": {"terms": {"field": "env_subgenre.keyword"}},
-                "label_breakdown": {"terms": {"field": "model_label.keyword"}},
-                "xai_override_breakdown": {"terms": {"field": "agent_final_decision.keyword"}},
-                "top_users": {"terms": {"field": "author_name.keyword", "size": 10}},
-                "avg_tier1_speed": {"avg": {"field": "processing_time_ms"}},
-                "avg_tier2_speed": {"avg": {"field": "agent_latency_seconds"}},
+                "platform_breakdown":    {"terms": {"field": "source_platform"}},
+                "domain_breakdown":      {"terms": {"field": "env_domain"}},
+                "subgenre_breakdown":    {"terms": {"field": "env_subgenre"}},
+                "label_breakdown":       {"terms": {"field": "model_label"}},
+                "xai_override_breakdown":{"terms": {"field": "agent_final_decision"}},
+                "top_users":             {"terms": {"field": "author_name.keyword", "size": 10}},
+                "avg_tier1_speed":       {"avg":   {"field": "processing_time_ms"}},
+                "avg_tier2_speed":       {"avg":   {"field": "agent_latency_seconds"}},
             },
         )
 

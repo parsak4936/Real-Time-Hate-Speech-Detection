@@ -37,32 +37,32 @@ def code(text: str) -> None:
 md("""
     # Pipeline Evaluation Notebook
 
-    Living notebook that tracks how each Stage of the pipeline performs against
-    the frozen baseline. Re-run after every Stage and append a new section. The
-    cross-stage comparison at the bottom shows whether the new work moved the
-    needle.
+    Living notebook that tracks how each layer of the moderation pipeline
+    performs against the original internship baseline. Every new feature
+    (temporal memory, RAG, multi-agent, …) appends one new section here so
+    we can see whether the change moved the needle.
 
-    **No Docker / no Ollama / no Elasticsearch are required for the Stage 0
-    baseline cells below.** `thesis_final_benchmark.csv` already contains the
-    frozen Tier-1 (`model_label`) and Tier-2 (`agent_final_decision`) verdicts
-    from the internship benchmark, plus the manually-labelled
-    `human_ground_truth`. Everything in §1 runs purely offline.
+    **No Docker / no Ollama / no Elasticsearch are required for the baseline
+    cells in §1.** `thesis_final_benchmark.csv` already contains the frozen
+    Tier-1 (`model_label`) and Tier-2 (`agent_final_decision`) verdicts from
+    the internship benchmark, plus the manually-labelled `human_ground_truth`.
+    Everything in §1 runs purely offline.
 
-    Live-infra requirements only appear when a future Stage needs to *generate*
-    new benchmark data — those cells will carry a `[LIVE INFRA]` tag in their
-    header.
+    Live-infra requirements only appear when a future section needs to
+    *generate* new benchmark data — those cells will carry a `[LIVE INFRA]`
+    tag in their header.
 
     ## How to extend this notebook
 
-    1. When a Stage lands, append a new top-level section
-       (e.g. `## 4. Stage 2 — Temporal Memory`).
+    1. When new pipeline work lands, append a new top-level section
+       (e.g. `## 5. Retrieval-Augmented Moderation`).
     2. Reuse the helpers defined in §0
        (`load_benchmark`, `agent_effective_label`, `compute_three_class_accuracy`, …).
     3. Add the resulting metrics dict to `RESULTS_REGISTRY` near the end.
     4. The cross-stage comparison table picks it up automatically.
 
-    Related docs: [`docs/ROADMAP.md`](../docs/ROADMAP.md),
-    [`docs/EVAL.md`](../docs/EVAL.md), [`docs/PROMPTS.md`](../docs/PROMPTS.md).
+    Related docs: [`docs/ROADMAP.md`](../docs/ROADMAP.md) (planning lens with
+    numbered stages), [`docs/EVAL.md`](../docs/EVAL.md), [`docs/PROMPTS.md`](../docs/PROMPTS.md).
 """)
 
 # ============================================================================
@@ -164,7 +164,7 @@ code("""
 """)
 
 # ============================================================================
-md("## 1. Stage 0 — Baseline: Static vs Agent vs Human")
+md("## 1. Baseline — Static (Tier-1) vs Agent (Tier-2) vs Human")
 md("### 1.1 Load benchmark")
 
 code("""
@@ -282,6 +282,48 @@ code("""
     print(latency.to_string())
 """)
 
+md("### 1.8 Per-platform breakdown — multi-platform generalisation evidence")
+md(
+    "Splits the benchmark by `source_platform` (YouTube / Twitch / Reddit) and "
+    "shows static + agent accuracy per platform. If accuracy stays consistent "
+    "across platforms, that's quantitative evidence for the report's "
+    "'platform-agnostic Trust & Safety pipeline' claim. If a particular "
+    "platform tanks, that's also publishable — 'cross-platform transfer is "
+    "weakest on Twitch due to emote density', etc."
+)
+
+code("""
+    if "source_platform" in df.columns:
+        def _platform_row(g):
+            s_acc = compute_three_class_accuracy(g["model_label"], g["human_ground_truth"])
+            a_acc = compute_three_class_accuracy(g["agent_pred"], g["human_ground_truth"])
+            return pd.Series({
+                "n":             len(g),
+                "Static acc":    s_acc,
+                "Agent acc":     a_acc,
+                "Delta (pp)":    (a_acc - s_acc) * 100,
+            })
+
+        per_platform = (
+            df.groupby("source_platform")
+            .apply(_platform_row)
+            .sort_values("n", ascending=False)
+        )
+        per_platform
+    else:
+        print("source_platform column missing — older benchmark CSV. Re-export with src/export_subset.py or scripts/sample_for_eval.py.")
+""")
+
+md("### 1.9 Tier-1 confusion matrix")
+
+code("""
+    print("Static (Tier-1 DistilBERT) confusion matrix:")
+    print(confusion_matrix(df["model_label"], df["human_ground_truth"]).to_string())
+    print()
+    print("Agent (Tier-2 baseline) confusion matrix:")
+    print(confusion_matrix(df["agent_pred"], df["human_ground_truth"]).to_string())
+""")
+
 # ============================================================================
 md("## 2. DistilBERT training reference")
 md(
@@ -316,18 +358,20 @@ code("""
 """)
 
 # ============================================================================
-md("## 3. Stage results registry")
+md("## 3. Pipeline results registry")
 md(
-    "Every Stage appends one row here. Stage 0 has two: the static baseline "
-    "(Tier-1 only) and the hybrid (Tier-1 + Tier-2 internship verdicts). "
-    "Future stages mutate `RESULTS_REGISTRY` in their own cell, then the "
-    "cross-stage table at the bottom picks the new row up automatically."
+    "Each pipeline variant we evaluate appends one row here. The baseline has "
+    "two: Tier-1 alone (DistilBERT) and the hybrid (Tier-1 + Tier-2 internship "
+    "verdicts). Future sections — Temporal Memory in §4, then Retrieval-Augmented "
+    "Moderation, Multi-Agent, etc. — mutate `RESULTS_REGISTRY` in their own cell. "
+    "The cross-stage table at the bottom of the notebook picks new rows up "
+    "automatically."
 )
 
 code("""
     RESULTS_REGISTRY = OrderedDict()
 
-    RESULTS_REGISTRY["Stage 0 — Static (Tier-1)"] = {
+    RESULTS_REGISTRY["Tier-1 baseline (DistilBERT only)"] = {
         "accuracy_3class":  static_acc,
         "accuracy_binary":  compute_binary_accuracy(df["model_label"], df["human_ground_truth"]),
         "mean_latency_ms":  t1_ms,
@@ -335,7 +379,7 @@ code("""
         "notes":            "DistilBERT alone, no Tier-2 overlay",
     }
 
-    RESULTS_REGISTRY["Stage 0 — Static + Agent (Tier-1 + Tier-2)"] = {
+    RESULTS_REGISTRY["Tier-1 + Tier-2 baseline (no memory)"] = {
         "accuracy_3class":  agent_acc,
         "accuracy_binary":  compute_binary_accuracy(df["agent_pred"], df["human_ground_truth"]),
         "mean_latency_ms":  t1_ms + t2_ms,
@@ -344,68 +388,403 @@ code("""
     }
 
     # ----------------------------------------------------------------------
-    # Future stages append entries below this line. Example:
+    # Future pipeline variants append entries below this line. Example:
     #
-    # RESULTS_REGISTRY["Stage 2 — + Temporal Memory"] = {...}
-    # RESULTS_REGISTRY["Stage 3 — + RAG"]              = {...}
+    # RESULTS_REGISTRY["Tier-1 + Tier-2 with memory"]      = {...}
+    # RESULTS_REGISTRY["Tier-1 + Tier-2 with memory + RAG"] = {...}
     # ----------------------------------------------------------------------
 
     pd.DataFrame(RESULTS_REGISTRY).T
 """)
 
 # ============================================================================
-md("## 4. Template — adding a future Stage")
+md("## 4. Temporal Memory (Tier-2 with conversational context)")
 md(
-    "Copy the cell below into a new section when a Stage lands. The "
-    "comments mark exactly what each subsequent Stage needs to change."
+    "This section evaluates the memory-augmented Tier-2 judge: instead of "
+    "scoring each message in isolation, the judge sees the author's recent "
+    "history, the same thread's last few messages, and a one-line "
+    "behavioural fingerprint. The hypothesis is that this context lets the "
+    "judge distinguish a normally-Normal user posting one suspicious-looking "
+    "message (likely sarcasm) from a user with a pattern of toxic posts "
+    "(likely genuine hostility), addressing the implicit-bias blindness "
+    "failure mode flagged in Report §6.3.\n\n"
+    "**Prerequisite — populate `agent_final_decision_with_memory` first.** "
+    "This section reads that column from the same benchmark CSV. Generate it "
+    "by running:\n"
+    "```bash\n"
+    "python scripts/replay_with_memory.py --csv thesis_final_benchmark.csv --apply\n"
+    "python src/export_subset.py thesis_final_benchmark.csv\n"
+    "```\n"
+    "If you have not run the replay yet, the cells below print a friendly "
+    "message and skip — the §1 baseline numbers stay valid regardless."
+)
+
+md("### 4.1 Re-load benchmark and check for memory-augmented verdicts")
+
+code("""
+    df_eval = load_benchmark()
+    has_memory_verdicts = (
+        "agent_final_decision_with_memory" in df_eval.columns
+        and df_eval["agent_final_decision_with_memory"].astype(str).str.strip().ne("").any()
+    )
+
+    if not has_memory_verdicts:
+        print("Memory-augmented verdicts NOT FOUND in the benchmark CSV.")
+        print("Run `python scripts/replay_with_memory.py --csv thesis_final_benchmark.csv --apply`")
+        print("then `python src/export_subset.py thesis_final_benchmark.csv` to populate them.")
+    else:
+        df_eval["agent_final_decision_with_memory"] = (
+            df_eval["agent_final_decision_with_memory"].astype(str).str.strip().str.lower()
+        )
+        df_eval["agent_pred_baseline"] = df_eval.apply(
+            lambda r: agent_effective_label(r["model_label"], r["agent_final_decision"]),
+            axis=1,
+        )
+        df_eval["agent_pred_with_memory"] = df_eval.apply(
+            lambda r: agent_effective_label(r["model_label"], r["agent_final_decision_with_memory"]),
+            axis=1,
+        )
+        print(f"Memory-augmented verdicts present on {len(df_eval)} records. Comparison ready.")
+""")
+
+md("### 4.2 Accuracy delta — baseline vs with-memory vs Human")
+
+code("""
+    if has_memory_verdicts:
+        baseline_acc_3class = compute_three_class_accuracy(df_eval["agent_pred_baseline"],   df_eval["human_ground_truth"])
+        memory_acc_3class   = compute_three_class_accuracy(df_eval["agent_pred_with_memory"], df_eval["human_ground_truth"])
+
+        baseline_acc_binary = compute_binary_accuracy(df_eval["agent_pred_baseline"],   df_eval["human_ground_truth"])
+        memory_acc_binary   = compute_binary_accuracy(df_eval["agent_pred_with_memory"], df_eval["human_ground_truth"])
+
+        delta_summary = pd.Series({
+            "Baseline agent (no memory) — 3-class":             f"{baseline_acc_3class:.1%}",
+            "With-memory agent — 3-class":                      f"{memory_acc_3class:.1%}",
+            "Delta (with_memory - baseline) — 3-class":         f"{(memory_acc_3class - baseline_acc_3class) * 100:+.2f} pp",
+            "Baseline agent — binary (toxic vs normal)":        f"{baseline_acc_binary:.1%}",
+            "With-memory agent — binary":                       f"{memory_acc_binary:.1%}",
+            "Delta (with_memory - baseline) — binary":          f"{(memory_acc_binary - baseline_acc_binary) * 100:+.2f} pp",
+        })
+        print(delta_summary.to_string())
+    else:
+        print("Skipped — see §4.1.")
+""")
+
+md("### 4.3 Per-domain delta — where did memory help most?")
+
+code("""
+    if has_memory_verdicts:
+        df_eval["main_domain"] = df_eval["env_domain"].apply(main_domain)
+
+        def _row(g):
+            baseline = compute_three_class_accuracy(g["agent_pred_baseline"],    g["human_ground_truth"])
+            with_mem = compute_three_class_accuracy(g["agent_pred_with_memory"], g["human_ground_truth"])
+            return pd.Series({
+                "n":                   len(g),
+                "baseline acc":        baseline,
+                "with-memory acc":     with_mem,
+                "Delta (pp)":          (with_mem - baseline) * 100,
+            })
+
+        per_domain_eval = (
+            df_eval.groupby("main_domain")
+            .apply(_row)
+            .sort_values("Delta (pp)", ascending=False)
+        )
+        per_domain_eval
+    else:
+        print("Skipped — see §4.1.")
+""")
+
+md("### 4.4 McNemar's test — is the delta statistically significant?")
+md(
+    "Paired binary outcomes (correct vs wrong against human ground truth).\n"
+    "- `memory_hurt`   = baseline was right but with-memory got it wrong.\n"
+    "- `memory_helped` = baseline was wrong but with-memory got it right.\n\n"
+    "Under the null hypothesis (memory has no effect), the two counts should "
+    "be roughly equal in expectation. A small McNemar p-value means the "
+    "observed imbalance is unlikely to be chance."
+)
+
+code("""
+    if has_memory_verdicts:
+        baseline_correct = df_eval["agent_pred_baseline"]    == df_eval["human_ground_truth"]
+        memory_correct   = df_eval["agent_pred_with_memory"] == df_eval["human_ground_truth"]
+
+        memory_hurt   = int((baseline_correct & ~memory_correct).sum())
+        memory_helped = int((~baseline_correct & memory_correct).sum())
+
+        print(f"memory_hurt:   {memory_hurt}")
+        print(f"memory_helped: {memory_helped}")
+
+        if memory_hurt + memory_helped == 0:
+            print("No discordant pairs — verdicts identical. p-value undefined.")
+        else:
+            try:
+                from scipy.stats import chi2
+                chi2_stat = (abs(memory_helped - memory_hurt) - 1) ** 2 / (memory_helped + memory_hurt)
+                p_value = float(chi2.sf(chi2_stat, df=1))
+                print(f"\\nMcNemar chi^2 = {chi2_stat:.3f}, df=1, p = {p_value:.4f}")
+                if p_value < 0.05:
+                    print("=> statistically significant at alpha=0.05.")
+                else:
+                    print("=> NOT statistically significant at alpha=0.05.")
+            except ImportError:
+                print("scipy not available — install it (`pip install scipy`) for an exact p-value.")
+    else:
+        print("Skipped — see §4.1.")
+""")
+
+md("### 4.5 Memory usage distribution")
+md("How much context did the judge actually have to work with?")
+
+code("""
+    if has_memory_verdicts and "agent_memory_user_msgs" in df_eval.columns:
+        usage = pd.DataFrame({
+            "User-history msgs":   df_eval["agent_memory_user_msgs"].astype(float).describe(),
+            "Thread-context msgs": df_eval["agent_memory_thread_msgs"].astype(float).describe(),
+        })
+        usage
+    else:
+        print("Skipped — memory usage columns not in CSV.")
+""")
+
+md("### 4.6 Register the with-memory variant in the cross-pipeline table")
+
+code("""
+    if has_memory_verdicts:
+        # Latency ≈ baseline hybrid latency + small ES memory-query overhead.
+        t1_eval = df_eval["processing_time_ms"].dropna().mean()
+        t2_eval = (df_eval["agent_latency_seconds"].dropna() * 1000).mean()
+
+        RESULTS_REGISTRY["Tier-1 + Tier-2 with memory"] = {
+            "accuracy_3class":  memory_acc_3class,
+            "accuracy_binary":  memory_acc_binary,
+            "mean_latency_ms":  t1_eval + t2_eval,
+            "n_records":        len(df_eval),
+            "notes":            "Memory-augmented judge prompt (user history + thread context + fingerprint)",
+        }
+        pd.DataFrame(RESULTS_REGISTRY).T
+    else:
+        print("Skipped — see §4.1.")
+""")
+
+# ============================================================================
+md("## 5. RAG (Tier-2 with semantic retrieval) — leave-one-out on the internship CSV")
+md(
+    "This section evaluates RAG-augmented Tier-2 judging: the prompt is "
+    "enriched with k semantically similar past cases (retrieved from Qdrant), "
+    "but NO user history or thread context — that isolates the RAG "
+    "contribution from the Stage-2 temporal-memory contribution.\n\n"
+    "Unlike §4 (temporal memory) this evaluation requires **no new manual "
+    "labelling**. The benchmark CSV itself is used as both the corpus and "
+    "the test set, via leave-one-out cross-validation: when judging each "
+    "row, Qdrant returns the top-k most similar OTHER rows as precedents.\n\n"
+    "**Prerequisite — populate the `agent_final_decision_with_rag` column.** "
+    "Run:\n"
+    "```bash\n"
+    "docker-compose up -d qdrant\n"
+    "python scripts/seed_rag_from_csv.py thesis_final_benchmark.csv --apply\n"
+    "python scripts/replay_with_rag.py --csv thesis_final_benchmark.csv --apply\n"
+    "```\n"
+    "Until that runs the cells below print a friendly skip message — §1-§4 "
+    "stay valid regardless."
+)
+
+md("### 5.1 Re-load benchmark and check for RAG verdicts")
+
+code("""
+    df_rag = load_benchmark()
+    has_rag_verdicts = (
+        "agent_final_decision_with_rag" in df_rag.columns
+        and df_rag["agent_final_decision_with_rag"].astype(str).str.strip().ne("").any()
+    )
+
+    if not has_rag_verdicts:
+        print("RAG verdicts NOT FOUND in the benchmark CSV.")
+        print("Run the three commands in the §5 prerequisite, then re-run this cell.")
+    else:
+        df_rag["agent_final_decision_with_rag"] = (
+            df_rag["agent_final_decision_with_rag"].astype(str).str.strip().str.lower()
+        )
+        df_rag["agent_pred_baseline"] = df_rag.apply(
+            lambda r: agent_effective_label(r["model_label"], r["agent_final_decision"]),
+            axis=1,
+        )
+        df_rag["agent_pred_with_rag"] = df_rag.apply(
+            lambda r: agent_effective_label(r["model_label"], r["agent_final_decision_with_rag"]),
+            axis=1,
+        )
+        print(f"RAG verdicts present on {len(df_rag)} records. Comparison ready.")
+""")
+
+md("### 5.2 Accuracy delta — baseline vs with-RAG vs Human")
+
+code("""
+    if has_rag_verdicts:
+        baseline_acc_3class = compute_three_class_accuracy(df_rag["agent_pred_baseline"], df_rag["human_ground_truth"])
+        rag_acc_3class      = compute_three_class_accuracy(df_rag["agent_pred_with_rag"], df_rag["human_ground_truth"])
+
+        baseline_acc_binary = compute_binary_accuracy(df_rag["agent_pred_baseline"], df_rag["human_ground_truth"])
+        rag_acc_binary      = compute_binary_accuracy(df_rag["agent_pred_with_rag"], df_rag["human_ground_truth"])
+
+        delta_summary = pd.Series({
+            "Baseline agent (no RAG) — 3-class":           f"{baseline_acc_3class:.1%}",
+            "With-RAG agent — 3-class":                    f"{rag_acc_3class:.1%}",
+            "Delta (with_rag - baseline) — 3-class":       f"{(rag_acc_3class - baseline_acc_3class) * 100:+.2f} pp",
+            "Baseline agent — binary (toxic vs normal)":   f"{baseline_acc_binary:.1%}",
+            "With-RAG agent — binary":                     f"{rag_acc_binary:.1%}",
+            "Delta (with_rag - baseline) — binary":        f"{(rag_acc_binary - baseline_acc_binary) * 100:+.2f} pp",
+        })
+        print(delta_summary.to_string())
+    else:
+        print("Skipped — see §5.1.")
+""")
+
+md("### 5.3 Per-domain delta — where did RAG help most?")
+
+code("""
+    if has_rag_verdicts:
+        df_rag["main_domain"] = df_rag["env_domain"].apply(main_domain)
+
+        def _row(g):
+            baseline = compute_three_class_accuracy(g["agent_pred_baseline"], g["human_ground_truth"])
+            with_rag = compute_three_class_accuracy(g["agent_pred_with_rag"], g["human_ground_truth"])
+            return pd.Series({
+                "n":           len(g),
+                "baseline acc": baseline,
+                "with-RAG acc": with_rag,
+                "Delta (pp)":  (with_rag - baseline) * 100,
+            })
+
+        per_domain_rag = (
+            df_rag.groupby("main_domain")
+            .apply(_row)
+            .sort_values("Delta (pp)", ascending=False)
+        )
+        per_domain_rag
+    else:
+        print("Skipped — see §5.1.")
+""")
+
+md("### 5.4 McNemar's test — is the RAG delta significant?")
+
+code("""
+    if has_rag_verdicts:
+        baseline_correct = df_rag["agent_pred_baseline"] == df_rag["human_ground_truth"]
+        rag_correct      = df_rag["agent_pred_with_rag"] == df_rag["human_ground_truth"]
+
+        rag_hurt   = int((baseline_correct & ~rag_correct).sum())
+        rag_helped = int((~baseline_correct & rag_correct).sum())
+
+        print(f"rag_hurt:   {rag_hurt}")
+        print(f"rag_helped: {rag_helped}")
+
+        if rag_hurt + rag_helped == 0:
+            print("No discordant pairs — verdicts identical. p-value undefined.")
+        else:
+            try:
+                from scipy.stats import chi2
+                chi2_stat = (abs(rag_helped - rag_hurt) - 1) ** 2 / (rag_helped + rag_hurt)
+                p_value = float(chi2.sf(chi2_stat, df=1))
+                print(f"\\nMcNemar chi^2 = {chi2_stat:.3f}, df=1, p = {p_value:.4f}")
+                if p_value < 0.05:
+                    print("=> statistically significant at alpha=0.05.")
+                else:
+                    print("=> NOT statistically significant at alpha=0.05.")
+            except ImportError:
+                print("scipy not available — install it (`pip install scipy`) for an exact p-value.")
+    else:
+        print("Skipped — see §5.1.")
+""")
+
+md("### 5.5 Precedent-retrieval distribution — how many cases did Qdrant return?")
+
+code("""
+    if has_rag_verdicts and "agent_retrieval_count" in df_rag.columns:
+        usage = df_rag["agent_retrieval_count"].astype(float).describe()
+        print("Precedents returned per query:")
+        print(usage.to_string())
+    else:
+        print("Skipped — agent_retrieval_count not in CSV.")
+""")
+
+md("### 5.6 Register the with-RAG variant in the cross-pipeline table")
+
+code("""
+    if has_rag_verdicts:
+        t1_rag = df_rag["processing_time_ms"].dropna().mean()
+        t2_rag = (df_rag["agent_latency_seconds"].dropna() * 1000).mean()
+
+        RESULTS_REGISTRY["Tier-1 + Tier-2 with RAG (no memory)"] = {
+            "accuracy_3class":  rag_acc_3class,
+            "accuracy_binary":  rag_acc_binary,
+            "mean_latency_ms":  t1_rag + t2_rag,
+            "n_records":        len(df_rag),
+            "notes":            "RAG-only prompt; semantic precedents from Qdrant, no temporal memory",
+        }
+        pd.DataFrame(RESULTS_REGISTRY).T
+    else:
+        print("Skipped — see §5.1.")
+""")
+
+# ============================================================================
+md("## 5b. Template — adding a future pipeline variant")
+md(
+    "Copy the cell below into a new section when a new pipeline variant lands "
+    "(e.g. Retrieval-Augmented Moderation, Multi-Agent, Edge-quantised, ...). "
+    "The comments mark exactly what each new section needs to change."
 )
 
 code("""
     # ----------------------------------------------------------------------
-    # TEMPLATE — duplicate this cell into its own section for each Stage.
+    # TEMPLATE — duplicate this cell into its own section for each
+    # new pipeline variant you want to evaluate.
     # ----------------------------------------------------------------------
     #
-    # # Stage N — <name>
+    # # <Variant name> — e.g. "Retrieval-Augmented Moderation"
     #
-    # # 1. Load the Stage-N CSV.
-    # #    - If the Stage only modifies the agent verdict (prompt/model change),
-    # #      re-run the live pipeline against the SAME texts and export with:
-    # #          python src/export_subset.py
-    # #    - If the Stage adds new data, export a fresh CSV with a stage suffix.
+    # # 1. Load the variant's benchmark CSV.
+    # #    - If the variant only modifies the agent verdict (prompt / model
+    # #      / context change), re-run the live pipeline (or its replay
+    # #      script) against the SAME texts as the baseline and export with:
+    # #          python src/export_subset.py <variant_benchmark>.csv
+    # #    - If the variant adds new data, export a fresh CSV with a
+    # #      descriptive suffix.
     # #
     # # [LIVE INFRA] needed only when generating the new CSV; not when reading it.
-    # stage_n_df = load_benchmark("stage_N_benchmark.csv")
+    # df_variant = load_benchmark("<variant_benchmark>.csv")
     #
     # # 2. Compute the agent's effective prediction.
-    # stage_n_df["agent_pred"] = stage_n_df.apply(
+    # df_variant["agent_pred"] = df_variant.apply(
     #     lambda r: agent_effective_label(r["model_label"], r["agent_final_decision"]),
     #     axis=1,
     # )
     #
     # # 3. Compute metrics.
-    # acc_3 = compute_three_class_accuracy(stage_n_df["agent_pred"], stage_n_df["human_ground_truth"])
-    # acc_b = compute_binary_accuracy(stage_n_df["agent_pred"], stage_n_df["human_ground_truth"])
-    # t1 = stage_n_df["processing_time_ms"].dropna().mean()
-    # t2 = (stage_n_df["agent_latency_seconds"].dropna() * 1000).mean()
+    # acc_3 = compute_three_class_accuracy(df_variant["agent_pred"], df_variant["human_ground_truth"])
+    # acc_b = compute_binary_accuracy(df_variant["agent_pred"],     df_variant["human_ground_truth"])
+    # t1    = df_variant["processing_time_ms"].dropna().mean()
+    # t2    = (df_variant["agent_latency_seconds"].dropna() * 1000).mean()
     #
     # # 4. Register.
-    # RESULTS_REGISTRY["Stage N — <name>"] = {
+    # RESULTS_REGISTRY["<Variant name>"] = {
     #     "accuracy_3class":  acc_3,
     #     "accuracy_binary":  acc_b,
     #     "mean_latency_ms":  t1 + t2,
-    #     "n_records":        len(stage_n_df),
-    #     "notes":            "<what changed since the previous Stage>",
+    #     "n_records":        len(df_variant),
+    #     "notes":            "<what changed since the previous variant>",
     # }
     #
     # pd.DataFrame(RESULTS_REGISTRY).T
 """)
 
 # ============================================================================
-md("## 5. Cross-stage comparison")
+md("## 7. Cross-pipeline comparison")
 md(
-    "Final readout. Re-render after any Stage appends to `RESULTS_REGISTRY`. "
-    "When a Stage's row appears here, the thesis can cite the delta from the "
-    "previous row as that Stage's contribution."
+    "Final readout. Re-render after any section appends to `RESULTS_REGISTRY`. "
+    "When a variant's row appears here, the thesis can cite the delta from "
+    "the previous row as that variant's contribution."
 )
 
 code("""

@@ -9,13 +9,26 @@ The full architectural rationale lives in `Internship_report_Draft_1 (1).pdf`. T
 
 ## Documentation index
 
-| File | Purpose |
-|---|---|
-| [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) | Maps the report's 5-layer figure onto the actual folder structure. |
-| [`docs/SCHEMA.md`](docs/SCHEMA.md) | The Universal Kafka payload + Elasticsearch document schema, with the full field contract. |
-| [`docs/PROMPTS.md`](docs/PROMPTS.md) | Canonical text of every LLM prompt used in the pipeline. |
-| [`docs/EVAL.md`](docs/EVAL.md) | How to reproduce the report's 93.5 % number. |
-| [`docs/ROADMAP.md`](docs/ROADMAP.md) | Stage 0 → Stage 7 plan mapped to supervisor's directions. |
+**Start here.** If you've never seen this codebase, read these in order:
+
+| Order | File | Purpose |
+|---|---|---|
+| 1 | [`docs/PROJECT_REFERENCE.md`](docs/PROJECT_REFERENCE.md) | **Single-page everything** — every file's purpose, full tree, all citations, quick-lookups. Keep open while writing thesis. |
+| 2 | [`docs/STATUS.md`](docs/STATUS.md) | Current state — what's built, what's pending, whether to commit. |
+| 3 | [`docs/CODEBASE_TOUR.md`](docs/CODEBASE_TOUR.md) | Sequenced reading path for studying the project from scratch (~3-4 hours). |
+| 3 | [`docs/GLOSSARY.md`](docs/GLOSSARY.md) | Every tool + concept + alternative, thesis-citable. |
+| 4 | [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) | 5-layer figure → folder structure. |
+| 5 | [`docs/SCHEMA.md`](docs/SCHEMA.md) | Universal payload + ES doc schema, full field contract. |
+| 6 | [`docs/PROMPTS.md`](docs/PROMPTS.md) | Canonical text of every LLM prompt. |
+| 7 | [`docs/EVAL.md`](docs/EVAL.md) | How to reproduce the report's 93.5%. |
+| 8 | [`docs/RUNBOOK.md`](docs/RUNBOOK.md) | Two end-to-end recipes — Path A (RAG without labels, 30 min) and Path B (full live data collection). |
+| 9 | [`docs/MONITORING.md`](docs/MONITORING.md) | Every visibility surface (Kibana, Qdrant dashboard, operator dashboard). |
+| 10 | [`docs/AUDIT_GUIDE.md`](docs/AUDIT_GUIDE.md) | Per-file checklist for reviewing the codebase. |
+| 11 | [`docs/MIGRATION.md`](docs/MIGRATION.md) | Should I wipe ES? Per-step audit checklist for in-place vs fresh-start migration. |
+| 12 | [`docs/SOURCES.md`](docs/SOURCES.md) | Free ingestion APIs (YouTube, Twitch, Reddit, Hacker News, Mastodon, Bluesky, ...) + setup. |
+| 13 | [`docs/THESIS_DELIVERABLES.md`](docs/THESIS_DELIVERABLES.md) | Complete checklist of everything you need to produce for the thesis report. |
+| 14 | [`docs/IMPROVEMENTS.md`](docs/IMPROVEMENTS.md) | Prioritised list of robustness / agentic / methodology / supervisor-management improvements. |
+| 15 | [`docs/ROADMAP.md`](docs/ROADMAP.md) | Stage 0 → Stage 7 plan, planning lens only. |
 
 ## Datasets
 
@@ -59,7 +72,7 @@ Three independent processes need to run for an end-to-end live session. Open thr
 ### Terminal 1 — Tier-1 Processor
 
 ```bash
-python src/Zone2_AIModels/distilbert_processor.py
+python src/static_classifier/distilbert_processor.py
 ```
 
 Consumes the Kafka topic `universal_stream`, runs DistilBERT, writes labelled records to the `real_time_analysis` Elasticsearch index and to `data/stream_log.csv`.
@@ -67,7 +80,7 @@ Consumes the Kafka topic `universal_stream`, runs DistilBERT, writes labelled re
 ### Terminal 2 — Producer (YouTube live chat)
 
 ```bash
-python src/Zone1_DataHighway/omni_ingest.py
+python src/ingestion/omni_ingest.py
 ```
 
 Prompts for a YouTube live URL (Enter accepts a default test stream). Scrapes the page metadata, calls the Context Agent to assign `env_domain` / `env_subgenre` / `env_strictness`, then publishes chat messages to Kafka.
@@ -75,7 +88,7 @@ Prompts for a YouTube live URL (Enter accepts a default test stream). Scrapes th
 ### Terminal 3 — Tier-2 Async Auditor (run on a cadence)
 
 ```bash
-python src/Zone3_Agents/xai_batch_judge.py
+python src/agents/xai_batch_judge.py
 ```
 
 Sweeps unreviewed records with confidence `< 0.80`, asks the LLM to validate, writes the verdict overlay back to Elasticsearch. Re-run periodically — every few minutes is plenty.
@@ -83,7 +96,7 @@ Sweeps unreviewed records with confidence `< 0.80`, asks the LLM to validate, wr
 ### Analyst console (on-demand)
 
 ```bash
-python src/Zone3_Agents/leader_agent.py
+python src/agents/leader_agent.py
 ```
 
 Natural-language interface to the pipeline. Routes to search, stats, per-user audit, or weather tools. See `docs/PROMPTS.md` §3 for the supported analyst vocabulary.
@@ -101,7 +114,7 @@ Natural-language interface to the pipeline. Routes to search, stats, per-user au
 |---|---|
 | `src/calculate_thesis_metrics.py` | Aggregate metrics over `thesis_final_benchmark.csv`. |
 | `src/export_subset.py` | Pull reviewed records out of ES into `thesis_final_benchmark.csv`. |
-| `src/Zone3_Agents/check_db_size.py` | Inspect a sample ES record to view the live schema. |
+| `src/agents/check_db_size.py` | Inspect a sample ES record to view the live schema. |
 | `src/reset_db.py --yes` | **Destructive.** Wipes the configured ES index. |
 | `scripts/normalize_domains.py` | Backfill legacy compound `env_domain` values into the closed taxonomy. Dry-run by default; pass `--apply` to write. |
 

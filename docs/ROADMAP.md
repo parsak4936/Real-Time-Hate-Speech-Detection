@@ -2,11 +2,27 @@
 
 Eight stages, sequenced by dependency. The supervisor's seven future-work directions are mapped to Stages 1–7. Stage 0 is the immediate consolidation pass that makes any later measurement defensible.
 
+> **Note on naming.** The "Stage 0 / 1 / 2 …" labels in this document are a **planning lens** — how we sequence the work and how we talk about progress with the supervisor. They are *not* the code's vocabulary. Inside `src/`, `scripts/`, the notebook, and the ES schema, names are descriptive (`replay_with_memory.py`, `agent_final_decision_with_memory`, `Tier-1 + Tier-2 with memory`, etc.) so a reader who hasn't seen this document can still navigate the codebase.
+
 Each stage lists: **goal**, the supervisor's directions it advances, dependencies, target deliverables, and a concrete success criterion.
 
 ---
 
 ## Stage 0 — Consolidation & Documentation *(done)*
+
+### Stage 0.5 — Agentic Context Agent + externalised taxonomy *(done)*
+
+Initial Stage 0 closed-list pin was the wrong fit: it turned the Context Agent into a classifier and contradicted the project's agentic moderation goal. Stage 0.5 corrects this:
+
+- The closed `ENV_DOMAINS` / `DOMAIN_DEFAULT_STRICTNESS` constants are deleted from `src/shared_utils/prompts.py`.
+- The taxonomy moves to `config/taxonomy.yaml` — a seed list, operator-extensible, with per-canonical aliases and `default_strictness` fallbacks.
+- The Context Agent prompt is rewritten as a discovery prompt: no list, no domain-named examples for strictness, just principles. The LLM proposes `env_domain` freely.
+- `shared_utils/taxonomy.py::normalise_domain()` maps free-text proposals onto the canonical seed (exact → alias → fuzzy → unknown-policy). The LLM's raw proposal is preserved in `env_domain_raw`; the match quality is stored in `env_domain_match`; off-seed proposals append to `data/pending_taxonomy.log` for operator review.
+- Strictness is LLM-reasoned per stream with a justification stored in `env_strictness_reasoning`. The YAML's `default_strictness` is consulted only as a fallback when the LLM output is malformed.
+- Universal Schema and ES doc both carry the new fields; see `docs/SCHEMA.md`.
+
+**Why this matters for the thesis.** The discovery vs. classification distinction is the agentic-moderation claim. Stage 0.5 makes that claim mechanically true: the LLM is no longer constrained to a Cartesian set of categories the engineer pre-declared. The pipeline curates a canonical key for analytics consistency, but it does so *after* the LLM's reasoning, not before.
+
 
 **Goal.** Lock the foundation: closed taxonomy, single-source prompts, deterministic LLM calls, accurate analytics, complete docs.
 
@@ -18,7 +34,7 @@ Each stage lists: **goal**, the supervisor's directions it advances, dependencie
 - `reset_db.py` requires `--yes`.
 - `distilbert_processor.py` and `youtube_adapter.py` carry `env_subgenre` through the Universal Schema and into Elasticsearch.
 - `scripts/normalize_domains.py` (dry-run default) rewrites existing ES docs to the closed taxonomy.
-- Dead files removed: legacy `yt_producer.py`, broken `tweeter_producer.py`, stub `reddit_adapter.py`, broken `llm_client.py`, empty `db_client.py`, orphaned `Zone1_DataHighway/bookmark.txt`.
+- Dead files removed: legacy `yt_producer.py`, broken `tweeter_producer.py`, stub `reddit_adapter.py`, broken `llm_client.py`, empty `db_client.py`, orphaned `ingestion/bookmark.txt`.
 - `requirements.txt` curated (was a 66 KB UTF-16 conda freeze).
 - README rewritten to reflect actual entry points.
 - `docs/{ARCHITECTURE,SCHEMA,PROMPTS,EVAL,ROADMAP}.md` added.
@@ -52,25 +68,36 @@ Each stage lists: **goal**, the supervisor's directions it advances, dependencie
 
 ---
 
-## Stage 2 — Real-Time Memory & Temporal Context
+## Stage 2 — Real-Time Memory & Temporal Context *(code landed; awaiting evaluation data)*
 
 **Maps to supervisor direction:** *(a) Real-Time Memory & Temporal Context.*
 
-**Why next.** Cheapest research win. The judge currently sees one message in isolation; pulling the last N messages from the same user / same thread out of ES and injecting them into the judge prompt directly attacks the §6.3 "implicit bias blindness" failure mode the report itself identified.
+**Why next.** Cheapest research win. The judge previously saw one message in isolation; pulling the last N messages from the same user / same thread out of ES and injecting them into the judge prompt directly attacks the §6.3 "implicit bias blindness" failure mode the report itself identified.
 
-**Dependencies.** Stage 1 (so the improvement is measurable).
+**Dependencies.** Stage 1 (eval notebook exists).
 
-**Deliverables.**
-- `src/Zone3_Agents/temporal.py` — `get_user_history(author_id, window)`, `get_thread_history(thread_id, window)` over ES.
-- New judge prompt variant `build_judge_prompt_with_context(...)` that takes a list of prior messages and reasons over the rolling window.
-- Behavioural fingerprint: short, structured summary of a user's recent labelling pattern (e.g. "8 Normal / 2 Offensive in last 20 messages").
-- Configuration knob: `MEMORY_WINDOW_SIZE` and `MEMORY_LOOKBACK_HOURS` in `shared_utils/config.py`.
+**What landed.**
+- `src/shared_utils/memory.py` — `get_user_history`, `get_thread_context`, `get_user_behavior_fingerprint`, `fetch_memory_bundle`. All four return prompt-ready strings; no LLM calls, pure ES retrieval.
+- `src/shared_utils/prompts.py::build_judge_prompt_with_memory` — Stage 2 prompt variant with three contextual rules layered on the original four forensic rules. The Stage 0 `build_judge_prompt` stays as the no-memory baseline.
+- `src/shared_utils/config.py` — `MEMORY_ENABLED`, `MEMORY_USER_WINDOW_SIZE`, `MEMORY_THREAD_WINDOW_SIZE`, `MEMORY_LOOKBACK_HOURS`, `MEMORY_FINGERPRINT_WINDOW`. All env-driven.
+- `xai_batch_judge.py` and `xai_judge_tool.py` rewired to use the memory variant when `MEMORY_ENABLED`. ES doc gains `agent_memory_used`, `agent_memory_user_msgs`, `agent_memory_thread_msgs`, `agent_memory_user_profile`.
+- `scripts/replay_with_memory.py` — re-judges already-reviewed ES records WITH memory, writing to `agent_final_decision_with_memory` / `agent_explanation_with_memory`. Dry-run default. `--csv` flag for targeted replay; `--limit` for smoke tests. Idempotent.
+- `src/export_subset.py` — exported CSV now includes `message_id` + `timestamp` (for ID-based replay matching), `agent_final_decision_with_memory`, `agent_explanation_with_memory`, all `agent_memory_*` fields.
+- `notebooks/evaluation.ipynb` — new §4 with v1-vs-v2 comparison, per-domain delta, McNemar's test, memory usage distribution, and a new `RESULTS_REGISTRY` row.
 
-**Success criterion.** Stage-1 harness shows ≥ 3 percentage-point accuracy lift on the False-Negative class (the implicit-toxicity bucket the report flagged) without significant False-Positive regression. McNemar p < 0.05.
+**What is still needed before the metric can be cited.**
+The Stage 2 numbers come from running:
+```bash
+python scripts/replay_with_memory.py --csv thesis_final_benchmark.csv --apply
+python src/export_subset.py thesis_final_benchmark.csv
+```
+then re-running the notebook. The replay needs Docker + ES + Ollama running and the 459 internship records (or a freshly collected equivalent) live in ES.
+
+**Success criterion.** Notebook §4.2 reports a positive delta (v2 - v1) in 3-class accuracy with McNemar p < 0.05 (§4.4). Per-domain breakdown (§4.3) shows where memory contributed most — expected to be Gaming (high sarcasm density) and News/Politics (where prior toxic posts amplify a borderline single message).
 
 ---
 
-## Stage 3 — Retrieval-Augmented Moderation (RAG)
+## Stage 3 — Retrieval-Augmented Moderation (RAG) *(code complete; evaluation via leave-one-out, no new labels needed)*
 
 **Maps to supervisor direction:** *(b) RAG.*
 
@@ -78,13 +105,27 @@ Each stage lists: **goal**, the supervisor's directions it advances, dependencie
 
 **Dependencies.** Stages 1 & 2.
 
-**Deliverables.**
-- Vector DB choice: **Qdrant** (Docker, free, fast) or **Chroma** (in-process, simpler).
-- `src/Zone3_Agents/rag.py` — embed every reviewed ES record on write, index it; at judge time retrieve k=5 nearest precedents.
-- Embedding model — start with `sentence-transformers/all-MiniLM-L6-v2` (lightweight, edge-friendly).
-- Judge prompt variant that includes the retrieved precedents as structured context.
+**What landed in the scaffolding pass.**
+- Vector DB: **Qdrant 1.10.1** added to `docker-compose.yml` (port 6333 HTTP, 6334 gRPC, persistent volume `qdrant_data`).
+- `config/rag.yaml` — operator-editable knobs: embedding model name, dim, device, batch size, top-k, similarity threshold.
+- `src/shared_utils/config.py` — env knobs: `RAG_ENABLED` (default False), `QDRANT_HOST`, `QDRANT_PORT`, `QDRANT_COLLECTION`.
+- `src/shared_utils/rag.py` — lazy Qdrant client + sentence-transformers embedder + `index_record`, `index_records_bulk`, `retrieve_similar`, `format_precedents_for_prompt`, `fetch_retrieval_bundle`. Symmetric API to `memory.py`.
+- `scripts/build_rag_index.py` — one-off bootstrap walker. Dry-run default; `--apply`, `--limit`, `--reviewed-only` flags. Idempotent via blake2b-hashed point IDs.
+- `src/shared_utils/prompts.py::build_judge_prompt_with_memory_and_rag` — defined, includes a new `RETRIEVED PRECEDENTS` block and a new contextual rule "Precedent Reasoning".
+- `requirements.txt` — added `qdrant-client>=1.10`, `sentence-transformers>=2.7`, `scipy>=1.10`.
 
-**Success criterion.** Harness shows further ≥ 2 pp accuracy lift over Stage 2 on the dogwhistle / coded-language subset (curate one). Ablation cleanly separates Stage 2 (memory) from Stage 3 (RAG) contributions.
+**What landed in the activation step.**
+- `src/shared_utils/prompts.py::build_judge_prompt_with_rag` — RAG-only variant for clean Stage 3 isolation (no memory confound).
+- `scripts/seed_rag_from_csv.py` — embeds the internship benchmark CSV directly into Qdrant. `human_ground_truth` deliberately omitted from the payload to prevent label leakage.
+- `scripts/replay_with_rag.py` — leave-one-out cross-validation against the CSV. Writes `agent_final_decision_with_rag`, `agent_explanation_with_rag`, `agent_retrieved_precedent_ids`, `agent_retrieval_count`.
+- `notebooks/evaluation.ipynb` §5 — RAG-vs-baseline comparison, per-domain breakdown, McNemar's test, registry entry. Mirrors §4 (temporal memory) structurally.
+- `docs/RUNBOOK.md` Path A — three-command recipe (`up qdrant`, `seed_rag_from_csv`, `replay_with_rag`) and the notebook step.
+
+**Evaluation requires.** Qdrant running and one round of seed + replay. No new live data, no manual labelling. ~15-30 minutes wall-clock.
+
+**Live-pipeline wiring** (`RAG_ENABLED=True` in the always-on Tier-2 sweep) is still deferred — it requires Stage 2 data first so memory + RAG can be measured together. Live wiring lands when Stage 2 has a measured number too.
+
+**Success criterion.** Notebook §5 (once it exists) reports a positive delta (with_memory_and_rag − with_memory) in 3-class accuracy on a curated dogwhistle / coded-language subset, with McNemar p < 0.05. Per-domain breakdown cleanly separates the temporal-memory contribution (Stage 2) from the semantic-retrieval contribution (Stage 3).
 
 ---
 

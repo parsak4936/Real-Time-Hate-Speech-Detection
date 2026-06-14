@@ -24,10 +24,10 @@ from shared_utils.prompts import (
     build_leader_synthesis_prompt,
 )
 
-from Zone3_Agents.tools.search_tool import execute_universal_search
-from Zone3_Agents.tools.stats_tool import execute_statistics
-from Zone3_Agents.tools.weather_tool import execute_weather_time
-from Zone3_Agents.tools.xai_judge_tool import execute_xai_judge
+from agents.tools.search_tool import execute_universal_search
+from agents.tools.stats_tool import execute_statistics
+from agents.tools.weather_tool import execute_weather_time
+from agents.tools.xai_judge_tool import execute_xai_judge
 
 TOOL_REGISTRY = {
     "UNIVERSAL_SEARCH": execute_universal_search,

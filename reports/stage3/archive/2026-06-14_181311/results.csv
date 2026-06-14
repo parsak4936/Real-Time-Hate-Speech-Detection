@@ -1,0 +1,5 @@
+,accuracy_3class,n_records,latency_ms,notes,delta_vs_baseline
+Tier-1 baseline (DistilBERT only),73.8%,298,30.6,"Static classifier, no Tier-2 overlay",
+"Tier-1 + Tier-2 baseline (no memory, no RAG)",88.6%,298,4754.3,"Hybrid pipeline, frozen internship verdicts",
+Tier-1 + Tier-2 with memory,78.9%,298,4754.3,Memory-augmented prompt (user history + thread context),-9.73 pp
+Tier-1 + Tier-2 with RAG (no memory),88.3%,298,4754.3,RAG-only prompt; semantic precedents from Qdrant,-0.34 pp

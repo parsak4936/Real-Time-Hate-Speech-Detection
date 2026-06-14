@@ -1,0 +1,226 @@
+# ---------------------------------------------------------------------------
+# Domain taxonomy — seed list, NOT a hard constraint.
+# ---------------------------------------------------------------------------
+#
+# The Context Agent is NOT shown this file. It proposes a domain in free text
+# based purely on the stream metadata. This YAML is consulted afterwards to
+# normalise the LLM's proposal onto a canonical analytics key so that Kibana
+# aggregations and stats_tool counts do not fragment.
+#
+# To add a new canonical category:
+#   - Append an entry under `canonical:` with at least a `name`.
+#   - Optionally list `aliases` (case-insensitive) and a `default_strictness`.
+#   - Restart any running producer (the YAML is loaded once at process start).
+#
+# To change moderation strictness defaults:
+#   - Edit the `default_strictness` field. This is only a fallback — the LLM
+#     decides strictness per stream and that decision wins unless malformed.
+#
+# To change behaviour when the LLM proposes something we have never seen:
+#   - Edit `unknown_policy.action`:
+#       accept_and_log    — keep the raw proposal, write it to env_domain,
+#                           and append to data/pending_taxonomy.log for later
+#                           promotion to canonical. Recommended for research.
+#       clamp_to_general  — silently replace with "General". Recommended for
+#                           strict-analytics production.
+# ---------------------------------------------------------------------------
+
+canonical:
+  - name: Gaming
+    aliases:
+      - video games
+      - esports
+      - gaming/esports
+      - gaming/survival
+      - gaming/action
+      - twitch
+      - livestream gaming
+      - speedrun
+    default_strictness: low
+
+  - name: Politics
+    aliases:
+      - political
+      - politics/news
+      - election
+      - government
+      - debate
+      - policy
+    default_strictness: high
+
+  - name: News
+    aliases:
+      - breaking news
+      - journalism
+      - current events
+      - live news
+      - press conference
+    default_strictness: high
+
+  - name: Music
+    aliases:
+      - concert
+      - song
+      - performance
+      - dj
+      - lofi
+      - radio
+      - karaoke
+    default_strictness: medium
+
+  - name: Sports
+    aliases:
+      - football
+      - basketball
+      - soccer
+      - sports commentary
+      - live match
+      - racing
+      - olympics
+    default_strictness: medium
+
+  - name: Education
+    aliases:
+      - tutorial
+      - lecture
+      - learning
+      - study
+      - training
+      - science
+      - academic
+    default_strictness: medium
+
+  - name: Entertainment
+    aliases:
+      - vlog
+      - comedy
+      - reaction
+      - podcast
+      - talk show
+      - variety
+      - irl
+    default_strictness: low
+
+  - name: Technology
+    aliases:
+      - tech
+      - software
+      - coding
+      - ai
+      - hardware
+      - programming
+      - dev
+    default_strictness: medium
+
+  - name: Lifestyle
+    aliases:
+      - travel
+      - food
+      - cooking
+      - fitness
+      - fashion
+      - beauty
+      - vlog/lifestyle
+    default_strictness: medium
+
+  - name: Health
+    aliases:
+      - medical
+      - mental health
+      - wellness
+      - healthcare
+      - support group
+      - therapy
+      - patient forum
+    default_strictness: high
+
+  - name: E-commerce
+    aliases:
+      - marketplace
+      - shopping
+      - retail
+      - product page
+      - product review
+      - amazon
+      - ebay
+      - etsy
+      - shopify
+      - seller chat
+      - buyer chat
+    default_strictness: medium
+
+  - name: Reviews
+    aliases:
+      - review
+      - rating
+      - feedback
+      - testimonial
+      - yelp
+      - tripadvisor
+      - google reviews
+      - imdb
+      - goodreads
+      - rotten tomatoes
+    default_strictness: medium
+
+  - name: Forum
+    aliases:
+      - discussion
+      - subreddit
+      - reddit
+      - board
+      - community
+      - thread
+      - hacker news
+      - stack overflow
+      - quora
+    default_strictness: medium
+
+  - name: Customer Support
+    aliases:
+      - support
+      - help
+      - complaint
+      - customer service
+      - ticket
+      - service chat
+      - help desk
+      - billing
+      - returns
+    default_strictness: high
+
+  - name: Social Media
+    aliases:
+      - tweet
+      - twitter
+      - x.com
+      - post
+      - social
+      - instagram
+      - facebook
+      - tiktok
+      - threads
+      - reel comments
+      - public timeline
+    default_strictness: medium
+
+  - name: General
+    aliases:
+      - chat
+      - casual
+      - misc
+      - just chatting
+      - blog comment
+      - generic comment section
+    default_strictness: medium
+
+# ---------------------------------------------------------------------------
+# Fuzzy-match threshold (0-1). Proposals scoring at or above this against any
+# canonical name/alias are accepted as that canonical. Below, the unknown
+# policy applies.
+# ---------------------------------------------------------------------------
+fuzzy_match_threshold: 0.75
+
+unknown_policy:
+  action: accept_and_log
+  log_path: data/pending_taxonomy.log

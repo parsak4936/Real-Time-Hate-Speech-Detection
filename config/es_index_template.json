@@ -1,0 +1,56 @@
+{
+  "settings": {
+    "number_of_shards": 1,
+    "number_of_replicas": 0,
+    "refresh_interval": "5s"
+  },
+  "mappings": {
+    "dynamic": "true",
+    "properties": {
+      "message_id":                       { "type": "keyword" },
+      "text":                             { "type": "text",
+                                            "fields": { "keyword": { "type": "keyword", "ignore_above": 512 } } },
+      "timestamp":                        { "type": "date" },
+
+      "source_platform":                  { "type": "keyword" },
+
+      "env_domain":                       { "type": "keyword" },
+      "env_domain_raw":                   { "type": "text",
+                                            "fields": { "keyword": { "type": "keyword", "ignore_above": 128 } } },
+      "env_domain_match":                 { "type": "keyword" },
+      "env_subgenre":                     { "type": "keyword" },
+      "env_strictness":                   { "type": "keyword" },
+      "env_strictness_reasoning":         { "type": "text" },
+
+      "thread_id":                        { "type": "keyword" },
+      "thread_title":                     { "type": "text",
+                                            "fields": { "keyword": { "type": "keyword", "ignore_above": 256 } } },
+      "has_media":                        { "type": "boolean" },
+
+      "author_id":                        { "type": "keyword" },
+      "author_name":                      { "type": "text",
+                                            "fields": { "keyword": { "type": "keyword", "ignore_above": 256 } } },
+      "is_moderator":                     { "type": "boolean" },
+      "is_sponsor":                       { "type": "boolean" },
+
+      "model_prediction":                 { "type": "integer" },
+      "model_label":                      { "type": "keyword" },
+      "model_confidence":                 { "type": "float" },
+      "processing_time_ms":               { "type": "float" },
+
+      "agent_reviewed":                   { "type": "boolean" },
+      "agent_model_used":                 { "type": "keyword" },
+      "agent_final_decision":             { "type": "keyword" },
+      "agent_explanation":                { "type": "text" },
+      "agent_latency_seconds":            { "type": "float" },
+
+      "agent_memory_used":                { "type": "boolean" },
+      "agent_memory_user_msgs":           { "type": "integer" },
+      "agent_memory_thread_msgs":         { "type": "integer" },
+      "agent_memory_user_profile":        { "type": "text" },
+
+      "agent_final_decision_with_memory": { "type": "keyword" },
+      "agent_explanation_with_memory":    { "type": "text" }
+    }
+  }
+}

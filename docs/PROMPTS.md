@@ -6,40 +6,66 @@ All LLM prompts the pipeline issues are defined in **one file**: `src/shared_uti
 
 ## 1. Context Agent prompt — `build_context_agent_prompt(...)`
 
-**Used by:** `src/Zone1_DataHighway/adapters/context_agent.py`
+**Used by:** `src/ingestion/adapters/context_agent.py`
 **Report section:** §4.3.2 (Prompt Architecture and Output Constraints)
 **Output format:** Strict JSON via Ollama `format="json"`
 
 ### What it does
 
-Takes the scraped HTML metadata of a live stream (title, channel, description, is_live flag) and asks the LLM to classify it into three fields:
+Takes the scraped HTML metadata of a live stream (title, channel, description, is_live flag) and asks the LLM to **discover**:
 
-- `env_domain` — **one** main category from a closed 10-value taxonomy.
-- `env_subgenre` — short free-text refinement, may be `""`.
-- `env_strictness` — `low` / `medium` / `high`.
+- `env_domain` — what the stream is about (free text, the LLM proposes; no closed list shown to it).
+- `env_subgenre` — a short refinement, free text, may be `""`.
+- `env_strictness` — `low` / `medium` / `high`, reasoned from principles.
+- `env_strictness_reasoning` — one-sentence justification.
 
-### Why a closed taxonomy
+### Why agentic discovery (not closed-list classification)
 
-In the internship benchmark `env_domain` was open-ended and the LLM produced compound values like `Gaming/Survival`, `Gaming/Esports`, `Politics/News`. This fragmented the `env_domain.keyword` aggregation in Kibana and `stats_tool`, and made cross-stream comparison impossible. The Stage 0 cleanup pins the main category to a closed list (`ENV_DOMAINS` in the prompt module) and pushes the granularity into the new optional `env_subgenre` field. Any out-of-taxonomy LLM output is clamped to `"General"` by `resolve_environment()`.
+The initial Stage 0 implementation showed the LLM a closed 10-value taxonomy and asked it to **pick**. That turned the Context Agent into a classifier and defeated the project's stated goal of agentic moderation. The Stage 1.5 rewrite removes the menu: the LLM proposes a category in whatever words it thinks best fit the stream, and a separate normaliser (see §1.1 below) maps that proposal to a canonical analytics key.
 
-### Closed taxonomies
+Strictness uses the same philosophy. The prompt no longer says *"low = Gaming, high = Politics"*; it describes the principles ("low = casual entertainment context", "high = serious or professional setting") and lets the LLM reason from the metadata. The principles do not name any specific domain.
 
-```python
-ENV_DOMAINS = [
-    "Gaming", "Politics", "News", "Music", "Sports",
-    "Education", "Entertainment", "Technology", "Lifestyle", "General",
-]
-ENV_STRICTNESS = ["low", "medium", "high"]
-```
+### 1.1 Taxonomy normalisation (downstream, not in prompt)
 
-## 2. Forensic Judge prompt — `build_judge_prompt(...)`
+After the LLM responds, `shared_utils/taxonomy.py::normalise_domain()` maps the free-text proposal onto a canonical entry from `config/taxonomy.yaml`. Four match qualities are recorded on the ES doc:
+
+| `env_domain_match` | What it means |
+|---|---|
+| `exact` | The LLM's proposal matched a canonical name letter-for-letter. |
+| `alias` | It matched a known alias of a canonical (e.g. "esports" → Gaming). |
+| `fuzzy` | A `SequenceMatcher` ratio ≥ `fuzzy_match_threshold` matched a canonical or alias. |
+| `unknown` | No canonical was close enough. The `unknown_policy.action` in the YAML decides what happens (default: `accept_and_log` — keep the proposal, write to `data/pending_taxonomy.log` for later promotion). |
+
+The LLM's raw proposal is preserved verbatim in `env_domain_raw` on every ES doc. The canonical name is in `env_domain`. Analytics aggregations key on `env_domain.keyword` so they stay stable across thousands of records.
+
+### 1.2 Extending the taxonomy
+
+Operators edit `config/taxonomy.yaml` — no code change. Append an entry to `canonical:` with optional `aliases` and `default_strictness`. Restart any running producer to pick up the change. To analyse which categories the LLM keeps proposing that you have not yet canonicalised, read `data/pending_taxonomy.log`.
+
+## 2. Forensic Judge prompt — `build_judge_prompt(...)` and `build_judge_prompt_with_memory(...)`
 
 **Used by:**
-- `src/Zone3_Agents/xai_batch_judge.py` (async sweep)
-- `src/Zone3_Agents/tools/xai_judge_tool.py` (on-demand audit)
+- `src/agents/xai_batch_judge.py` (async sweep) — picks the memory variant when `MEMORY_ENABLED`.
+- `src/agents/tools/xai_judge_tool.py` (on-demand audit) — same.
+- `scripts/replay_with_memory.py` — always uses the memory variant (it exists to populate the v2 verdicts).
 
 **Report section:** §4.4 (Tier-2 Agentic Auditor)
 **Output format:** Strict JSON via Ollama `format="json"`
+
+### Variants
+
+| Variant | When used | Extra context |
+|---|---|---|
+| `build_judge_prompt` | Baseline. Used when `MEMORY_ENABLED=False` and `RAG_ENABLED=False`. | None — message judged in isolation. |
+| `build_judge_prompt_with_memory` | When `MEMORY_ENABLED=True` and `RAG_ENABLED=False` (default live config after Stage 2). | Three injected blocks: USER BEHAVIOR FINGERPRINT, RECENT USER HISTORY, THREAD CONTEXT. |
+| `build_judge_prompt_with_rag` | RAG only, no memory. Used by `scripts/replay_with_rag.py` for clean Stage 3 isolation (measuring the RAG contribution alone). | One injected block: RETRIEVED PRECEDENTS (top-k semantically similar past cases, with their model_label, env_domain, and Tier-2 baseline verdict — **human_ground_truth is deliberately omitted from the payload to prevent label leakage**). |
+| `build_judge_prompt_with_memory_and_rag` | When both `MEMORY_ENABLED=True` and `RAG_ENABLED=True` (full memory + retrieval). Wired into agents when both flags are flipped. | All three memory blocks AND the RETRIEVED PRECEDENTS block. |
+
+All four prompts share the same four forensic rules. Each step up the ladder adds contextual rules:
+
+- **Memory variant** adds rules 5–7: **Behavioral Pattern**, **Conversational Continuity**, **Memory is Evidence Not Verdict**.
+- **RAG variant** adds rules 5–6: **Precedent Reasoning** + **Precedents Are Evidence Not Verdict**.
+- **Memory + RAG variant** combines both rule sets (5–8).
 
 ### What it does
 
@@ -64,7 +90,7 @@ The report (§4.4) states inference runs at `temperature=0.0`. In the previous c
 
 ## 3. Leader Agent router prompt — `build_leader_router_prompt(...)`
 
-**Used by:** `src/Zone3_Agents/leader_agent.py` (Phase 1)
+**Used by:** `src/agents/leader_agent.py` (Phase 1)
 **Output format:** Strict JSON via Ollama `format="json"`
 
 Routes the analyst's natural-language input to one of five tools:
@@ -79,7 +105,7 @@ The router prompt includes a "vocabulary & database mapping" block that translat
 
 ## 4. Leader Agent synthesis prompt — `build_leader_synthesis_prompt(...)`
 
-**Used by:** `src/Zone3_Agents/leader_agent.py` (Phase 3)
+**Used by:** `src/agents/leader_agent.py` (Phase 3)
 **Output format:** Free text (no JSON constraint)
 
 Takes the raw tool output and the original analyst question, asks the LLM to compose a concise grounded report. The "fuzzy matching" instruction is there because `search_tool` uses ES fuzzy matching on `author_name`, so the synthesis layer must accept that a slightly-different-spelled username in the raw data is the user's typo.
