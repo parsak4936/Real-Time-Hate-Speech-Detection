@@ -42,10 +42,10 @@ Verify: open http://localhost:6333/dashboard — Qdrant UI loads.
 
 ```bash
 # Dry-run first to verify the CSV is well-formed:
-python scripts/seed_rag_from_csv.py thesis_final_benchmark.csv
+python scripts/setup/seed_rag_from_csv.py thesis_final_benchmark.csv
 
 # Actually populate:
-python scripts/seed_rag_from_csv.py thesis_final_benchmark.csv --apply
+python scripts/setup/seed_rag_from_csv.py thesis_final_benchmark.csv --apply
 ```
 
 First run downloads the embedding model (~80 MB sentence-transformers/all-MiniLM-L6-v2). Subsequent runs are fast.
@@ -56,10 +56,10 @@ You should see something like `Indexed 459/459 records into Qdrant in 18.4s.`
 
 ```bash
 # Smoke test on 5 rows first (no CSV write, no commitment):
-python scripts/replay_with_rag.py --csv thesis_final_benchmark.csv --limit 5
+python scripts/eval/replay_with_rag.py --csv thesis_final_benchmark.csv --limit 5
 
 # Then the full run:
-python scripts/replay_with_rag.py --csv thesis_final_benchmark.csv --apply
+python scripts/eval/replay_with_rag.py --csv thesis_final_benchmark.csv --apply
 ```
 
 Per-row output looks like:
@@ -269,7 +269,7 @@ Stop with Ctrl+C when there's nothing left to review (or when you have enough �
 ## 6. Export to CSV
 
 ```bash
-python src/export_subset.py thesis_final_benchmark.csv
+python scripts/eval/export_subset.py thesis_final_benchmark.csv
 ```
 
 This writes a CSV in the repo root with one row per reviewed record and all the columns the notebook needs (including `message_id` and `timestamp` so `replay_with_memory.py` can match by exact ID later).
@@ -302,10 +302,10 @@ This step re-judges the records you just labelled, with the memory-augmented pro
 
 ```bash
 # Smoke test first (no writes):
-python scripts/replay_with_memory.py --csv thesis_final_benchmark.csv --limit 5
+python scripts/eval/replay_with_memory.py --csv thesis_final_benchmark.csv --limit 5
 
 # Then for real:
-python scripts/replay_with_memory.py --csv thesis_final_benchmark.csv --apply
+python scripts/eval/replay_with_memory.py --csv thesis_final_benchmark.csv --apply
 ```
 
 You'll see per-record output like:
@@ -332,7 +332,7 @@ Baseline vs with-memory deltas: 38 (15.4%)
 ## 9. Re-export to include the new columns
 
 ```bash
-python src/export_subset.py thesis_final_benchmark.csv
+python scripts/eval/export_subset.py thesis_final_benchmark.csv
 ```
 
 Open the CSV briefly — confirm `agent_final_decision_with_memory` is now populated. Note: this overwrites the file you hand-labelled, but the `human_ground_truth` column survives because the export reads it from ES (it was indexed when the live pipeline ran).
@@ -488,7 +488,7 @@ print(f"Delta: {delta:+.1pp}, McNemar p = {p_value:.4f}")
 
 ```bash
 # Create a multi_agent_verdict column by running orchestrator on each row
-python scripts/replay_with_multi_agent.py --csv thesis_benchmark_eval.csv --apply --force
+python scripts/eval/replay_with_multi_agent.py --csv thesis_benchmark_eval.csv --apply --force
 ```
 
 Expected per-row output:

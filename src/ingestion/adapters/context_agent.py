@@ -51,7 +51,19 @@ def resolve_environment(source_platform: str, raw_meta: dict) -> dict:
     print(f"-> [Context Agent] Using LLM: {ACTIVE_MODEL}")
 
     prompt = build_context_agent_prompt(source_platform, raw_meta)
-    context_data = ollama_chat_json(prompt)
+    # The LLM call can fail outright (rate limit / network / daemon down), not
+    # just return malformed JSON. Either way, ingestion must never crash — a
+    # failed context lookup degrades to safe defaults so chat keeps flowing.
+    try:
+        context_data = ollama_chat_json(prompt)
+    except Exception as exc:  # noqa: BLE001
+        status = getattr(exc, "status_code", None)
+        if status == 429:
+            print("-> [Context Agent] Ollama rate limit (429) — using fallback context; "
+                  "ingestion continues (records tagged 'General').")
+        else:
+            print(f"-> [Context Agent Error] LLM call failed ({exc}). Using fallback.")
+        return _fallback_env()
 
     if context_data is None:
         print("-> [Context Agent Error] Failed to parse AI response. Using fallback.")

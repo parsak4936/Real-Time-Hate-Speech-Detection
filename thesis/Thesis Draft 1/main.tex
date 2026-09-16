@@ -1,0 +1,100 @@
+\documentclass[11pt,a4paper]{report}
+
+% --- encoding & fonts ---
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+
+% --- sane page margins ---
+\usepackage[a4paper,margin=2.6cm]{geometry}
+
+% --- typography: this is what fixes the "jumps" ---
+\usepackage{microtype}
+\usepackage{parskip}
+\usepackage{setspace}
+\onehalfspacing            % swap to \singlespacing for denser text
+\setlength{\emergencystretch}{3em}
+
+% --- figures & tables (array + calc are what make the wide tables render) ---
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{array}
+\usepackage{calc}
+\usepackage{longtable}
+\usepackage{ltcaption}
+\usepackage{booktabs}
+\usepackage{caption}
+\captionsetup{font=small,labelfont=bf}
+
+% --- math, citations, links ---
+\usepackage{amsmath,amssymb}
+\usepackage[numbers,sort&compress]{natbib}
+\usepackage[hidelinks]{hyperref}
+
+% --- Pandoc helpers still referenced by the chapters ---
+\providecommand{\tightlist}{\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\providecommand{\pandocbounded}[1]{#1}
+
+\begin{document}
+
+% ------------------- Title page (Università di Messina) -------------------
+\begin{titlepage}
+  \centering
+  \includegraphics[width=0.24\textwidth]{unime-logo.jpg}\\[10pt]
+  {\Large\textsc{Universit\`a degli Studi di Messina}}\\[4pt]
+  \rule{\linewidth}{0.4mm}\\[6pt]
+  {\small\bfseries DIPARTIMENTO DI SCIENZE MATEMATICHE E INFORMATICHE,\\
+   SCIENZE FISICHE E SCIENZE DELLA TERRA}\\[6pt]
+  {\normalsize Master's Degree in Data Science (LM-DATA)}\\
+  {\normalsize Curriculum: Economics}\\[26mm]
+
+  {\LARGE\bfseries Scalable Real-Time Hate Speech Detection}\\[8pt]
+  {\large A Big Data Architecture utilizing Stream Processing and\\
+   Deep Learning with Automated AI Agents}\\[24mm]
+
+  \noindent
+  \begin{minipage}[t]{0.5\textwidth}
+    \raggedright\large
+    \textbf{Supervisor:}\\ Prof.\ Francesco La Rosa\\[8pt]
+    \textbf{Co-Supervisor:}\\ Dr.\ Pierluigi Dell'Acqua
+  \end{minipage}\hfill
+  \begin{minipage}[t]{0.4\textwidth}
+    \raggedleft\large
+    \textbf{Candidate:}\\ Parsa Kazemi (560\,180)
+  \end{minipage}\\[22mm]
+
+  {\large Academic Year 2025/2026}
+\end{titlepage}
+\chapter*{Abstract}
+Online platforms now produce more speech than any team of humans could hope to read. On a busy live stream the chat can scroll past at thousands of messages a minute, and buried in that flow are the ones moderation actually exists for: the slur aimed at another viewer, the pile-on, the threat wrapped in a joke. Deciding, in real time, whether a message is fine, merely rude, or genuinely hateful is partly a Big Data problem and partly a language problem, and the two pull against each other. Fast static classifiers keep up with the stream but read words without context, so they confuse offensive language with hate and flag far too much that is innocent. The models that do grasp context, today's Large Language Models (LLMs), are far too slow to run on every message.
+
+This thesis builds a pipeline that refuses to pick a side. Ingestion, processing, and storage run on a containerised Big Data stack (Apache Kafka, Apache Spark, and Elasticsearch, with a Qdrant vector store for semantic search), so the stream never blocks. Classification then happens in two tiers. A fine-tuned DistilBERT model, measured here against Logistic Regression and SVM baselines, handles the fast first pass; only the cases it is unsure about are handed up to a second tier, an LLM "judge" that weighs the message in context and explains its verdict, after a light Context Agent has worked out what kind of stream this is and how strict it should be. Several further ideas are then layered onto the judge and tested one at a time: a temporal memory of what a user and a thread have said before, a retrieval step that surfaces similar past cases as precedent, a switchable curated-knowledge backend (an "LLM-Wiki" of policies and glossaries) set against that retrieval, and a multi-agent design that splits the decision between a risk scorer, a behavioural profiler, an escalation router, and a supervisor.
+
+Because real chat is overwhelmingly normal, headline accuracy flatters almost anything, so the evaluation leads instead with toxic-class F1, confusion matrices, and McNemar's test on a hand-labelled benchmark. The two-tier design cuts the static model's false positives sharply, and the multi-agent configuration reaches the best toxic-class F1, though it buys that precision by giving up some recall (a tension the thesis examines rather than hides). The central contribution is not any one component but the pipeline as a whole, together with a controlled, honest account of how much each kind of added context is really worth.
+
+Keywords: hate-speech detection, Big Data, stream processing, Apache Kafka, Apache Spark, DistilBERT, LLM-as-a-judge, retrieval-augmented generation, multi-agent systems, content moderation.
+\clearpage
+
+% ------------------- front matter -------------------
+\tableofcontents
+\listoffigures
+\listoftables
+\clearpage
+
+% ==== Chapters, added ONE BY ONE. Uncomment as we review each. ====
+\input{body/introduction}
+\input{body/sota}
+\input{body/architecture}
+\input{body/methods}
+\input{body/results}
+\input{body/discussion}
+\input{body/conclusion}
+
+\appendix
+\input{body/appendix_prompts}
+\input{body/appendix_environment}
+
+\bibliographystyle{unsrtnat}
+\bibliography{references}
+
+\end{document}

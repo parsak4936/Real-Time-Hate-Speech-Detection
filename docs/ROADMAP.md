@@ -33,7 +33,7 @@ Initial Stage 0 closed-list pin was the wrong fit: it turned the Context Agent i
 - `stats_tool` duplicate-code block removed; performance metrics now reach the analyst.
 - `reset_db.py` requires `--yes`.
 - `distilbert_processor.py` and `youtube_adapter.py` carry `env_subgenre` through the Universal Schema and into Elasticsearch.
-- `scripts/normalize_domains.py` (dry-run default) rewrites existing ES docs to the closed taxonomy.
+- `scripts/setup/normalize_domains.py` (dry-run default) rewrites existing ES docs to the closed taxonomy.
 - Dead files removed: legacy `yt_producer.py`, broken `tweeter_producer.py`, stub `reddit_adapter.py`, broken `llm_client.py`, empty `db_client.py`, orphaned `ingestion/bookmark.txt`.
 - `requirements.txt` curated (was a 66 KB UTF-16 conda freeze).
 - README rewritten to reflect actual entry points.
@@ -81,15 +81,15 @@ Initial Stage 0 closed-list pin was the wrong fit: it turned the Context Agent i
 - `src/shared_utils/prompts.py::build_judge_prompt_with_memory` — Stage 2 prompt variant with three contextual rules layered on the original four forensic rules. The Stage 0 `build_judge_prompt` stays as the no-memory baseline.
 - `src/shared_utils/config.py` — `MEMORY_ENABLED`, `MEMORY_USER_WINDOW_SIZE`, `MEMORY_THREAD_WINDOW_SIZE`, `MEMORY_LOOKBACK_HOURS`, `MEMORY_FINGERPRINT_WINDOW`. All env-driven.
 - `xai_batch_judge.py` and `xai_judge_tool.py` rewired to use the memory variant when `MEMORY_ENABLED`. ES doc gains `agent_memory_used`, `agent_memory_user_msgs`, `agent_memory_thread_msgs`, `agent_memory_user_profile`.
-- `scripts/replay_with_memory.py` — re-judges already-reviewed ES records WITH memory, writing to `agent_final_decision_with_memory` / `agent_explanation_with_memory`. Dry-run default. `--csv` flag for targeted replay; `--limit` for smoke tests. Idempotent.
-- `src/export_subset.py` — exported CSV now includes `message_id` + `timestamp` (for ID-based replay matching), `agent_final_decision_with_memory`, `agent_explanation_with_memory`, all `agent_memory_*` fields.
+- `scripts/eval/replay_with_memory.py` — re-judges already-reviewed ES records WITH memory, writing to `agent_final_decision_with_memory` / `agent_explanation_with_memory`. Dry-run default. `--csv` flag for targeted replay; `--limit` for smoke tests. Idempotent.
+- `scripts/eval/export_subset.py` — exported CSV now includes `message_id` + `timestamp` (for ID-based replay matching), `agent_final_decision_with_memory`, `agent_explanation_with_memory`, all `agent_memory_*` fields.
 - `notebooks/evaluation.ipynb` — new §4 with v1-vs-v2 comparison, per-domain delta, McNemar's test, memory usage distribution, and a new `RESULTS_REGISTRY` row.
 
 **What is still needed before the metric can be cited.**
 The Stage 2 numbers come from running:
 ```bash
-python scripts/replay_with_memory.py --csv thesis_final_benchmark.csv --apply
-python src/export_subset.py thesis_final_benchmark.csv
+python scripts/eval/replay_with_memory.py --csv thesis_final_benchmark.csv --apply
+python scripts/eval/export_subset.py thesis_final_benchmark.csv
 ```
 then re-running the notebook. The replay needs Docker + ES + Ollama running and the 459 internship records (or a freshly collected equivalent) live in ES.
 
@@ -110,14 +110,14 @@ then re-running the notebook. The replay needs Docker + ES + Ollama running and 
 - `config/rag.yaml` — operator-editable knobs: embedding model name, dim, device, batch size, top-k, similarity threshold.
 - `src/shared_utils/config.py` — env knobs: `RAG_ENABLED` (default False), `QDRANT_HOST`, `QDRANT_PORT`, `QDRANT_COLLECTION`.
 - `src/shared_utils/rag.py` — lazy Qdrant client + sentence-transformers embedder + `index_record`, `index_records_bulk`, `retrieve_similar`, `format_precedents_for_prompt`, `fetch_retrieval_bundle`. Symmetric API to `memory.py`.
-- `scripts/build_rag_index.py` — one-off bootstrap walker. Dry-run default; `--apply`, `--limit`, `--reviewed-only` flags. Idempotent via blake2b-hashed point IDs.
+- `scripts/setup/build_rag_index.py` — one-off bootstrap walker. Dry-run default; `--apply`, `--limit`, `--reviewed-only` flags. Idempotent via blake2b-hashed point IDs.
 - `src/shared_utils/prompts.py::build_judge_prompt_with_memory_and_rag` — defined, includes a new `RETRIEVED PRECEDENTS` block and a new contextual rule "Precedent Reasoning".
 - `requirements.txt` — added `qdrant-client>=1.10`, `sentence-transformers>=2.7`, `scipy>=1.10`.
 
 **What landed in the activation step.**
 - `src/shared_utils/prompts.py::build_judge_prompt_with_rag` — RAG-only variant for clean Stage 3 isolation (no memory confound).
-- `scripts/seed_rag_from_csv.py` — embeds the internship benchmark CSV directly into Qdrant. `human_ground_truth` deliberately omitted from the payload to prevent label leakage.
-- `scripts/replay_with_rag.py` — leave-one-out cross-validation against the CSV. Writes `agent_final_decision_with_rag`, `agent_explanation_with_rag`, `agent_retrieved_precedent_ids`, `agent_retrieval_count`.
+- `scripts/setup/seed_rag_from_csv.py` — embeds the internship benchmark CSV directly into Qdrant. `human_ground_truth` deliberately omitted from the payload to prevent label leakage.
+- `scripts/eval/replay_with_rag.py` — leave-one-out cross-validation against the CSV. Writes `agent_final_decision_with_rag`, `agent_explanation_with_rag`, `agent_retrieved_precedent_ids`, `agent_retrieval_count`.
 - `notebooks/evaluation.ipynb` §5 — RAG-vs-baseline comparison, per-domain breakdown, McNemar's test, registry entry. Mirrors §4 (temporal memory) structurally.
 - `docs/RUNBOOK.md` Path A — three-command recipe (`up qdrant`, `seed_rag_from_csv`, `replay_with_rag`) and the notebook step.
 
@@ -129,22 +129,31 @@ then re-running the notebook. The replay needs Docker + ES + Ollama running and 
 
 ---
 
-## Stage 4 — Multi-Agent Decomposition
+## Stage 4 — Multi-Agent Decomposition  ✅ CODE DONE
 
 **Maps to supervisor direction:** *(c) Multi-Agent Architectures.*
 
-**Why here.** Only meaningful once Stages 2 & 3 produce the data (history, retrieved precedents) the specialist agents would consume.
+**Dependencies.** Stages 1–3 (done).
 
-**Dependencies.** Stages 1–3.
+**What landed.**
+- `src/shared_utils/prompts.py` — four new prompt builders: `build_risk_scorer_prompt`, `build_behavior_profiler_prompt`, `build_escalator_prompt`, `build_supervisor_prompt`.
+- `src/agents/multi_agent.py` — `run_multi_agent()` orchestrates the four agents in sequence and returns the final verdict plus every intermediate signal (risk score, behaviour risk, escalation action). Pure logic — caller supplies the memory bundle + optional precedents, so it does no ES/Qdrant queries itself.
+- `scripts/eval/replay_with_multi_agent.py` — benchmark replay; writes `agent_final_decision_with_multi_agent` + `agent_ma_risk_score` / `agent_ma_behavior_risk` / `agent_ma_escalation_action` to the CSV. `--limit` for cheap testing (4 LLM calls/row, so test before a full run).
+- `notebooks/evaluation.ipynb` §6 — accuracy delta, McNemar test, specialist-signal distributions (incl. fraction routed to human review), registry row.
 
-**Deliverables.**
-- Risk Scorer — outputs a 0–1 risk score (not a categorical label) using the retrieved precedents.
-- Behavior Profiler — produces the structured user fingerprint from Stage 2 as a dedicated agent, not a function call.
-- Escalator — decides whether to surface to a human or auto-action.
-- Supervisor — meta-agent that reconciles disagreement between Risk Scorer and Profiler.
-- Leader Agent reframed as orchestrator over these four specialists (not a tool-call router).
+**The four agents.**
+1. **Risk Scorer** — scores the message content in isolation, 0..1.
+2. **Behavior Profiler** — characterises the author from their history (consumes the Stage 2 memory bundle).
+3. **Escalator** — routes: auto_clear / auto_flag / human_review.
+4. **Supervisor** — reconciles all signals into the final Correct / False Positive / False Negative verdict (same space as the other variants → directly comparable in the notebook).
 
-**Success criterion.** Harness shows the multi-agent system out-performs the monolithic Stage 3 judge on at least one of: precision on HATE, recall on subtle False Negatives, or escalation efficiency (fraction of cases that need human review).
+**To evaluate.**
+```powershell
+python -u scripts/eval/replay_with_multi_agent.py --csv thesis_benchmark_eval.csv --limit 5   # test
+python -u scripts/eval/replay_with_multi_agent.py --csv thesis_benchmark_eval.csv --apply
+```
+
+**Success criterion.** Notebook §6 shows the multi-agent variant matches or beats the monolithic baseline on binary recall of the toxic class, OR demonstrates useful escalation efficiency (a sensible fraction routed to human review). The intermediate-signal storage is itself a Stage 5 (XAI) foundation.
 
 ---
 
@@ -168,6 +177,11 @@ then re-running the notebook. The replay needs Docker + ES + Ollama running and 
 
 ## Stage 6 — Edge-Aware Optimization
 
+> **DECISION 2026-06-18 (supervisor meeting):** Stage 6 is **NOT to be
+> implemented.** Discuss it as future work in the report only. See
+> [`MEETING_2026-06-18.md`](MEETING_2026-06-18.md) D2. The deliverables below are
+> retained as the basis for that written discussion.
+
 **Maps to supervisor direction:** *(e) Edge-Aware Optimization.*
 
 **Why here.** Optimises something now known to work. Premature without Stages 4–5.
@@ -186,6 +200,10 @@ then re-running the notebook. The replay needs Docker + ES + Ollama running and 
 
 ## Stage 7 — Federated Learning
 
+> **DECISION 2026-06-18 (supervisor meeting):** Stage 7 is **NOT to be
+> implemented.** Discuss it as future work in the report only. See
+> [`MEETING_2026-06-18.md`](MEETING_2026-06-18.md) D2.
+
 **Maps to supervisor direction:** *(g) Federated Learning.*
 
 **Why last.** Long-tail research direction that builds the deployment story. Decentralises Stage 6.
@@ -198,6 +216,52 @@ then re-running the notebook. The replay needs Docker + ES + Ollama running and 
 - Privacy-preserving aggregation (differential privacy noise on the delta).
 
 **Success criterion.** Demonstrate the FL Tier-1 within ≤ 2 pp of centrally-trained DistilBERT on a held-out test set; the thesis can argue privacy gains quantitatively.
+
+---
+
+## Stage 8 — Pluggable Retrieval (WIKI vs RAG)  *(NEW — 2026-06-18)*
+
+**Origin.** Supervisor meeting 2026-06-18 (D3/D4). Add **WIKI** — an alternative
+retrieval/knowledge backend ("a RAG competitor") — and keep it **alongside** the
+current Qdrant-precedent RAG, switchable by config and independently evaluable.
+
+**Dependencies.** Stage 3 (RAG) — WIKI reuses its prompt slot and CSV-column pattern.
+
+**Design.** Formalise `rag.py`'s shape into a `Retriever` interface
+(`retrieve()` + `format_precedents_for_prompt()`); back it with
+`QdrantPrecedentRetriever` (current) and a new `WikiRetriever`. Select via a
+`RETRIEVAL_BACKEND` flag (`qdrant` | `wiki` | `both`). New CSV columns
+`agent_final_decision_with_wiki` / `agent_explanation_with_wiki` make WIKI just
+another variant the notebook and `check_results.py` score. A `replay_with_wiki.py`
+mirrors `replay_with_rag.py`.
+
+**Blocked on.** The prof's WIKI resources (repo/paper/dataset) — requested by
+email. **Do not pick the implementation before that reply.**
+
+**Success criterion.** Notebook scores RAG and WIKI as separate variant columns;
+the live judge can switch backends with one flag and no downstream change.
+
+See [`MEETING_2026-06-18.md`](MEETING_2026-06-18.md) §3 and §7b.
+
+---
+
+## Stage 9 — Trustpilot Ingestion  *(NEW — 2026-06-18)*
+
+**Origin.** Supervisor meeting 2026-06-18 (D3). New Layer-1 source for brand-review
+comments, tied to another student's project.
+
+**Dependencies.** Stage 0.5 (Universal Schema + Context Agent) — the adapter reuses both.
+
+**Design.** `src/ingestion/adapters/trustpilot_adapter.py` emitting the same Kafka
+message shape as the Twitch adapter; a `trustpilot.com` branch in
+`omni_ingest.py::route_input()`. Acquisition path (API vs scraper vs dataset) is
+pending the prof's resources — see [`MEETING_2026-06-18.md`](MEETING_2026-06-18.md) §7a.
+
+**Success criterion.** Trustpilot comments flow through Tier-1, Tier-2, memory,
+RAG, and multi-agent with no downstream code change; Trustpilot appears as a new
+`source_platform` and a new `env_domain` in the dashboard and the eval.
+
+See [`MEETING_2026-06-18.md`](MEETING_2026-06-18.md) §4.
 
 ---
 

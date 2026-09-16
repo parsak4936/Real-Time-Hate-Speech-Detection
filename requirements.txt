@@ -34,7 +34,8 @@ pyyaml>=6.0              # config/taxonomy.yaml, config/rag.yaml
 
 # -- Operator dashboard + analytics (Streamlit + Plotly) --
 streamlit>=1.30          # scripts/operator_dashboard.py, scripts/analytics_dashboard.py
-plotly>=5.18             # advanced charts for analytics_dashboard.py
+plotly>=5.18             # charts for scripts/ui/dashboard.py
+streamlit-autorefresh>=1.0   # optional live auto-refresh for the dashboard
 
 # -- Additional ingestion adapters --
 praw>=7.7                # Reddit comment streaming (src/ingestion/adapters/reddit_adapter.py)

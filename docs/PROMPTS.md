@@ -47,7 +47,7 @@ Operators edit `config/taxonomy.yaml` — no code change. Append an entry to `ca
 **Used by:**
 - `src/agents/xai_batch_judge.py` (async sweep) — picks the memory variant when `MEMORY_ENABLED`.
 - `src/agents/tools/xai_judge_tool.py` (on-demand audit) — same.
-- `scripts/replay_with_memory.py` — always uses the memory variant (it exists to populate the v2 verdicts).
+- `scripts/eval/replay_with_memory.py` — always uses the memory variant (it exists to populate the v2 verdicts).
 
 **Report section:** §4.4 (Tier-2 Agentic Auditor)
 **Output format:** Strict JSON via Ollama `format="json"`
@@ -58,7 +58,7 @@ Operators edit `config/taxonomy.yaml` — no code change. Append an entry to `ca
 |---|---|---|
 | `build_judge_prompt` | Baseline. Used when `MEMORY_ENABLED=False` and `RAG_ENABLED=False`. | None — message judged in isolation. |
 | `build_judge_prompt_with_memory` | When `MEMORY_ENABLED=True` and `RAG_ENABLED=False` (default live config after Stage 2). | Three injected blocks: USER BEHAVIOR FINGERPRINT, RECENT USER HISTORY, THREAD CONTEXT. |
-| `build_judge_prompt_with_rag` | RAG only, no memory. Used by `scripts/replay_with_rag.py` for clean Stage 3 isolation (measuring the RAG contribution alone). | One injected block: RETRIEVED PRECEDENTS (top-k semantically similar past cases, with their model_label, env_domain, and Tier-2 baseline verdict — **human_ground_truth is deliberately omitted from the payload to prevent label leakage**). |
+| `build_judge_prompt_with_rag` | RAG only, no memory. Used by `scripts/eval/replay_with_rag.py` for clean Stage 3 isolation (measuring the RAG contribution alone). | One injected block: RETRIEVED PRECEDENTS (top-k semantically similar past cases, with their model_label, env_domain, and Tier-2 baseline verdict — **human_ground_truth is deliberately omitted from the payload to prevent label leakage**). |
 | `build_judge_prompt_with_memory_and_rag` | When both `MEMORY_ENABLED=True` and `RAG_ENABLED=True` (full memory + retrieval). Wired into agents when both flags are flipped. | All three memory blocks AND the RETRIEVED PRECEDENTS block. |
 
 All four prompts share the same four forensic rules. Each step up the ladder adds contextual rules:

@@ -1,0 +1,18 @@
+# LLM Wiki backend — the curated-knowledge alternative to vector RAG.
+#
+# RAG retrieves similar PAST CASES from Qdrant. The Wiki retrieves relevant
+# CURATED KNOWLEDGE (policies, domain rules, glossary, edge cases) from the
+# markdown pages under wiki/. Both feed the same Tier-2 judge prompt slot, so
+# they are directly comparable as switchable backends.
+#
+# The Wiki reuses the SAME embedder as RAG (config/rag.yaml -> embedding.model_name)
+# so the only variable between the two backends is the corpus, not the retriever.
+
+knowledge_base:
+  path: wiki                # directory of markdown pages, relative to repo root
+
+retrieval:
+  top_k: 4                  # relevant glossary/edge-case entries to pull by similarity
+  similarity_threshold: 0.15  # low: this is curated knowledge, not exact-match cases
+  always_include_policy: true  # always inject the core policy page
+  always_include_domain: true  # always inject the page for the message's domain

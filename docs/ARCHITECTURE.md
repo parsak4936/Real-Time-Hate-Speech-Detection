@@ -136,7 +136,7 @@ Five independent processes once Stage 3 (RAG) is activated:
 | 1 | Producer | `python src/ingestion/omni_ingest.py` | Asks for a YouTube URL, scrapes metadata, runs the Context Agent, pushes chat messages to Kafka. |
 | 2 | Processor | `python src/static_classifier/distilbert_processor.py` | Consumes the Kafka topic, runs DistilBERT, writes to Elasticsearch + CSV log. |
 | 3 | Tier-2 sweep | `python src/agents/xai_batch_judge.py` | Periodically audits low-confidence ES records and overlays the LLM verdict. Run on a cadence. |
-| 4 | RAG bootstrap | `python scripts/build_rag_index.py --apply` | One-off (or periodic) — walks ES, embeds, populates Qdrant. Idempotent; safe to re-run. Required before `RAG_ENABLED` can do anything useful. |
+| 4 | RAG bootstrap | `python scripts/setup/build_rag_index.py --apply` | One-off (or periodic) — walks ES, embeds, populates Qdrant. Idempotent; safe to re-run. Required before `RAG_ENABLED` can do anything useful. |
 | 5 | Leader (analyst console) | `python src/agents/leader_agent.py` | On-demand. The analyst opens this when they want to query the pipeline. |
 
 Stage 3 (RAG) is currently **scaffolded but not wired into the live judge** — see [`docs/ROADMAP.md`](ROADMAP.md). Setting `RAG_ENABLED=True` while the agents still call `build_judge_prompt_with_memory` is a no-op; the activation step (one-line change in `xai_batch_judge.py` to pick the `_with_memory_and_rag` variant when both flags are on) lands together with `scripts/replay_with_memory_and_rag.py` when the user is ready to evaluate Stage 3.

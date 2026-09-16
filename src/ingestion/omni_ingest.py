@@ -17,6 +17,7 @@ sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 from adapters.youtube_adapter import start_youtube_pipeline
 from adapters.twitch_adapter import start_twitch_pipeline
 from adapters.reddit_adapter import start_reddit_pipeline
+from adapters.trustpilot_adapter import start_trustpilot_pipeline
 
 DEFAULT_TEST_VIDEO_ID = "mAoDkS1ZBw0"
 
@@ -26,9 +27,10 @@ def route_input():
     print(" OMNI-INGESTION ROUTER")
     print("=" * 60)
     print("Accepts:")
-    print("  - YouTube:  https://www.youtube.com/watch?v=... or https://youtu.be/...")
-    print("  - Twitch:   https://www.twitch.tv/<channel> or just <channel>")
-    print("  - Reddit:   https://www.reddit.com/r/<subreddit> or r/<subreddit>")
+    print("  - YouTube:    https://www.youtube.com/watch?v=... or https://youtu.be/...")
+    print("  - Twitch:     https://www.twitch.tv/<channel> or just <channel>")
+    print("  - Reddit:     https://www.reddit.com/r/<subreddit> or r/<subreddit>")
+    print("  - Trustpilot: https://www.trustpilot.com/review/<business-domain>")
     print()
 
     user_input = input("Paste a URL (Enter for default YouTube test stream): ").strip()
@@ -53,6 +55,11 @@ def route_input():
     if "reddit.com" in lower or lower.startswith("r/") or lower.startswith("/r/"):
         print("\n-> [Router] Reddit URL detected. Handing off to Reddit adapter...")
         start_reddit_pipeline(user_input)
+        return
+
+    if "trustpilot.com" in lower or lower.startswith("trustpilot:"):
+        print("\n-> [Router] Trustpilot URL detected. Handing off to Trustpilot adapter...")
+        start_trustpilot_pipeline(user_input)
         return
 
     # Heuristic fallback: bare channel/subreddit names

@@ -50,6 +50,7 @@ from shared_utils.config import (
 from shared_utils.llm import ollama_chat_json
 from shared_utils.memory import fetch_memory_bundle
 from shared_utils.prompts import build_judge_prompt, build_judge_prompt_with_memory
+from shared_utils import retrieval
 
 es = Elasticsearch(ES_HOST, request_timeout=60)
 
@@ -60,12 +61,16 @@ DEFAULT_BATCH_SIZE = 60
 DEFAULT_CONFIDENCE_CEILING = 0.80
 
 
-def _build_query(batch_size: int, conf_below: float, platforms, domains):
+def _build_query(batch_size: int, conf_below: float, platforms, domains, since=None):
     must = [{"range": {"model_confidence": {"lt": conf_below}}}]
     if platforms:
         must.append({"terms": {"source_platform": platforms}})
     if domains:
         must.append({"terms": {"env_domain": domains}})
+    if since:
+        # Only records ingested at/after this timestamp — scopes the sweep to
+        # the batch you just gathered, not the whole unreviewed backlog.
+        must.append({"range": {"timestamp": {"gte": since}}})
 
     return {
         "query": {
@@ -79,7 +84,7 @@ def _build_query(batch_size: int, conf_below: float, platforms, domains):
     }
 
 
-def _fetch_records_per_domain(batch_size, conf_below, platforms, per_domain_cap):
+def _fetch_records_per_domain(batch_size, conf_below, platforms, per_domain_cap, since=None):
     """Balanced sweep: cap per-domain so over-represented platforms don't drown others."""
     # Use a composite aggregation to walk every (env_domain) bucket and pull a
     # capped sample from each. Simpler approach: iterate domains we know about.
@@ -89,7 +94,8 @@ def _fetch_records_per_domain(batch_size, conf_below, platforms, per_domain_cap)
             "bool": {
                 "must_not": [{"term": {"agent_reviewed": True}}],
                 "must": [{"range": {"model_confidence": {"lt": conf_below}}}]
-                       + ([{"terms": {"source_platform": platforms}}] if platforms else []),
+                       + ([{"terms": {"source_platform": platforms}}] if platforms else [])
+                       + ([{"range": {"timestamp": {"gte": since}}}] if since else []),
             }
         },
         "aggs": {"domains": {"terms": {"field": "env_domain", "size": 50}}},
@@ -109,7 +115,7 @@ def _fetch_records_per_domain(batch_size, conf_below, platforms, per_domain_cap)
             break
         remaining = batch_size - len(collected)
         size = min(per_domain_cap, remaining)
-        q = _build_query(size, conf_below, platforms, [d])
+        q = _build_query(size, conf_below, platforms, [d], since=since)
         r = es.search(index=INDEX_NAME, body=q)
         collected.extend(r["hits"]["hits"])
 
@@ -123,6 +129,7 @@ def run_batch_auditor(args):
     print(f"Confidence <    {args.confidence}")
     print(f"Platform filter: {args.platform or 'any'}")
     print(f"Domain filter:   {args.domain or 'any'}")
+    print(f"Since (ingested):{args.since or 'any time'}")
     print(f"Per-domain cap:  {args.per_domain_cap or 'no cap'}")
     print(f"Memory:         {MEMORY_ENABLED}")
     print(f"Update ES:      {not args.no_update}\n")
@@ -130,10 +137,12 @@ def run_batch_auditor(args):
     try:
         if args.per_domain_cap:
             hits = _fetch_records_per_domain(
-                args.batch_size, args.confidence, args.platform, args.per_domain_cap
+                args.batch_size, args.confidence, args.platform, args.per_domain_cap,
+                since=args.since,
             )
         else:
-            query = _build_query(args.batch_size, args.confidence, args.platform, args.domain)
+            query = _build_query(args.batch_size, args.confidence, args.platform, args.domain,
+                                 since=args.since)
             res = es.search(index=INDEX_NAME, body=query)
             hits = res["hits"]["hits"]
 
@@ -168,13 +177,28 @@ def run_batch_auditor(args):
             print(f'TEXT: "{raw_text[:140]}"')
             print(f"DISTILBERT: {original_prediction} (Conf: {confidence:.2f})")
 
-            # Build prompt (baseline OR memory-augmented).
+            # Build prompt. A retrieval backend (RAG or LLM-Wiki), if selected via
+            # RETRIEVAL_BACKEND, takes over grounding; otherwise fall back to the
+            # memory-augmented judge, or the plain baseline.
             memory_used = False
             memory_user_msgs = 0
             memory_thread_msgs = 0
             memory_fingerprint = ""
 
-            if MEMORY_ENABLED:
+            backend = retrieval.active_backend()
+            if backend != "none":
+                ctx = retrieval.fetch_context(text=raw_text, domain=domain, message_id=message_id)
+                print(f"-> Retrieval backend: {backend} ({ctx['count']} items)")
+                prompt = retrieval.build_prompt(
+                    raw_text=raw_text,
+                    original_prediction=original_prediction,
+                    confidence=confidence,
+                    domain=domain,
+                    strictness=strictness,
+                    subgenre=subgenre,
+                    context_text=ctx["context_text"],
+                )
+            elif MEMORY_ENABLED:
                 bundle = fetch_memory_bundle(
                     author_id=author_id,
                     thread_id=thread_id,
@@ -213,9 +237,17 @@ def run_batch_auditor(args):
             start_time = time.time()
 
             # Per-record try/except so a single Ollama timeout doesn't kill the batch.
+            # A 429 is different: the whole session is rate-limited, so there's no
+            # point grinding through the rest of the batch — stop cleanly and let
+            # the operator resume later (already-saved verdicts persist in ES).
             try:
                 result = ollama_chat_json(prompt)
             except Exception as e:
+                if getattr(e, "status_code", None) == 429:
+                    print(f"\n-> [STOP] Ollama rate limit (429). Stopping the sweep. "
+                          f"{ok_count} verdicts saved to ES so far.")
+                    print("-> Re-run the same command later — reviewed records are skipped.")
+                    break
                 print(f"-> LLM ERROR (record skipped): {e}")
                 err_count += 1
                 time.sleep(args.sleep)
@@ -282,6 +314,10 @@ def main():
                         help="Restrict to specific env_domain value(s). Repeat for multiple.")
     parser.add_argument("--per-domain-cap", type=int, default=None,
                         help="Pull at most N records per domain (balanced sweep).")
+    parser.add_argument("--since", default=None,
+                        help="Only judge records ingested at/after this time "
+                             "(e.g. 2026-06-24 or 2026-06-24T15:00). Scopes the sweep "
+                             "to a freshly-gathered batch instead of the whole backlog.")
     parser.add_argument("--no-update", action="store_true",
                         help="Dry run — don't write verdicts to ES.")
     parser.add_argument("--sleep", type=float, default=2.0,

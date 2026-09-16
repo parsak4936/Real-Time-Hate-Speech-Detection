@@ -79,7 +79,7 @@ Organised by architecture layer to match the report's Figure 1, then by feature 
 ### Fine-tuning
 **What.** Take a pre-trained language model and train its weights further on a task-specific dataset. We fine-tuned `distilbert-base-uncased` on 43,000 hate-speech samples for 2 epochs.
 **Why.** Pre-training learns general language; fine-tuning specialises for the moderation task.
-**Hyperparameters in this project** (see `src/Hate_speach_Project.ipynb` and Internship Report §4.2): AdamW optimiser, learning rate 5e-5, weight decay 0.01, batch size 8, max token length 128, 2 epochs.
+**Hyperparameters in this project** (see `notebooks/Hate_speach_Project.ipynb` and Internship Report §4.2): AdamW optimiser, learning rate 5e-5, weight decay 0.01, batch size 8, max token length 128, 2 epochs.
 **Alternatives.** Prompting a zero-shot classifier; LoRA / QLoRA (parameter-efficient fine-tuning).
 
 ### Hugging Face `transformers`
@@ -285,7 +285,7 @@ Organised by architecture layer to match the report's Figure 1, then by feature 
 
 ### Idempotency
 **What.** A property where running an operation multiple times has the same effect as running it once.
-**Why important here.** `scripts/build_rag_index.py`, `replay_with_memory.py`, `replay_with_rag.py`, `seed_rag_from_csv.py` all upsert (overwrite on duplicate ID) rather than insert. Re-running them is safe.
+**Why important here.** `scripts/setup/build_rag_index.py`, `replay_with_memory.py`, `replay_with_rag.py`, `seed_rag_from_csv.py` all upsert (overwrite on duplicate ID) rather than insert. Re-running them is safe.
 
 ### Dry-run mode
 **What.** Scripts default to "print what would happen" mode; `--apply` is needed to actually write. Used by `reset_db.py`, `normalize_domains.py`, `build_rag_index.py`, `replay_with_memory.py`, `seed_rag_from_csv.py`, `replay_with_rag.py`.
@@ -310,7 +310,7 @@ If you want to cite or read the implementation of any concept above:
 | Universal Schema | [`docs/SCHEMA.md`](SCHEMA.md), `src/static_classifier/distilbert_processor.py` |
 | Closed → open taxonomy | `src/shared_utils/prompts.py`, `src/shared_utils/taxonomy.py`, `config/taxonomy.yaml` |
 | Temporal memory | `src/shared_utils/memory.py` |
-| RAG | `src/shared_utils/rag.py`, `config/rag.yaml`, `scripts/seed_rag_from_csv.py`, `scripts/replay_with_rag.py` |
+| RAG | `src/shared_utils/rag.py`, `config/rag.yaml`, `scripts/setup/seed_rag_from_csv.py`, `scripts/eval/replay_with_rag.py` |
 | Judge prompts (all variants) | `src/shared_utils/prompts.py` |
 | Evaluation harness | `notebooks/evaluation.ipynb` |
 | Ollama wrapper (temp=0 + json mode + retry) | `src/shared_utils/llm.py` |

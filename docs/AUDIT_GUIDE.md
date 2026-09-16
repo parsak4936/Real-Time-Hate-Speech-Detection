@@ -178,7 +178,7 @@ For each file the audit gives four things:
 
 **Change propagation.** Adding new Tier-1 output fields (e.g. softmax probabilities per class):
 - Update [`docs/SCHEMA.md`](SCHEMA.md).
-- Update `src/export_subset.py` to include them.
+- Update `scripts/eval/export_subset.py` to include them.
 - Update Kibana dashboard if you want them charted.
 
 **How to verify it broke.** `BERT Model Loaded successfully.` doesn't print on start → `models/bert_final/` is missing or corrupted; redownload.
@@ -258,7 +258,7 @@ Same as `xai_batch_judge.py`. The key difference: it queries ES by `author_name`
 
 ---
 
-## `scripts/seed_rag_from_csv.py`
+## `scripts/setup/seed_rag_from_csv.py`
 
 **Purpose.** Reads a benchmark CSV, embeds each row's text, upserts into Qdrant. Used for Stage 3 evaluation without live ES.
 
@@ -270,7 +270,7 @@ Same as `xai_batch_judge.py`. The key difference: it queries ES by `author_name`
 
 ---
 
-## `scripts/replay_with_rag.py`
+## `scripts/eval/replay_with_rag.py`
 
 **Purpose.** Leave-one-out RAG evaluation on a CSV.
 
@@ -282,7 +282,7 @@ Same as `xai_batch_judge.py`. The key difference: it queries ES by `author_name`
 
 ---
 
-## `scripts/replay_with_memory.py`
+## `scripts/eval/replay_with_memory.py`
 
 **Purpose.** Re-judges already-reviewed ES records with memory-augmented prompt; writes to `agent_final_decision_with_memory`.
 
@@ -304,7 +304,7 @@ Same as `xai_batch_judge.py`. The key difference: it queries ES by `author_name`
 3. §4 (Memory) and §5 (RAG) print "skip" messages when the relevant `_with_memory` / `_with_rag` columns are missing — they don't crash.
 4. §7 (Cross-pipeline comparison) renders the `RESULTS_REGISTRY` regardless of how many variants have landed.
 
-**Regenerating.** Run `python scripts/_build_eval_notebook.py` to recreate the notebook from the build script. Use this for structural changes; inline edits in Jupyter for one-off tweaks.
+**Regenerating.** Run `python scripts/eval/_build_eval_notebook.py` to recreate the notebook from the build script. Use this for structural changes; inline edits in Jupyter for one-off tweaks.
 
 **How to verify it broke.** §1.4 reports a number other than 93.5% for the Agent accuracy — either the CSV is wrong or the `agent_effective_label` function changed.
 
@@ -351,7 +351,7 @@ When you've changed something and want a quick sanity sweep:
 python -m py_compile $(find src scripts -name "*.py")
 
 # 2. Notebook still generates from the build script:
-python scripts/_build_eval_notebook.py
+python scripts/eval/_build_eval_notebook.py
 
 # 3. Taxonomy smoke-test:
 python -c "

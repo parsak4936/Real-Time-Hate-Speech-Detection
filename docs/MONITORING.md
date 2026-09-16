@@ -69,11 +69,11 @@ sort -u -k2 data/pending_taxonomy.log | head -20
 
 ---
 
-## The new piece — `scripts/operator_dashboard.py`
+## The new piece — `scripts/ui/dashboard.py`
 
 Run with:
 ```bash
-streamlit run scripts/operator_dashboard.py
+streamlit run scripts/ui/dashboard.py
 ```
 
 Opens at http://localhost:8501.
@@ -101,10 +101,10 @@ A single-page Streamlit dashboard that unifies the views above:
 
 **Note on chat UI.** This dashboard is explicitly **read-only**. There is no input box where a user can type queries.
 
-A companion file, [`scripts/analyst_chat.py`](../scripts/analyst_chat.py), provides a Streamlit chat interface to the Leader Agent for moderator use. It is also operator-facing (not end-user-facing). Run with:
+A companion file, [`scripts/ui/analyst_chat.py`](../scripts/ui/analyst_chat.py), provides a Streamlit chat interface to the Leader Agent for moderator use. It is also operator-facing (not end-user-facing). Run with:
 
 ```bash
-streamlit run scripts/analyst_chat.py --server.port 8502
+streamlit run scripts/ui/analyst_chat.py --server.port 8502
 ```
 
 The dashboard (8501) and the chat (8502) can run side by side. The chat shows the LLM's tool-call decomposition in expanders, which is itself a thesis-worthy artefact: examiners can see exactly how the agent reasoned per query.
@@ -175,6 +175,6 @@ When `omni_ingest.py` is feeding a stream, watch for:
 | Processor crashes on start | DistilBERT weights missing | Re-download `models/bert_final/` from the OneDrive link in README |
 | Batch judge prints `0 records to audit` | All current records have confidence ≥ 0.80 OR all are already reviewed | Lower `TARGET_CONFIDENCE_BELOW`, or wait for new low-confidence records |
 | All `agent_final_decision` are `Parsing Error` | Ollama returning malformed JSON | Check Ollama logs; bump retry count in `llm.py`; reduce prompt length |
-| `replay_with_rag.py` returns identical baseline = with_rag for every row | Qdrant empty OR threshold too high | `python scripts/seed_rag_from_csv.py thesis_final_benchmark.csv --apply`; lower `similarity_threshold` in `config/rag.yaml` |
+| `replay_with_rag.py` returns identical baseline = with_rag for every row | Qdrant empty OR threshold too high | `python scripts/setup/seed_rag_from_csv.py thesis_final_benchmark.csv --apply`; lower `similarity_threshold` in `config/rag.yaml` |
 | Operator dashboard panel "Qdrant" red | Container not running | `docker-compose up -d qdrant` |
 | `pending_taxonomy.log` exploding | LLM proposing very specific subcategories | Raise `fuzzy_match_threshold` or expand `config/taxonomy.yaml` aliases |

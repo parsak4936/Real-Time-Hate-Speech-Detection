@@ -47,7 +47,7 @@ Everything else is XAI / audit / measurement trail. You can strip them if you wa
 
 | Concern | Reality |
 |---|---|
-| Old records have `env_domain="Gaming/Survival"` compound values | `scripts/normalize_domains.py --apply` fixes them in place — splits into `env_domain=Gaming` + `env_subgenre=Survival`. |
+| Old records have `env_domain="Gaming/Survival"` compound values | `scripts/setup/normalize_domains.py --apply` fixes them in place — splits into `env_domain=Gaming` + `env_subgenre=Survival`. |
 | Old records don't have `env_domain_raw` / `env_strictness_reasoning` | Missing fields don't break anything. ES aggregations skip them. New records will have them. |
 | Will `replay_with_memory.py` overwrite the internship Tier-2 verdicts? | **No** — it writes to `agent_final_decision_with_memory` (new column). The original `agent_final_decision` is never touched. |
 | Will `xai_batch_judge.py` re-judge old reviewed records with memory? | **No** — its ES query has `must_not: [{term: {agent_reviewed: true}}]`. Already-reviewed records are skipped. |
@@ -119,13 +119,13 @@ curl -s -X GET "http://localhost:9200/real_time_analysis/_count" \
 
 ```bash
 # Preview only — see what would change without writing
-python scripts/normalize_domains.py
+python scripts/setup/normalize_domains.py
 
 # Read the output carefully. You'll see lines like:
 #   env_domain='Gaming/Survival'   sub=''   ->  env_domain='Gaming' sub='Survival'
 
 # If the preview looks right, write:
-python scripts/normalize_domains.py --apply
+python scripts/setup/normalize_domains.py --apply
 ```
 
 **Audit checkpoint after this step:**
@@ -161,10 +161,10 @@ Your 459-record internship benchmark CSV is still labeled. `replay_with_memory.p
 
 ```bash
 # Smoke test on 5 records
-python scripts/replay_with_memory.py --csv thesis_final_benchmark.csv --limit 5
+python scripts/eval/replay_with_memory.py --csv thesis_final_benchmark.csv --limit 5
 
 # If sane, full run
-python scripts/replay_with_memory.py --csv thesis_final_benchmark.csv --apply
+python scripts/eval/replay_with_memory.py --csv thesis_final_benchmark.csv --apply
 ```
 
 **Audit checkpoint after this step:**
@@ -173,7 +173,7 @@ python scripts/replay_with_memory.py --csv thesis_final_benchmark.csv --apply
   ```bash
   curl -s "http://localhost:9200/real_time_analysis/_search?q=_exists_:agent_final_decision_with_memory&size=1"
   ```
-- Re-export the CSV: `python src/export_subset.py thesis_final_benchmark.csv` — open it, confirm the new column appears.
+- Re-export the CSV: `python scripts/eval/export_subset.py thesis_final_benchmark.csv` — open it, confirm the new column appears.
 - Open `notebooks/evaluation.ipynb` → Restart & Run All → §4 produces real numbers instead of "Skipped".
 
 ### Step 6 — Run Stage 3 RAG evaluation (no ES dependency)
@@ -183,10 +183,10 @@ python scripts/replay_with_memory.py --csv thesis_final_benchmark.csv --apply
 docker-compose up -d qdrant
 
 # 2. Seed Qdrant from the labelled CSV
-python scripts/seed_rag_from_csv.py thesis_final_benchmark.csv --apply
+python scripts/setup/seed_rag_from_csv.py thesis_final_benchmark.csv --apply
 
 # 3. Leave-one-out replay
-python scripts/replay_with_rag.py --csv thesis_final_benchmark.csv --apply
+python scripts/eval/replay_with_rag.py --csv thesis_final_benchmark.csv --apply
 ```
 
 **Audit checkpoint after this step:**
@@ -232,7 +232,7 @@ print(f'{labeled}/{len(df)} records have human_ground_truth')
 ### Step 2 — Wipe the ES index
 
 ```bash
-python src/reset_db.py --yes
+python scripts/setup/reset_db.py --yes
 ```
 
 **Audit checkpoint:**
@@ -272,7 +272,7 @@ This will iterate the 60 most recent unreviewed records under confidence 0.80 an
 ### Step 6 — Export a NEW benchmark CSV
 
 ```bash
-python src/export_subset.py thesis_final_benchmark_v2.csv
+python scripts/eval/export_subset.py thesis_final_benchmark_v2.csv
 ```
 
 This pulls all reviewed records into a CSV. **The `human_ground_truth` column will be empty** — that's the work you have to do manually for a fresh evaluation. Path B's cost.
@@ -318,10 +318,10 @@ print(len(t.canonical_names()), 'canonicals')
 "
 
 # 4. Notebook regenerates from build script
-python scripts/_build_eval_notebook.py
+python scripts/eval/_build_eval_notebook.py
 
 # 5. Operator dashboard launches
-streamlit run scripts/operator_dashboard.py
+streamlit run scripts/ui/dashboard.py
 # (open http://localhost:8501, verify all three health indicators are green)
 ```
 

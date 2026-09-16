@@ -90,8 +90,8 @@ This is what the processor writes to the `real_time_analysis` index. Tier-2 agen
 | Author | `author_id`, `author_name`, `is_moderator`, `is_sponsor` | Producer → relayed by processor |
 | Tier-1 prediction | `model_prediction`, `model_label`, `model_confidence`, `processing_time_ms` | Processor (DistilBERT) |
 | Tier-2 overlay (Stage 0) | `agent_reviewed`, `agent_model_used`, `agent_final_decision`, `agent_explanation`, `agent_latency_seconds` | `xai_batch_judge.py` or `xai_judge_tool.py` |
-| Tier-2 memory overlay (Stage 2) | `agent_memory_used`, `agent_memory_user_msgs`, `agent_memory_thread_msgs`, `agent_memory_user_profile` | `xai_batch_judge.py` / `xai_judge_tool.py` when `MEMORY_ENABLED`, OR `scripts/replay_with_memory.py` |
-| Tier-2 replay overlay (memory-augmented) | `agent_final_decision_with_memory`, `agent_explanation_with_memory` | `scripts/replay_with_memory.py` only — never overwrites the live `agent_final_decision` |
+| Tier-2 memory overlay (Stage 2) | `agent_memory_used`, `agent_memory_user_msgs`, `agent_memory_thread_msgs`, `agent_memory_user_profile` | `xai_batch_judge.py` / `xai_judge_tool.py` when `MEMORY_ENABLED`, OR `scripts/eval/replay_with_memory.py` |
+| Tier-2 replay overlay (memory-augmented) | `agent_final_decision_with_memory`, `agent_explanation_with_memory` | `scripts/eval/replay_with_memory.py` only — never overwrites the live `agent_final_decision` |
 
 ### Closed-value fields
 
@@ -125,12 +125,15 @@ To keep variant-vs-variant comparison clean, the index uses **named slots** rath
 | Slot | Populated by | When |
 |---|---|---|
 | `agent_final_decision` | Live pipeline (`xai_batch_judge.py` / `xai_judge_tool.py`) | Always — this is the current production verdict. When `MEMORY_ENABLED=True` it carries memory-augmented verdicts for fresh ingestions. |
-| `agent_final_decision_with_memory` | `scripts/replay_with_memory.py` only | Retroactively labels the pre-memory historical records with the memory-augmented verdict so the eval notebook can compare. |
-| `agent_final_decision_with_rag` | `scripts/replay_with_rag.py` — leave-one-out against the benchmark CSV. | Measures the RAG contribution in isolation (no memory). Companion columns written by the same script: `agent_explanation_with_rag`, `agent_retrieved_precedent_ids` (comma-separated list of point IDs that were injected as precedents), `agent_retrieval_count`. |
+| `agent_final_decision_with_memory` | `scripts/eval/replay_with_memory.py` only | Retroactively labels the pre-memory historical records with the memory-augmented verdict so the eval notebook can compare. |
+| `agent_final_decision_with_rag` | `scripts/eval/replay_with_rag.py` — leave-one-out against the benchmark CSV. | Measures the RAG contribution in isolation (no memory). Companion columns written by the same script: `agent_explanation_with_rag`, `agent_retrieved_precedent_ids` (comma-separated list of point IDs that were injected as precedents), `agent_retrieval_count`. |
 | `agent_final_decision_with_memory_and_rag` | Future `scripts/replay_with_memory_and_rag.py` | Same pattern for the combined memory + RAG variant. Will be written once both Stage 2 and Stage 3 are validated and we want to measure their joint contribution. |
-| `agent_final_decision_with_multi_agent` | Future `scripts/replay_with_multi_agent.py` | Same pattern when the multi-agent decomposition lands. |
+| `agent_final_decision_with_multi_agent` | `scripts/eval/replay_with_multi_agent.py` (Stage 4) | Final verdict of the four-agent pipeline. Companion CSV columns: `agent_explanation_with_multi_agent`, `agent_ma_risk_score` (0..1 from Risk Scorer), `agent_ma_behavior_risk` (low/medium/high from Behavior Profiler), `agent_ma_escalation_action` (auto_clear/auto_flag/human_review from Escalator). |
+| `agent_final_decision_with_memory_and_rag` | Future `scripts/replay_with_memory_and_rag.py` | Same pattern for the combined memory + RAG variant. |
 
-The replay scripts never touch the live `agent_final_decision` slot. This guarantees the original internship baseline numbers stay reproducible forever, no matter how many variants we layer on.
+The replay scripts never touch the live `agent_final_decision` slot.
+
+> **Note:** the `*_with_rag` and `*_with_multi_agent` columns currently live in the **benchmark CSV only**, not in ES (those replays write to the CSV directly). The `*_with_memory` columns are written to ES by `replay_with_memory.py` and pulled into the CSV via `scripts/eval/sync_es_to_csv.py`. This guarantees the original internship baseline numbers stay reproducible forever, no matter how many variants we layer on.
 
 ## 3. Why two schemas?
 

@@ -1,0 +1,104 @@
+\chapter{Hardware and Software Environment}\label{hardware-and-software-environment}
+
+The entire pipeline, including the fine-tuning of the Tier-1 classifier, was developed and run on a single consumer laptop. The constrained resources, in particular the 4 GB of GPU memory, directly shaped two design choices discussed in Chapter 4: the selection of a distilled transformer for Tier-1, and the training batch size of 8. The core count matters too, since it sets the ceiling on the throughput measured in Chapter 5.
+
+\section{Hardware}\label{appendix-hardware}
+
+\begin{longtable}{@{}
+  >{\raggedright\arraybackslash}p{\dimexpr 0.4000\linewidth - \tabcolsep \relax}
+  >{\raggedright\arraybackslash}p{\dimexpr 0.6000\linewidth - \tabcolsep \relax}@{}}
+\caption{Hardware environment.}\label{tab:env-hardware}\tabularnewline
+\toprule
+Component & Specification \\
+\midrule
+\endfirsthead
+\toprule
+Component & Specification \\
+\midrule
+\endhead
+\bottomrule
+\endlastfoot
+Processor (CPU) & Intel Core i5, 8th generation, 4 physical cores and 8 logical threads \\
+System memory & 12 GB DDR4 RAM \\
+Graphics (GPU) & NVIDIA GTX 1650, 4 GB VRAM \\
+Tier-1 inference & CPU; the classifier runs without GPU offload, as Section~\ref{throughput-scalability} shows \\
+Tier-2 inference & \texttt{gpt-oss:120b} served through Ollama's hosted endpoint, the 120-billion-parameter model being far larger than the local GPU can hold \\
+\end{longtable}
+
+\section{Software}\label{appendix-software}
+
+The pipeline runs on \textbf{Python 3.10.11}. Table~\ref{tab:env-python} lists the Python packages that affect a reported result, and Table~\ref{tab:env-services} the containerised services, each pinned to the exact image tag used.
+
+\begin{longtable}{@{}
+  >{\raggedright\arraybackslash}p{\dimexpr 0.3000\linewidth - 1.33\tabcolsep \relax}
+  >{\raggedright\arraybackslash}p{\dimexpr 0.2000\linewidth - 1.33\tabcolsep \relax}
+  >{\raggedright\arraybackslash}p{\dimexpr 0.5000\linewidth - 1.33\tabcolsep \relax}@{}}
+\caption{Python runtime packages.}\label{tab:env-python}\tabularnewline
+\toprule
+Package & Version & Role \\
+\midrule
+\endfirsthead
+\toprule
+Package & Version & Role \\
+\midrule
+\endhead
+\bottomrule
+\endlastfoot
+PyTorch (\texttt{torch}) & 2.5.1 (CUDA 12.1) & Deep-learning framework for DistilBERT \\
+Transformers & 5.1.0 & DistilBERT model and tokenizer \\
+scikit-learn & 1.7.2 & Logistic Regression and SVM baselines, TF-IDF \\
+sentence-transformers & 5.5.1 & MiniLM embedder for RAG and the LLM-Wiki \\
+ollama (client) & 0.6.1 & Tier-2 LLM access \\
+qdrant-client & 1.17.0 & Vector store client \\
+kafka-python & 2.3.0 & Kafka producer and consumer \\
+elasticsearch (client) & 7.17.9 & Elasticsearch access \\
+streamlit & 1.58.0 & Operator dashboard and analyst chat \\
+pandas / numpy / scipy & 2.3.3 / 2.2.6 / 1.15.3 & Data handling, metrics, McNemar's test \\
+plotly & 6.8.0 & Dashboard charts \\
+\end{longtable}
+
+\begin{longtable}{@{}
+  >{\raggedright\arraybackslash}p{\dimexpr 0.4000\linewidth - \tabcolsep \relax}
+  >{\raggedright\arraybackslash}p{\dimexpr 0.6000\linewidth - \tabcolsep \relax}@{}}
+\caption{Containerised services, as pinned in \texttt{docker-compose.yml}.}\label{tab:env-services}\tabularnewline
+\toprule
+Service & Image tag \\
+\midrule
+\endfirsthead
+\toprule
+Service & Image tag \\
+\midrule
+\endhead
+\bottomrule
+\endlastfoot
+Apache Kafka (Confluent) & \texttt{confluentinc/cp-kafka:7.5.0} \\
+Apache Zookeeper & \texttt{zookeeper:3.9} \\
+Apache Spark (master and worker) & \texttt{apache/spark:3.4.1} \\
+Elasticsearch (server) & \texttt{docker.elastic.co/elasticsearch/elasticsearch:8.10.2} \\
+Kibana & \texttt{docker.elastic.co/kibana/kibana:8.10.2} \\
+Qdrant & \texttt{qdrant/qdrant:v1.10.1} \\
+\end{longtable}
+
+One pairing is deliberate and worth flagging for anyone rebuilding the stack: the Elasticsearch \emph{client} is a 7.17 release while the \emph{server} is 8.10, which the client supports in its compatibility mode. Upgrading the client to match the server major version is the obvious-looking correction, and it breaks the ingestion path.
+
+\section{Models}\label{appendix-models}
+
+\begin{longtable}{@{}
+  >{\raggedright\arraybackslash}p{\dimexpr 0.3400\linewidth - 1.33\tabcolsep \relax}
+  >{\raggedright\arraybackslash}p{\dimexpr 0.3000\linewidth - 1.33\tabcolsep \relax}
+  >{\raggedright\arraybackslash}p{\dimexpr 0.3600\linewidth - 1.33\tabcolsep \relax}@{}}
+\caption{Models used, with size where it constrained a design choice.}\label{tab:env-models}\tabularnewline
+\toprule
+Model & Size & Role \\
+\midrule
+\endfirsthead
+\toprule
+Model & Size & Role \\
+\midrule
+\endhead
+\bottomrule
+\endlastfoot
+\texttt{distilbert-base-uncased}, fine-tuned & 67.0M parameters, 6 layers, 257 MB on disk & Tier-1 classifier \\
+\texttt{gpt-oss:120b} via Ollama & 120B parameters, hosted & Tier-2 judge and the four agents \\
+\texttt{all-MiniLM-L6-v2} & 384-dimensional embeddings & Retrieval for both RAG and the LLM-Wiki \\
+\end{longtable}

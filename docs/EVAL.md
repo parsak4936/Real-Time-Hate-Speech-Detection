@@ -6,13 +6,13 @@ This document records how the report's headline numbers were produced and how to
 
 | Metric | Value | Source |
 |---|---|---|
-| Tier-1 validation accuracy (Dataset A, 20% holdout) | 79.44% | DistilBERT training run (`src/Hate_speach_Project.ipynb`) |
+| Tier-1 validation accuracy (Dataset A, 20% holdout) | 79.44% | DistilBERT training run (`notebooks/Hate_speach_Project.ipynb`) |
 | Tier-1 F1 (Dataset A) | 0.796 | Same |
 | Classical LR baseline accuracy | 76% | Same notebook |
 | Tier-1 average inference latency | 36.10 ms | `data/stream_log.csv` aggregation |
 | Tier-2 average inference latency | 6951.81 ms (192.6×) | `agent_latency_seconds` in ES |
 | Dataset B size | 459 low-confidence (<80%) records | `thesis_final_benchmark.csv` |
-| Static vs Human accuracy (Dataset B) | 71.0% | `src/calculate_thesis_metrics.py` |
+| Static vs Human accuracy (Dataset B) | 71.0% | `scripts/eval/calculate_thesis_metrics.py` |
 | Agent vs Human accuracy (Dataset B) | **93.5%** | Same |
 | Static-Agent consensus | 68.4% | Same |
 | Unanimous (all three) agreement | 67.1% | Same |
@@ -38,7 +38,7 @@ This file is the canonical hold-out set for Tier-2 evaluation: 459 manually-labe
 It was produced by:
 
 ```bash
-python src/export_subset.py
+python scripts/eval/export_subset.py
 ```
 
 `export_subset.py` queries the live `real_time_analysis` index for records where `agent_reviewed == true` AND `agent_latency_seconds` exists, then writes the eight thesis-relevant fields to CSV. The `human_ground_truth` column is intentionally written as empty so the human auditor can label it in a spreadsheet without inheriting any AI hint.
@@ -46,7 +46,7 @@ python src/export_subset.py
 ### 2. Compute the metrics
 
 ```bash
-python src/calculate_thesis_metrics.py
+python scripts/eval/calculate_thesis_metrics.py
 ```
 
 This reads the CSV, normalises label casing, prints:
@@ -89,7 +89,7 @@ That snippet is the minimum reproducer for the 93.5% figure. Building it into a 
 If you edit any prompt in `src/shared_utils/prompts.py`, the report's numbers no longer apply. Re-running them requires:
 
 1. Either: replay Dataset B's raw texts back through the Tier-2 judge (faster) — needs Stage 1's harness.
-2. Or: wipe `agent_*` fields in ES (`scripts/normalize_domains.py` is for taxonomy, not this — Stage 1 will add an `unreview_agent_audits.py`), rerun the live pipeline, regenerate Dataset B.
+2. Or: wipe `agent_*` fields in ES (`scripts/setup/normalize_domains.py` is for taxonomy, not this — Stage 1 will add an `unreview_agent_audits.py`), rerun the live pipeline, regenerate Dataset B.
 
 Until Stage 1 lands, the only safe statement is "the prompt change is in effect; the 93.5% figure must be re-measured before being cited."
 

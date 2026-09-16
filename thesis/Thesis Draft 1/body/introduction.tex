@@ -1,0 +1,57 @@
+\chapter{Introduction}\label{introduction}
+
+\section{Context and Motivation}\label{context-and-motivation}
+
+Open a popular live stream and watch the chat for a minute. Hundreds, sometimes thousands, of messages go by, and somewhere in that stream are the ones a moderator actually has to catch: the slur aimed at another viewer, the coordinated pile-on, the threat phrased as a joke. Nobody can read all of it in real time, which is why moderation has become an automation problem. It is an awkward one, though, because it sits on top of two hard problems at once, and they do not cooperate: getting the data through fast enough, and understanding it well enough.
+
+The understanding is harder than it looks. Hateful language and ordinary offensive language reach for the same words; what tells them apart is intent and target, not vocabulary \citep{davidson2017}. Work from the words alone and the two keep blurring together. Context only sharpens the trap. ``Kill him'' is a normal thing to shout at a boss fight and an alarming thing to post under a political video, yet the sentence does not change. Sarcasm, in-jokes, reclaimed slurs, deliberate misspellings meant to dodge a filter, all of it depends on where something was said and by whom, and none of it shows up in the isolated string.
+
+The speed side is a Big Data problem in the plain sense of the term. Live chat arrives as an unbounded, bursty stream, and a single-node script falls behind (or quietly drops messages) the moment a stream goes viral. So throughput and fault tolerance have to come first, before any of the clever language work is allowed to matter.
+
+This thesis takes on both at once. It builds a real-time, distributed pipeline for hate-speech detection and then makes it smarter in stages, beginning with a fast classifier that ignores context and ending with a system that weighs the domain, a speaker's history, cases it has seen before, and the pooled judgement of several specialised agents. The engineering keeps the habits of Big Data (throughput, fault tolerance, room to scale sideways); the intelligence comes from what Large Language Models (LLMs) can now do with context that earlier models simply could not.
+
+\section{Problem Statement}\label{problem-statement}
+
+Two weaknesses in the usual approach set up everything that follows.
+
+The first is contextual ambiguity. A static classifier reads a message and nothing around it, but the detail that would settle the hard cases (the platform, the topic, who is speaking and what they have said before) lives in the metadata, not in the message. Cut off from that, these models misjudge domain slang, sarcasm, and coded language, and they fail in one direction more than the other: they over-flag. The signature mistake is a false positive, an ordinary message marked toxic. Getting that under control, without retraining the model every time a new community shows up, is the first challenge.
+
+The second is scale. The models that read context best are LLMs, and they are slow, often several seconds per message where a lightweight classifier needs a few milliseconds. Put one in front of every message on a busy stream and the pipeline stalls; retreat to a single-node classical setup and it collapses at peak load. Real context-awareness and real-time throughput, together, on modest hardware, is the second challenge.
+
+Whatever solves both has to keep the fast part and the smart part apart, spend the expensive reasoning only where it earns its keep, and stay modular enough to take on new sources and new tactics without being rebuilt from scratch.
+
+\section{Research Questions and Objectives}\label{research-questions-and-objectives}
+
+Three questions run through the thesis.
+
+\begin{itemize}
+\tightlist
+\item \textbf{RQ1 (Infrastructure).} Can a modular, containerised Big Data pipeline, built on Kafka, Spark, and Elasticsearch, classify hate speech across several platforms in real time and at low latency, while staying easy to extend?
+\item \textbf{RQ2 (Two tiers).} If a fast static classifier goes first and an LLM auditor is called only for the cases it is unsure about, do the false positives that dog static models actually come down?
+\item \textbf{RQ3 (Context).} Past a single LLM verdict, does adding memory of prior behaviour, retrieved precedents, and a multi-agent split of the decision improve detection of the toxic class? And since toxic messages are rare, are those gains real or just noise?
+\end{itemize}
+
+The objectives fall out of the questions. Build the streaming pipeline and a shared ingestion format across platforms. Train and benchmark the two-tier classifier against classical baselines. Implement the three context mechanisms and a scoring harness that anyone can re-run. Finally, put every variant up against a hand-labelled benchmark, using metrics that hold their meaning under heavy class imbalance.
+
+\section{Contributions}\label{contributions}
+
+The main contributions are these.
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item \textbf{A working real-time Big Data moderation pipeline.} A containerised stack that keeps ingestion (Kafka) separate from distributed processing (Spark) and from storage and retrieval (Elasticsearch, and Qdrant for vectors), fed through one common schema by two deliberately unalike producers, YouTube over HTTP polling and Twitch over a live IRC socket, with dashboards for watching it run and for picking apart the evaluation.
+\item \textbf{An agentic Context Agent.} Rather than force each stream into a fixed menu of categories, it lets the LLM name the domain and the right level of strictness in free text, then maps that back onto a canonical taxonomy so the analytics stay consistent.
+\item \textbf{A two-tier classifier.} A fast DistilBERT model for the first pass (benchmarked here against Logistic Regression and SVM), paired with an LLM judge that looks only at the low-confidence cases and, unlike the classifier, says why.
+\item \textbf{Four context mechanisms, each measured on its own.} Temporal memory (a user's and a thread's recent history, plus a short behavioural fingerprint); two interchangeable retrieval backends set head to head, retrieval-augmented moderation over similar past \emph{cases} and a curated-knowledge \emph{LLM-Wiki} over policies and glossaries, chosen by a single configuration flag; and a multi-agent decomposition (risk scoring, behavioural profiling, escalation routing, and a supervisor that reconciles them).
+\item \textbf{A Reproducible evaluation.} A hand-labelled benchmark, a scoring harness that re-runs on demand, and an analysis that leads with toxic-class F1 and confusion matrices instead of the flattering headline accuracy, with McNemar's test to see whether the differences actually hold.
+\end{enumerate}
+
+The pipeline is deliberately built so that its retrieval backend and its data sources can be swapped, and one of each is exercised here: the vector-RAG and LLM-Wiki backends are chosen by a single flag and evaluated against each other, while a consumer-review source (Trustpilot) was written against the same ingestion contract but blocked at collection, and so remains planned work inside the same evaluation frame.
+
+\section{Scope and Delimitations}\label{scope-and-delimitations}
+
+The thesis stays with English-language, text-only moderation of public live-stream and review content, on free data sources and an open-weight LLM served through Ollama (run on a hosted endpoint here, but swappable for a fully local model on adequate hardware). Images, audio, and video are out of scope, as is non-English coverage and any deployment beyond a single containerised host. Two directions that came up on their own, edge optimisation and federated learning, are discussed but not built, by agreement on scope. Ethics is not left to the end as a formality: stripping personal identifiers at ingestion, and the plain fact that ``safe'' means different things in different domains, are taken up in the final chapter.
+
+\section{Thesis Structure}\label{thesis-structure}
+
+The rest of the thesis runs as follows. \textbf{Chapter 2} reviews the work this one stands on, from hate-speech datasets and classifiers to LLM-as-a-judge, retrieval augmentation, and the evaluation methods that make results trustworthy, and says where the present system fits. \textbf{Chapter 3} lays out the five-layer pipeline and defends each choice of tool and model side by side. \textbf{Chapter 4} is the how: the DistilBERT tier and its classical baselines, the Context Agent, the LLM judge, and the three context mechanisms, prompts included. \textbf{Chapter 5} is the evidence, the benchmark and the comparative results with confusion matrices and significance tests. \textbf{Chapter 6} steps back to weigh what the numbers mean, including the precision-recall trade-off and the places where extra context did not pay off. \textbf{Chapter 7} closes with the contributions, the ethical questions, and the planned extensions.

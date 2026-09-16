@@ -13,3 +13,15 @@ __pycache__/
 
 # Saved analyst chat conversations (may contain sensitive moderation data).
 chat_history/
+
+# --- Personal / working docs — keep locally, do NOT upload to GitHub ---
+# Meeting notes, the email draft, and any private planning stay off the repo.
+docs/MEETING_*.md
+docs/email_to_prof_*.md
+
+# --- Backup / scratch CSVs (the master thesis_benchmark_eval.csv stays tracked) ---
+thesis_benchmark_eval-*.csv
+thesis_benchmark_eval.*.csv
+
+# --- Accidental junk ---
+--help

@@ -1,0 +1,79 @@
+\chapter{Discussion}\label{discussion}
+
+The results in Chapter 5 are more interesting for their shape than their size. The headline is not that one configuration scored highest. It is that four ways of adding context behaved so differently from one another, and that the two which changed the most were the two that came out significant, in opposite directions. This chapter works through why.
+
+\section{Context helps, but only the right kind}\label{context-helps-but-only-the-right-kind}
+
+A flat assumption sits behind a great deal of ``add more context'' engineering: that more information can only help. These results push back on it.
+
+Two of the four modules, memory and RAG, left the score essentially unchanged. A third, the LLM-Wiki, made it significantly worse. Only the multi-agent decomposition produced a real gain. So whatever ``context helps'' means here, it is clearly conditional, and the condition has less to do with how much context is added than with how that context is structured and used.
+
+\section{The central tension: precision against recall}\label{the-central-tension-precision-against-recall}
+
+Almost everything in Chapter 5 is a story about one trade-off.
+
+Toxic messages are rare, so every system is walking a tightrope. Lean toward flagging and it catches more toxicity but also more innocents: recall up, precision down. Lean toward restraint and it makes fewer false accusations but misses more: precision up, recall down. It is the tension a smoke alarm faces. Too sensitive and it goes off whenever someone makes toast, so people stop trusting it. Too dull and it stays silent during a real fire. F1 is just a way of scoring how well a system balances the two.
+
+Seen through that lens the variants line up cleanly. The baseline sits in the middle. The Wiki turns the sensitivity up, holding recall and losing precision, the alarm that cries toast. The multi-agent system turns it down and, crucially, does so without losing much toxicity, which is why it is the only one whose balance actually improves.
+
+\section{Why memory and RAG stayed neutral}\label{why-memory-and-rag-stayed-neutral}
+
+The likeliest explanation is not that the ideas are wrong but that the data starves them.
+
+Both depend on there being something to retrieve. Memory needs an author to have a history. RAG needs the message to have close neighbours among past cases. On this benchmark, drawn from many short-lived live sessions, 83.1 per cent of authors appear exactly once and the median author contributes a single message, so the ``history'' the memory module fetches is usually empty or a single unremarkable line. A profile built on one prior message is barely a profile. RAG hits a softer version of the same wall: with a modest precedent pool, the nearest past case is frequently not very near, and a weak analogy is easy for the judge to ignore.
+
+This reading has a testable consequence, which matters for a thesis. Both modules should come alive on data where authors recur and the precedent pool is dense. That is exactly the enriched, author-heavy data being collected next, and it is the honest reason to report these two as \emph{neutral on this benchmark} rather than as failures.
+
+\section{Why the curated knowledge over-flags}\label{why-the-curated-knowledge-over-flags}
+
+The Wiki result is the most instructive of the four, because it fails legibly.
+
+Feeding the judge a policy page, a dog-whistle glossary, and a list of edge cases made it more suspicious, and the suspicion was indiscriminate: recall held steady while precision fell. The knowledge base is, in effect, a briefing on everything that can go wrong, and a judge who has just read it starts seeing hazards everywhere, much the way a first-aid course can leave someone convinced every headache is serious.
+
+That diagnosis points at the fix rather than away from it. The starter knowledge base is broad and blunt. It names categories of harm without the precise boundaries that stop a rule from over-firing. A glossary entry saying ``watch for coded replacement rhetoric'' will flag any mention of immigration; the same entry, scoped with counter-examples, would not. So the low precision is a property of a small, early knowledge base, not of the curated-knowledge idea itself.
+
+It also sharpens the contrast this thesis set out to draw. On this benchmark, retrieving past \emph{cases} disturbed the baseline less than injecting general \emph{rules}, because a specific precedent is self-limiting in a way a general rule is not. Whether a carefully scoped knowledge base closes that gap is the natural next experiment, and a graph-structured version, GraphRAG, is one route to the precision a flat base lacks.
+
+\section{What the multi-agent win actually shows}\label{what-the-multi-agent-win-actually-shows}
+
+The multi-agent system is the one clear success, and it is worth being precise about why, because the obvious explanation is not quite right.
+
+It did not win by being smarter about toxicity in general. Its recall is the lowest in the table. It won by being disciplined. Splitting the judgement into a risk score, a behaviour profile, a routing decision, and a final reconciliation forces the model to separate ``is this content risky'' from ``is this author risky'' from ``what should happen next,'' and a verdict that has to survive all four steps is harder to reach carelessly. The gain is not extra knowledge. It is reduced impulsiveness, which is precisely why it shows up as higher precision. The same logic explains why a committee overturns fewer sound decisions than a single hurried reviewer: the friction is the feature.
+
+\section{How the judge fails}\label{how-the-judge-fails}
+
+The judge is not infallible, and its mistakes are as informative as its successes. When it errs, it errs by leniency, letting subtle toxicity through as a false negative more readily than it over-flags. A close look at those misses points to one root cause, which the internship phase of this work named \emph{implicit-bias blindness}, and three patterns recur inside it.
+
+The first is over-correction in permissive domains. In a stream tagged low-strictness, gaming for instance, the judge learns that aggression is usually just trash talk, then carries that expectation too far and waves through almost all hostile language as banter. A reasonable assumption hardening into a blind spot, the way a lifeguard who has seen a hundred false alarms grows slow to the hundred-and-first.
+
+The second is veiled sarcasm and semantic drift. The judge reads a literal message well. A sentence whose harm lives in its tone, or in a meaning that has drifted from the plain words, slips past. A polite surface wrapped around hostile intent is exactly what a single-shot reading handles worst.
+
+The third is the hardest: the niche dogwhistle. Some coded language cannot be resolved from one message at all. Deciding whether a phrase is innocent or an attack requires knowing that this particular user has used it as an attack before. That is not a gap the judge can close on its own, and it is the strongest argument in the whole thesis for the mechanisms that reach outside the single message, temporal memory and, in the last resort, a human. The internship system made that last resort explicit as a Targeted Behavioural Review tool, letting a human moderator pull a user's full history and rule on the pattern rather than the line. The lesson carries into this work unchanged: automated layers clear the high-volume noise, and the deepest, most context-dependent cases still land on a person's desk, by design rather than by failure.
+
+\section{The human role these results actually show}\label{the-human-role}
+
+It would be easy to read Chapter 5 as a comparison of six automated configurations. That reading misses the fact that people are present at three separate points in this study, and that one of them turns out to be the strongest force acting on the results.
+
+The first is annotation. Every score in this thesis is a measurement against 1,748 messages read and labelled by hand. No model in the comparison ever encounters ground truth; it encounters one person's judgement about what a message meant in the place it appeared, and the entire evaluation is an account of how closely each configuration reproduces those judgements. That labour is the foundation the other two chapters stand on, and it is worth naming rather than treating as a preprocessing step.
+
+The second is escalation. The multi-agent chain routed 44 messages to human review and cleared 94.2 per cent automatically, which puts the human-in-the-loop idea this thesis borrows from Crossmod and Automoderator \citep{chandrasekharan2019crossmod, jhaver2019automod} into concrete form: the machine takes the volume and a person is called for a minority of cases. What that minority would amount to in a working deployment is not something this study can answer, since it depends on arrival rate and reviewer capacity rather than on the share alone. The direction still matters, though. A system referring a quarter of its traffic to a moderator would be unusable, and one referring nothing would be the unaccountable automation the literature warns against \citep{gillespie2018custodians}. What the results establish is that the route exists and is taken, which is the precondition for tuning it.
+
+The third shaped this study most and was never measured directly: the human moderators working upstream, on the platforms the data came from. The toxic class stayed at eighty messages not because live chat is civil but because moderators and their automated tools remove the worst content within seconds, often before an ingestion pipeline can see it.
+
+Read the other way round, the central difficulty of this thesis is evidence that existing human moderation is effective. The scarcity that starved the memory and RAG modules, that left only eighty positives to compute F1 over, and that forced every conclusion about small effects to be hedged, is the visible shadow of moderators doing their job well. This is worth stating because it cuts against the framing that usually motivates work like this. Automated moderation is not needed because humans are failing; on well-run channels they are plainly succeeding, at a cost in labour and exposure the literature documents carefully \citep{roberts2019behindscreen, wohn2019volunteer}. What automation offers is scale and speed at the moments a small volunteer team cannot cover, which is precisely the division of labour that Section~\ref{context-helps-but-only-the-right-kind} onward has been describing.
+
+\section{Limitations}\label{limitations}
+
+Several limits bound how far these results should be pushed.
+
+\textbf{The toxic class is small.} Eighty toxic messages is enough to detect a strong effect, since the multi-agent gain clears the significance bar comfortably, but not enough to resolve small ones. The neutral readings for memory and RAG should be read as ``no detectable effect on this set,'' not ``no effect,'' and the priority for the next round is simply more labelled toxicity.
+
+\textbf{Collecting toxic data is harder than it sounds.} A practical obstacle shaped the whole dataset and is worth stating plainly. On well-run platforms, human moderators and automated filters delete the most toxic messages within seconds, often before an ingestion pipeline can capture them. The system is, in effect, trying to study a phenomenon the environment is actively erasing, and that is the deeper reason the toxic class stayed small however long collection ran. The lesson for future data work is to sample from lightly-moderated or unmoderated spaces, where toxic content survives long enough to be recorded, rather than from the very platforms whose job is to remove it.
+
+\textbf{A single annotator.} The ground truth was labelled by one reviewer, so it carries one person's reading of the borderline cases, and hate-speech judgements are known to vary between annotators. A second labeller on a subset, with an agreement score, would firm up the foundation the whole comparison rests on.
+
+\textbf{Latency and cost.} Every gain from the second tier is bought with LLM calls that take seconds, and the multi-agent variant spends four of them per message. The tiered design keeps that off the live path, but the cost is real and would shape any production deployment.
+
+\textbf{Scope.} The benchmark is English-language, text-only, and drawn from two platforms, YouTube and Twitch, both of them live-chat sources. Two further sources were considered and set aside: Reddit, whose API grants script credentials only to an established account, and Trustpilot, which refuses automated collection. Both are access restrictions rather than design limits, but the effect on this study is the same, and nothing here shows how the findings travel to threaded discussion or to long-form review text. Nor does anything here speak to images, audio, other languages, or the coordinated behaviour that plays out across many messages rather than within one.
+
+\textbf{Screen blindness.} The judge reads a stream's domain from its metadata, but it never sees the live audio or video, and that gap has real consequences. A broadcast whose topic shifts halfway through keeps a context tag that has quietly gone stale. A joking or misleading stream title sends the Context Agent down the wrong path from the very first message. And any harm living in what is shown or said aloud, rather than typed, is simply invisible to the system. The pipeline reasons about text in a world that is audiovisual, and wherever the two diverge, it is guessing. Closing that gap means giving the context layer access to more of the stream than its title, which is a direction rather than a fix.

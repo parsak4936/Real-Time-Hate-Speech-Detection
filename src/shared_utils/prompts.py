@@ -133,6 +133,56 @@ The decision MUST be exactly one of: "Correct", "False Positive", "False Negativ
 """
 
 
+def build_judge_prompt_with_wiki(
+    raw_text: str,
+    original_prediction: str,
+    confidence: float,
+    domain: str,
+    strictness: str,
+    knowledge_text: str,
+    subgenre: str = "",
+) -> str:
+    """
+    Wiki-augmented judge prompt — curated KNOWLEDGE (policies, domain rules,
+    glossary, edge cases) instead of retrieved past cases.
+
+    The switchable counterpart to build_judge_prompt_with_rag: identical shape,
+    but the injected block is authoritative moderation knowledge rather than
+    semantically similar precedents. Used by scripts/eval/replay_with_wiki.py so
+    the RAG and LLM-Wiki backends can be compared directly.
+    """
+    subgenre_line = f" | SUBGENRE: {subgenre}" if subgenre else ""
+    return f"""[ROLE: XAI CONTEXT JUDGE - TRUST & SAFETY ADVISOR]
+Evaluate the following prediction made by a static DistilBERT model.
+
+TEXT TO ANALYZE: "{raw_text}"
+PREDICTION: {original_prediction} (Confidence: {confidence:.2%})
+DOMAIN: {domain}{subgenre_line} | STRICTNESS: {strictness}
+
+MODERATION KNOWLEDGE BASE (authoritative policy, domain rules, and glossary for THIS case):
+{knowledge_text}
+
+{JUDGE_FORENSIC_RULES}
+
+ADDITIONAL CONTEXTUAL RULES:
+5. Knowledge Reasoning: Treat the MODERATION KNOWLEDGE BASE as the governing policy.
+   Apply its label definitions, the domain page's strictness, and any glossary or
+   edge-case entry that matches this message.
+6. Knowledge Guides, Content Governs: The knowledge base tells you HOW to judge; the
+   literal content of the message still decides the verdict. A matching glossary term
+   is a signal, not an automatic label — a message that merely mentions or condemns
+   coded language is not itself hateful.
+
+TASK:
+1. Validate: Is DistilBERT's prediction Correct, a False Positive, or a False Negative?
+2. Explain: Detail exactly why. You MUST reference the forensic rules AND the specific
+   knowledge-base entries that informed your decision.
+
+OUTPUT FORMAT: Output ONLY valid JSON: {{"decision": "...", "explanation": "..."}}
+The decision MUST be exactly one of: "Correct", "False Positive", "False Negative".
+"""
+
+
 def build_judge_prompt_with_memory_and_rag(
     raw_text: str,
     original_prediction: str,
@@ -244,6 +294,101 @@ TASK:
 
 OUTPUT FORMAT: Output ONLY valid JSON: {{"decision": "...", "explanation": "..."}}
 The decision MUST be exactly one of: "Correct", "False Positive", "False Negative".
+"""
+
+
+# ---------------------------------------------------------------------------
+# Stage 4 — Multi-Agent decomposition.
+#
+# The monolithic Tier-2 judge is split into four specialist agents that run
+# in sequence. Each is a separate LLM call with a focused responsibility:
+#   1. Risk Scorer        — scores the message content in isolation (0..1).
+#   2. Behavior Profiler  — characterises the author from their history.
+#   3. Escalator          — decides routing (auto-clear / auto-flag / human).
+#   4. Supervisor         — reconciles all signals into the final verdict,
+#                           in the SAME space as the other variants so the
+#                           evaluation notebook can compare directly:
+#                           "Correct" | "False Positive" | "False Negative".
+# ---------------------------------------------------------------------------
+
+def build_risk_scorer_prompt(raw_text, domain, strictness, subgenre=""):
+    subgenre_line = f" | SUBGENRE: {subgenre}" if subgenre else ""
+    return f"""[ROLE: RISK SCORING AGENT]
+You score the toxicity RISK of a single chat message, looking ONLY at the message content (ignore author history — another agent handles that).
+
+MESSAGE: "{raw_text}"
+DOMAIN: {domain}{subgenre_line} | STRICTNESS: {strictness}
+
+Consider: slurs, threats, harassment, dogwhistles, leetspeak evasion, and whether aggressive language is genuine hostility vs domain-normal banter (e.g. gaming trash talk).
+
+OUTPUT ONLY valid JSON:
+{{"risk_score": 0.0, "rationale": "one sentence"}}
+risk_score is a float 0.0 (clearly benign) to 1.0 (clearly toxic). 0.5 = genuinely ambiguous.
+"""
+
+
+def build_behavior_profiler_prompt(author_name, fingerprint, user_history_text):
+    return f"""[ROLE: BEHAVIORAL PROFILING AGENT]
+You characterise a user's behavioural pattern from their recent history. You do NOT judge the current message — only the pattern.
+
+USER: {author_name}
+BEHAVIOUR FINGERPRINT: {fingerprint}
+RECENT HISTORY (newest first):
+{user_history_text}
+
+OUTPUT ONLY valid JSON:
+{{"behavior_risk": "low", "profile_summary": "one sentence describing this user's pattern"}}
+behavior_risk is one of: "low" (consistently normal), "medium" (occasional issues), "high" (repeated toxicity).
+"""
+
+
+def build_escalator_prompt(raw_text, risk_score, behavior_risk, thread_context_text, strictness):
+    return f"""[ROLE: ESCALATION ROUTING AGENT]
+You decide how a flagged message should be ROUTED, given upstream signals. You do not make the final hate/normal call.
+
+MESSAGE: "{raw_text}"
+CONTENT RISK SCORE: {risk_score}
+AUTHOR BEHAVIOUR RISK: {behavior_risk}
+STRICTNESS: {strictness}
+THREAD CONTEXT (newest first):
+{thread_context_text}
+
+Routing policy:
+- "auto_clear"   : low content risk AND low behaviour risk → no action needed.
+- "auto_flag"    : high content risk OR (medium content AND high behaviour) → machine can action confidently.
+- "human_review" : genuinely ambiguous, conflicting signals, or subtle/implicit cases needing a person.
+
+OUTPUT ONLY valid JSON:
+{{"action": "auto_clear", "escalate_to_human": false, "rationale": "one sentence"}}
+"""
+
+
+def build_supervisor_prompt(
+    raw_text, original_prediction, confidence, domain, strictness,
+    risk_score, risk_rationale, behavior_risk, profile_summary,
+    escalation_action, precedents_text="", subgenre="",
+):
+    subgenre_line = f" | SUBGENRE: {subgenre}" if subgenre else ""
+    precedents_block = (
+        f"\nSIMILAR PAST CASES:\n{precedents_text}\n" if precedents_text else ""
+    )
+    return f"""[ROLE: SUPERVISOR AGENT — final Trust & Safety authority]
+You reconcile all specialist signals into a final verdict on the static DistilBERT model's prediction.
+
+MESSAGE: "{raw_text}"
+DISTILBERT PREDICTION: {original_prediction} (confidence {confidence:.2%})
+DOMAIN: {domain}{subgenre_line} | STRICTNESS: {strictness}
+
+SPECIALIST SIGNALS:
+- Risk Scorer: score={risk_score}, "{risk_rationale}"
+- Behavior Profiler: behaviour_risk={behavior_risk}, "{profile_summary}"
+- Escalator: action={escalation_action}
+{precedents_block}
+TASK: Decide whether DistilBERT's prediction was Correct, a False Positive (it over-flagged a benign message), or a False Negative (it missed real toxicity). Weigh the specialist signals, but the message content itself is the final authority — do not let history alone override a clear-cut case.
+
+OUTPUT ONLY valid JSON:
+{{"decision": "...", "explanation": "one to two sentences"}}
+decision MUST be exactly one of: "Correct", "False Positive", "False Negative".
 """
 
 

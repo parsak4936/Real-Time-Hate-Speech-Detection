@@ -57,7 +57,7 @@ You now know: how a YouTube chat message becomes a Kafka record with `env_domain
 ## Tier 4 — Layer 3: Tier-1 static classifier (30 min)
 
 19. **`src/static_classifier/distilbert_processor.py`** — long-running Kafka consumer. Loads DistilBERT from `models/bert_final/`, classifies each message, writes a verdict + all Universal Schema fields to Elasticsearch.
-20. **`src/Hate_speach_Project.ipynb`** — the training notebook. **Don't run** (hours-long GPU job); read for methodology only. Hyperparameters, class balancing, evaluation metrics from the internship phase.
+20. **`notebooks/Hate_speach_Project.ipynb`** — the training notebook. **Don't run** (hours-long GPU job); read for methodology only. Hyperparameters, class balancing, evaluation metrics from the internship phase.
 
 You now know: how a Kafka record becomes an Elasticsearch document with `model_label` + `model_confidence`.
 
@@ -81,7 +81,7 @@ You now know: how Tier-2 reviews Tier-1's decisions, and how the analyst interro
 27. **[`EVAL.md`](EVAL.md)** — how the 93.5% from the report was produced; how to reproduce it.
 28. **[`RUNBOOK.md`](RUNBOOK.md)** — two paths (A: Stage 3 RAG without labels; B: Stage 2 memory with labels).
 29. **`notebooks/evaluation.ipynb`** — living evaluation notebook. §1 baseline reproduces the report; §4 measures temporal memory; §5 measures RAG; §7 cross-pipeline comparison.
-30. **`scripts/_build_eval_notebook.py`** — the generator that produces `evaluation.ipynb`. Used only when restructuring the notebook.
+30. **`scripts/eval/_build_eval_notebook.py`** — the generator that produces `evaluation.ipynb`. Used only when restructuring the notebook.
 
 You now know: how to evaluate every variant, run the existing benchmark, and compare across stages.
 
@@ -89,13 +89,13 @@ You now know: how to evaluate every variant, run the existing benchmark, and com
 
 ## Tier 7 — Operational scripts (20 min)
 
-31. **`scripts/normalize_domains.py`** — taxonomy backfill for old open-taxonomy ES records.
-32. **`scripts/seed_rag_from_csv.py`** — push the internship benchmark CSV into Qdrant.
-33. **`scripts/build_rag_index.py`** — push live ES records into Qdrant.
-34. **`scripts/replay_with_memory.py`** — re-judge reviewed ES records with memory injected.
-35. **`scripts/replay_with_rag.py`** — leave-one-out RAG evaluation on the CSV.
-36. **`src/export_subset.py`** — pull reviewed records out of ES into a benchmark CSV (with `message_id` + `timestamp` for replay matching).
-37. **`src/reset_db.py`** — destructive index wipe (requires `--yes`).
+31. **`scripts/setup/normalize_domains.py`** — taxonomy backfill for old open-taxonomy ES records.
+32. **`scripts/setup/seed_rag_from_csv.py`** — push the internship benchmark CSV into Qdrant.
+33. **`scripts/setup/build_rag_index.py`** — push live ES records into Qdrant.
+34. **`scripts/eval/replay_with_memory.py`** — re-judge reviewed ES records with memory injected.
+35. **`scripts/eval/replay_with_rag.py`** — leave-one-out RAG evaluation on the CSV.
+36. **`scripts/eval/export_subset.py`** — pull reviewed records out of ES into a benchmark CSV (with `message_id` + `timestamp` for replay matching).
+37. **`scripts/setup/reset_db.py`** — destructive index wipe (requires `--yes`).
 
 You now know: every standalone command and what it does.
 

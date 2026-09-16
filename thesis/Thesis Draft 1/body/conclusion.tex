@@ -1,0 +1,57 @@
+\chapter{Conclusion and Future Work}\label{conclusion-and-future-work}
+
+This thesis set out to build a moderation pipeline that could be fast and context-aware at once, then to measure honestly how much each kind of added context was really worth. This closing chapter states what was achieved against the research questions, addresses the ethical questions the system raises, and lays out the work that follows from it.
+
+\section{Summary}\label{summary}
+
+What was delivered is a modular, real-time Big Data pipeline for hate-speech detection.
+
+A containerised stack of Kafka, Spark, Elasticsearch, and Qdrant carries messages from more than one platform through a single schema. A fast DistilBERT tier labels every one of them in tens of milliseconds. An asynchronous LLM judge then reviews only the uncertain minority, grounded, at the operator's choice, in temporal memory, retrieved precedents, or a curated knowledge base, or decomposed across four specialist agents. Every one of those configurations was evaluated against a hand-labelled benchmark using imbalance-aware metrics and significance testing, and the whole pipeline was left reproducible from a single command.
+
+\section{Answers to the research questions}\label{answers-to-the-research-questions}
+
+\textbf{RQ1, the infrastructure, is answered in the affirmative.} The pipeline classifies live messages from YouTube and Twitch through one schema, at a median Tier-1 latency of 28 milliseconds and a sustained rate of about thirty messages a second on a single laptop, and that rate rises as cores are added. It also absorbed new context modules and an entire second retrieval backend during the project without any change to the layers beneath them. The modularity was not a claim made on paper. It was exercised repeatedly.
+
+\textbf{RQ2, the two-tier design, is answered clearly, and it is the study's strongest result.} Decoupling a fast static classifier from a selective LLM auditor more than doubled toxic F1, from 0.13 to 0.37, and lifted precision from 0.07 to 0.27, by cleaning up exactly the domain-specific false positives that static models are known to produce. Large, and unambiguous.
+
+\textbf{RQ3, whether extra context improves detection, is answered with a careful ``it depends,'' and that nuance is itself the finding.} Of the three context strategies, only the multi-agent decomposition produced a statistically significant improvement over the single-shot judge (p \textless{} 0.001). Temporal memory and retrieval-augmented moderation left the score statistically unchanged, most plausibly because the data was too sparse in repeat authors and close precedents to feed them. The curated-knowledge LLM-Wiki changed behaviour significantly, but in the wrong direction, its broad rules pushing the judge to over-flag. So the honest answer is that context helped only where it imposed discipline, as the agent decomposition does, rather than mere suspicion, as the flat knowledge base does, or where it depended on data the benchmark could not yet supply.
+
+\section{Ethical considerations}\label{ethical-considerations}
+
+A system that flags people's speech automatically cannot leave its ethics to the end. Two commitments are built in, a third is a balance rather than a guarantee, and one problem stays open.
+
+Privacy is handled at ingestion. The common schema carries only the message, an identifier, and timing, stripping personally identifying information before anything reaches the LLM, so the reasoning layer never sees more of a person than the decision requires. Human authority is preserved by design: the pipeline flags and explains, the multi-agent escalator routes genuinely uncertain cases to a person, and no automated component is given the last word on a ban.
+
+Fairness is the third commitment, and it cuts both ways. Static classifiers inherit the biases of their training data, and those biases surface most often as false positives against distinct dialects and subcultures, a bag-of-words model reading African-American Vernacular English or gaming slang as aggression. The contextual judge softens that bias directly, overriding the static model's rigid thresholds with reasoning, which is part of why the two-tier design cuts false positives so sharply. But it brings a bias of its own in the opposite direction, the leniency documented in Section~\ref{how-the-judge-fails}. Fairness here is therefore not a solved property. It is a balance struck across two tiers, with a human holding final authority over the decisions that cannot be undone.
+
+The open problem is that ``safe'' is not one thing. What counts as acceptable moderation on a public gaming stream is not what counts in a medical or financial setting, and a pipeline built to be domain-agnostic inherits that variability. The right long-term answer is to make the boundary itself dynamic, letting the context layer inject not just a domain label but the privacy and retention rules that domain demands, so the system's own limits flex with the sensitivity of what it is reading. A direction, not a solved problem, and flagged here as such.
+
+\section{Future work}\label{future-work}
+
+Several lines follow directly from the results.
+
+\textbf{Grow the toxic class.} The most immediate need is more labelled toxicity. Eighty toxic messages resolved the large multi-agent effect but not the small ones. A few hundred would turn the neutral readings for memory and RAG from ``undetectable here'' into a firm answer either way, and it is the cheapest high-value work available.
+
+\textbf{Give memory and RAG the data they need.} Section~\ref{why-memory-and-rag-stayed-neutral} traces their flat results to sparse histories and thin precedents, so the natural test is author-dense data where both have something to work with. A measurement gap, not a design one.
+
+\textbf{Distil the judge back into the classifier.} The Tier-2 judge produces something valuable almost as a by-product: a steadily growing set of messages labelled with context-aware verdicts and written explanations. Those verdicts could be captured as a new, context-aware training set and used to fine-tune Tier-1, a teacher-to-student loop in which the slow contextual model teaches the fast blind one. If it worked, the static tier would inherit some of the judge's sense of context, catch more on its own, and gradually lighten the load on the expensive second tier. Whether that loop actually lifts Tier-1, and by how much, is a clean experiment the pipeline is already positioned to run, since every judged record is stored with its verdict. It also turns the running system into its own source of better training data over time.
+
+\textbf{Ensemble self-labelling by inter-variant vote.} A cheaper route to new data follows from a simple observation: the pipeline already holds several genuinely different views of the same message. The baseline judge reasons from the text alone. The memory variant adds the author's history. RAG adds retrieved precedent, the LLM-Wiki adds curated rules, and the multi-agent chain adds a decomposed decision. Treat each as an independent annotator, combine their verdicts by majority or weighted vote, and silver labels appear automatically, in the same spirit that datasets such as Davidson's \citep{davidson2017} and HateXplain \citep{hatexplain2021} were built from the majority vote of several human coders, but without the human cost. Agreement across variants is a natural confidence signal, and their disagreement is arguably worth more still: those are the genuinely ambiguous cases, and routing them to a human instead of discarding them turns the scheme into the human-in-the-loop labelling loop the earlier chapters argue for. The honest caveat is that these voters are not independent the way separate annotators are, since they share one underlying judge, so a shared bias would be amplified rather than cancelled. A dataset built this way would need validating against a small human-labelled gold set before it could train the next model. Used with that guard, it is a low-cost way to grow exactly the toxic-class data these results were short of.
+
+\textbf{Scope the knowledge base.} The LLM-Wiki over-flags because its rules are broad. Tighter, counter-example-rich entries should recover the precision it currently spends, and a graph-structured retrieval such as GraphRAG is one route to the specificity a flat base lacks. The switchable-backend design means either can be dropped in and measured against the vector RAG already in place.
+
+\textbf{Cross-domain validation.} Extending the evaluation to consumer reviews would test whether the findings hold outside live chat. The Trustpilot adapter was written for exactly this, but the site returned HTTP 403 to automated collection, so a published review dataset is the sensible proxy. The ingestion path is already built to receive it, and the same access obstacle applies to Reddit, whose API requires an established account.
+
+\textbf{Stronger Tier-1 baselines.} DistilBERT was chosen for speed on constrained hardware, but the static tier is a swap-in component. Comparing it against stronger encoders, RoBERTa \citep{roberta2019}, DeBERTa \citep{deberta2021}, the domain-specific HateBERT \citep{hatebert2021}, or a purpose-built safety classifier such as Llama Guard \citep{llamaguard2023}, would show whether a better first pass reduces how often the expensive judge has to be called at all.
+
+\textbf{Beyond text, and beyond moderated data.} Two of the study's own limitations mark the last directions. Giving the context layer access to more of a stream than its title, its audio, its video, its shifting topic, would begin to close the screen-blindness gap. And collecting from lightly-moderated sources, where toxic content is not deleted before it can be seen, would build the denser benchmark the toxic-class results have been waiting for.
+
+\textbf{Validate the scale-out path.} Throughput was shown to grow as cores are added on one machine, but the multi-node case rests on the architecture rather than on measurement. Raising the Kafka partition count and running consumers across separate hosts would test whether the ceiling rises as the design predicts. It is a configuration change rather than a redesign, so the experiment is cheap once a cluster is available, and it would convert the horizontal-scaling claim from a property of the design into a result.
+
+\textbf{Edge-aware optimisation and federated learning.} Quantising the static tier for cheaper edge deployment, and training it in a federated, privacy-preserving way, are natural extensions of this architecture. Both are left here as discussed future work rather than implemented, in keeping with the scope agreed for this thesis.
+
+\section{Closing}\label{closing}
+
+The lasting result of this work is not a single best number. It is a demonstration, tested honestly, that context in moderation is neither free nor uniform.
+
+A two-tier design pays for itself handsomely. A disciplined decomposition of the decision pays for itself more modestly, but really. And simply pouring in more information, whether an author's thin history or a broad book of rules, can leave a system no better off or actively worse. For a field that tends to assume more context is always an improvement, that is the finding worth carrying forward.

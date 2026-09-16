@@ -262,7 +262,7 @@ Verbatim suggestion for the next email:
 >
 > 1. **Agentic discovery (direction-adjacent)** — the Context Agent's closed taxonomy was the wrong fit for an agentic project. The new implementation has the LLM propose `env_domain` freely, with downstream normalisation against an operator-extensible YAML seed list. Off-seed proposals are logged for analysis (this in itself is a publishable measurement). Implemented + qualitatively evaluated.
 >
-> 2. **Temporal memory and conversational context (direction a)** — implemented as a memory module pulling user history + thread context from Elasticsearch and injecting them into an extended judge prompt. Awaiting a live data round before formal evaluation; the methodology and replay script (`scripts/replay_with_memory.py`) are ready.
+> 2. **Temporal memory and conversational context (direction a)** — implemented as a memory module pulling user history + thread context from Elasticsearch and injecting them into an extended judge prompt. Awaiting a live data round before formal evaluation; the methodology and replay script (`scripts/eval/replay_with_memory.py`) are ready.
 >
 > 3. **Retrieval-Augmented Moderation (direction b)** — implemented with Qdrant + sentence-transformers (all-MiniLM-L6-v2). Crucially, this one can be evaluated against the existing 459-record internship benchmark via leave-one-out cross-validation without new manual labelling, which I plan to run before our next meeting.
 >

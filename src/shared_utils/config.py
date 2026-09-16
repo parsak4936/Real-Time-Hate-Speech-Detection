@@ -75,6 +75,17 @@ QDRANT_COLLECTION  = os.getenv("QDRANT_COLLECTION", "moderation_records")
 # config/rag.yaml — operator-editable without touching Python.
 
 # ----------------------------------------------------------------------
+# Switchable retrieval backend — RAG (vector precedents) vs LLM-Wiki (curated KB)
+# ----------------------------------------------------------------------
+# One flag selects what grounds the live Tier-2 judge:
+#   "none" — no retrieval (memory-only or baseline judge; current default).
+#   "rag"  — semantically similar PAST CASES from Qdrant (shared_utils/rag.py).
+#   "wiki" — curated KNOWLEDGE from the wiki/ pages (shared_utils/wiki.py).
+# The offline eval replays (replay_with_rag.py / replay_with_wiki.py) compare the
+# two backends column-by-column; this flag switches the LIVE pipeline between them.
+RETRIEVAL_BACKEND = os.getenv("RETRIEVAL_BACKEND", "none").strip().lower()
+
+# ----------------------------------------------------------------------
 # Additional ingestion sources (see docs/SOURCES.md for setup)
 # ----------------------------------------------------------------------
 # Reddit — required for src/ingestion/adapters/reddit_adapter.py.

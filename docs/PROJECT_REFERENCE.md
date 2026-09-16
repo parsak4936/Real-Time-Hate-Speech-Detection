@@ -20,10 +20,9 @@ For deeper dives, follow the cross-references to the specialised docs. For step-
 
 ```
 LAYER 5 — Analyst Surface
-  ├── operator_dashboard.py    (passive monitoring, 6 panels, port 8501)
-  ├── analytics_dashboard.py   (8 tabs, plotly charts, port 8503)
-  ├── analyst_chat.py          (Streamlit chat to Leader Agent, port 8502)
-  └── leader_agent.py          (terminal natural-language console)
+  ├── scripts/ui/dashboard.py     (live monitoring + evaluation deep-dive)
+  ├── scripts/ui/analyst_chat.py  (Streamlit chat to Leader Agent, port 8502)
+  └── agents/leader_agent.py      (terminal natural-language console)
                                                               ↑↓
 LAYER 4 — Storage & Visualisation
   ├── Elasticsearch  (index: real_time_analysis, 32-field mapping)
@@ -121,9 +120,9 @@ F:\hate-speech-pipeline\
 │   ├── seed_rag_from_csv.py             Bootstrap Qdrant from a labelled CSV
 │   ├── build_rag_index.py               Bootstrap Qdrant from ES (alternative seed source)
 │   ├── replay_with_rag.py               Leave-one-out RAG evaluation on benchmark CSV
-│   ├── operator_dashboard.py            Streamlit minimal monitoring (port 8501)
-│   ├── analytics_dashboard.py           Streamlit deep analytics — 8 tabs (port 8503)
-│   └── analyst_chat.py                  Streamlit chat to Leader Agent (port 8502)
+│   └── ui/
+│       ├── dashboard.py               Live monitoring + evaluation deep-dive
+│       └── analyst_chat.py            Streamlit chat to Leader Agent
 │
 └── src/                               Production runtime code
     │

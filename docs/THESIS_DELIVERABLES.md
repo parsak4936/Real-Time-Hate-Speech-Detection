@@ -116,9 +116,9 @@ Sentences/paragraphs you can adapt verbatim:
 | ☐ | Tier-2 batch auditor | `src/agents/xai_batch_judge.py` |
 | ☐ | Leader Agent (analyst console) | `src/agents/leader_agent.py` |
 | ☐ | Three ingestion adapters | `src/ingestion/adapters/{youtube,twitch,reddit}_adapter.py` |
-| ☐ | Replay scripts (Stage 2 + Stage 3) | `scripts/replay_with_memory.py` + `scripts/replay_with_rag.py` |
+| ☐ | Replay scripts (Stage 2 + Stage 3) | `scripts/eval/replay_with_memory.py` + `scripts/eval/replay_with_rag.py` |
 | ☐ | Evaluation notebook | `notebooks/evaluation.ipynb` |
-| ☐ | Operator + Analyst UIs | `scripts/operator_dashboard.py` + `scripts/analytics_dashboard.py` + `scripts/analyst_chat.py` |
+| ☐ | Operator + Analyst UIs | `scripts/ui/dashboard.py` + `scripts/ui/dashboard.py` + `scripts/ui/analyst_chat.py` |
 
 ---
 
