@@ -1,0 +1,5 @@
+(psutil not installed — host CPU/RAM will be blank; GPU + docker still captured. `pip install psutil` to enable.)
+Sampling every 2s for 5000s -> F:\hate-speech-pipeline\reports\scaling\20260923-223749_p4_c4_r1\resource_WIX.csv
+Run your load (throughput_bench.py / a live stream) now in another terminal.
+
+[22:37:55] host CPU % RAM % | GPU 153MB/6% | kafka=0.93%/468.1MiB / 4.804GiB ; elasticsearch=0.86%/1.476GiB / 4.804

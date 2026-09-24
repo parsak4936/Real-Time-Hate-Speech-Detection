@@ -1,0 +1,8 @@
+Benchmarking 4000 messages across 1 worker(s)...
+
+  workers          : 1  (threads/worker: all cores)
+  worker 0         : 4000 msgs in 147.3s -> 27.2 msg/s
+  STEADY-STATE     : 4000 msgs / 147.3s inference -> 27.2 msg/s (~1,629 msg/min)   <-- use this for the scaling curve
+  incl. model load : 24.8 msg/s over 161.0s wall
+
+Record:  workers=1  threads=all  steady_state=27.2 msg/s

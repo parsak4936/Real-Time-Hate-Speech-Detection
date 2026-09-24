@@ -1,0 +1,7 @@
+Run 20260923-223749_p4_c4_r1
+  mode=preload  partitions=4  sent=10000  processed_rows=0  bench files=NONE
+
+No processor timing rows for this run.
+  Copy each machine's BENCH_LOG file into this folder as bench_<node>.csv,
+  and check its run_id column equals '20260923-223749_p4_c4_r1'.
+FAIL delivery: 0 of 10000 messages processed.

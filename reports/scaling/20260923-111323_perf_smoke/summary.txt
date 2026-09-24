@@ -1,0 +1,7 @@
+Run 20260923-111323_perf_smoke
+  mode=preload  partitions=2  sent=100  processed_rows=0  bench files=NONE
+
+No processor timing rows for this run.
+  Copy each machine's BENCH_LOG file into this folder as bench_<node>.csv,
+  and check its run_id column equals '20260923-111323_perf_smoke'.
+FAIL delivery: 0 of 100 messages processed.

@@ -1,0 +1,20 @@
+Run 20260923-234455_p2_c2_r3
+  mode=preload  partitions=2  sent=10000  processed_rows=10000  bench files=['bench_WIX_1.csv', 'bench_WIX_2.csv']
+
+Throughput (steady, first 10% dropped): 21.93 msg/s over 410.261s
+  WIX: 21.93 msg/s (10000 messages)
+
+Latency (preload mode: end-to-end includes backlog wait, so only the
+  model and Elasticsearch columns are meaningful; use a rate run for latency)
+  end_to_end     p50  258238.8 | p95  459422.2 | p99  479838.0 | max  487852.4
+  kafka_wait     p50  258154.1 | p95  459311.1 | p99  479760.8 | max  487766.8
+  inference      p50      37.5 | p95      70.1 | p99     130.6 | max     741.6
+  elasticsearch  p50      46.4 | p95      50.5 | p99      53.8 | max     263.0
+
+Balance: per processor {'WIX#16640': 4939, 'WIX#12924': 5061} (max/min 1.02)
+         per partition {0: 5061, 1: 4939}
+
+PASS delivery: 10000/10000 processed
+PASS duplicates: 0
+PASS no unknown extras: 0
+n/a  clock sanity: single machine

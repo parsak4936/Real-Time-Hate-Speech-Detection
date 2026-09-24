@@ -6,9 +6,11 @@ writes the labeled record to Elasticsearch + a CSV audit log. Tier-2
 overlay fields (agent_*) are written later by the batch judge.
 """
 
+import csv
 import datetime
 import json
 import os
+import socket
 import sys
 import time
 
@@ -19,6 +21,15 @@ from elasticsearch import Elasticsearch
 from kafka import KafkaConsumer
 from transformers import DistilBertForSequenceClassification, DistilBertTokenizer
 
+# Chat text contains emoji. When output goes to a file (or a non-UTF-8 console)
+# Windows falls back to cp1252 and printing one would kill the processor, so
+# unprintable characters are replaced instead.
+for _stream in (sys.stdout, sys.stderr):
+    try:
+        _stream.reconfigure(encoding="utf-8", errors="replace")
+    except Exception:
+        pass
+
 current_dir = os.path.dirname(os.path.abspath(__file__))
 src_dir = os.path.abspath(os.path.join(current_dir, "../"))
 if src_dir not in sys.path:
@@ -27,7 +38,12 @@ if src_dir not in sys.path:
 from shared_utils.config import ES_HOST, INDEX_NAME, KAFKA_BROKERS, KAFKA_TOPICS
 
 MODELS_DIR = os.path.join(src_dir, "../models")
-LOG_FILE = os.path.join(src_dir, "../data/stream_log.csv")
+LOG_FILE = os.getenv("PROCESSOR_LOG_FILE", os.path.join(src_dir, "../data/stream_log.csv"))
+
+# Opt-in benchmark settings for the scaling experiments. Unset = original behaviour.
+GROUP_ID = os.getenv("PROCESSOR_GROUP_ID", "moderation_processor")
+BENCH_LOG = os.getenv("BENCH_LOG", "")
+NODE_NAME = os.getenv("NODE_NAME", socket.gethostname())
 
 # ---------------------------------------------------------------------------
 # 1. Elasticsearch
@@ -81,7 +97,7 @@ consumer = KafkaConsumer(
     bootstrap_servers=KAFKA_BROKERS,
     auto_offset_reset="earliest",
     enable_auto_commit=True,
-    group_id="moderation_processor",
+    group_id=GROUP_ID,
     value_deserializer=lambda x: json.loads(x.decode("utf-8")),
 )
 
@@ -103,6 +119,21 @@ if not os.path.exists(LOG_FILE):
         ]
     ).to_csv(LOG_FILE, index=False)
 
+# Per-message timing log, only when BENCH_LOG is set. Line-buffered, so every
+# row reaches disk immediately and an interrupted run keeps everything so far.
+bench_file = bench_writer = None
+if BENCH_LOG:
+    new_file = not os.path.exists(BENCH_LOG)
+    bench_file = open(BENCH_LOG, "a", newline="", encoding="utf-8", buffering=1)
+    bench_writer = csv.writer(bench_file)
+    if new_file:
+        bench_writer.writerow([
+            "node", "pid", "run_id", "seq", "topic", "partition", "offset",
+            "kafka_ts_ms", "kafka_ts_type", "t_recv_ms", "infer_ms", "es_ms",
+            "t_done_ms", "label", "confidence",
+        ])
+    print(f"-> Benchmark log: {BENCH_LOG} | node {NODE_NAME} | group {GROUP_ID}")
+
 print("-" * 120)
 print(f"{'DOMAIN':<12} | {'SOURCE':<8} | {'PREDICTION':<12} | {'CONF.':<6} | {'LATENCY':<8} | {'TEXT'}")
 print("-" * 120)
@@ -112,6 +143,7 @@ print("-" * 120)
 # ---------------------------------------------------------------------------
 try:
     for message in consumer:
+        t_recv_ms = time.time() * 1000
         data = message.value
 
         payload_text = data.get("payload_text", "")
@@ -137,6 +169,7 @@ try:
             f"{payload_text[:40]}..."
         )
 
+        es_ms = 0.0
         if es:
             doc = {
                 "message_id": platform_meta.get("tweet_id", "UNKNOWN"),
@@ -169,10 +202,22 @@ try:
                 "agent_final_decision": None,
                 "agent_explanation": None,
             }
+            t_es = time.time()
             try:
                 es.index(index=INDEX_NAME, document=doc)
             except Exception as e:
                 print(f"Kibana Error: {e}")
+            es_ms = (time.time() - t_es) * 1000
+
+        if bench_writer:
+            t_done_ms = time.time() * 1000
+            bench_writer.writerow([
+                NODE_NAME, os.getpid(), data.get("bench_run_id", ""), data.get("bench_seq", ""),
+                message.topic, message.partition, message.offset,
+                message.timestamp, message.timestamp_type,
+                round(t_recv_ms, 3), round(latency_ms, 3), round(es_ms, 3), round(t_done_ms, 3),
+                label_text, round(float(confidence), 4),
+            ])
 
         with open(LOG_FILE, "a", encoding="utf-8") as f:
             clean_text = payload_text.replace("\n", " ").replace(",", " ")
@@ -184,3 +229,6 @@ try:
 
 except KeyboardInterrupt:
     print("\nProcessor stopped safely.")
+finally:
+    if bench_file:
+        bench_file.close()

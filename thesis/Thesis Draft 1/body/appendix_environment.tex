@@ -1,6 +1,6 @@
 \chapter{Hardware and Software Environment}\label{hardware-and-software-environment}
 
-The entire pipeline, including the fine-tuning of the Tier-1 classifier, was developed and run on a single consumer laptop. The constrained resources, in particular the 4 GB of GPU memory, directly shaped two design choices discussed in Chapter 4: the selection of a distilled transformer for Tier-1, and the training batch size of 8. The core count matters too, since it sets the ceiling on the throughput measured in Chapter 5.
+The entire pipeline, including the fine-tuning of the Tier-1 classifier, was developed and run on a single consumer laptop. The constrained resources, in particular the 4 GB of GPU memory, directly shaped two design choices discussed in Chapter~\ref{methods-and-implemented-modules}: the selection of a distilled transformer for Tier-1, and the training batch size of 8. Core count and memory matter too: throughput rose as classifier processes were added up to the four physical cores, and memory sat close to full once the container stack shared the machine (Section~\ref{throughput-scalability}). Table~\ref{tab:env-hardware} gives the full specification.
 
 \section{Hardware}\label{appendix-hardware}
 
@@ -18,11 +18,12 @@ Component & Specification \\
 \endhead
 \bottomrule
 \endlastfoot
-Processor (CPU) & Intel Core i5, 8th generation, 4 physical cores and 8 logical threads \\
-System memory & 12 GB DDR4 RAM \\
-Graphics (GPU) & NVIDIA GTX 1650, 4 GB VRAM \\
+Processor (CPU) & Intel Core i5-8265U, 8th generation, 4 physical cores and 8 logical threads \\
+System memory & 12 GB DDR4 RAM (8 GB + 4 GB, 2400 MHz) \\
+Graphics (GPU) & NVIDIA GTX 1650 with Max-Q Design, 4 GB VRAM \\
+Operating system & Windows 11 Pro \\
 Tier-1 inference & CPU; the classifier runs without GPU offload, as Section~\ref{throughput-scalability} shows \\
-Tier-2 inference & \texttt{gpt-oss:120b} served through Ollama's hosted endpoint, the 120-billion-parameter model being far larger than the local GPU can hold \\
+Tier-2 inference & \texttt{gpt-oss:120b} (Ollama tag \texttt{gpt-oss:120b-cloud}) served through Ollama's hosted endpoint, a 116.8-billion-parameter model far larger than the local GPU can hold \\
 \end{longtable}
 
 \section{Software}\label{appendix-software}
@@ -74,7 +75,7 @@ Service & Image tag \\
 Apache Kafka (Confluent) & \texttt{confluentinc/cp-kafka:7.5.0} \\
 Apache Zookeeper & \texttt{zookeeper:3.9} \\
 Apache Spark (master and worker) & \texttt{apache/spark:3.4.1} \\
-Elasticsearch (server) & \texttt{docker.elastic.co/elasticsearch/elasticsearch:8.10.2} \\
+Elasticsearch (server) & \texttt{docker.elastic.co/\allowbreak elasticsearch/\allowbreak elasticsearch:8.10.2} \\
 Kibana & \texttt{docker.elastic.co/kibana/kibana:8.10.2} \\
 Qdrant & \texttt{qdrant/qdrant:v1.10.1} \\
 \end{longtable}
@@ -82,6 +83,8 @@ Qdrant & \texttt{qdrant/qdrant:v1.10.1} \\
 One pairing is deliberate and worth flagging for anyone rebuilding the stack: the Elasticsearch \emph{client} is a 7.17 release while the \emph{server} is 8.10, which the client supports in its compatibility mode. Upgrading the client to match the server major version is the obvious-looking correction, and it breaks the ingestion path.
 
 \section{Models}\label{appendix-models}
+
+Table~\ref{tab:env-models} lists the three models, with their size where it constrained a design choice.
 
 \begin{longtable}{@{}
   >{\raggedright\arraybackslash}p{\dimexpr 0.3400\linewidth - 1.33\tabcolsep \relax}
@@ -98,7 +101,7 @@ Model & Size & Role \\
 \endhead
 \bottomrule
 \endlastfoot
-\texttt{distilbert-base-uncased}, fine-tuned & 67.0M parameters, 6 layers, 257 MB on disk & Tier-1 classifier \\
-\texttt{gpt-oss:120b} via Ollama & 120B parameters, hosted & Tier-2 judge and the four agents \\
+\texttt{distilbert-base-uncased}, fine-tuned & 67.0M parameters, 6 layers, about 269 MB on disk & Tier-1 classifier \\
+\texttt{gpt-oss:120b} via Ollama & 116.8B parameters (5.1B active per token, mixture-of-experts), hosted & Tier-2 judge and the four agents \\
 \texttt{all-MiniLM-L6-v2} & 384-dimensional embeddings & Retrieval for both RAG and the LLM-Wiki \\
 \end{longtable}

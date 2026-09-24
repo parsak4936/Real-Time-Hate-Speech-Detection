@@ -1,0 +1,2 @@
+time,host_cpu_%,host_ram_%,gpu_mem_MB,gpu_util_%,docker
+22:36:39,,,163,2,kafka=1.11%/457.8MiB / 4.804GiB ; elasticsearch=1.47%/1.474GiB / 4.804GiB ; zookeeper=0.10%/87.57MiB / 4.804GiB

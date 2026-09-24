@@ -1,0 +1,77 @@
+{
+  "run_id": "20260923-232815_p2_c2_r1",
+  "mode": "preload",
+  "partitions": 2,
+  "sent": 10000,
+  "processed_unique": 10000,
+  "processed_rows": 10000,
+  "missing": 0,
+  "duplicates": 0,
+  "extras": 0,
+  "throughput": {
+    "messages_steady": 9000,
+    "window_seconds": 438.355,
+    "msgs_per_sec": 20.53
+  },
+  "throughput_by_node": {
+    "WIX": {
+      "messages_steady": 9000,
+      "window_seconds": 438.355,
+      "msgs_per_sec": 20.53
+    }
+  },
+  "latency_ms": {
+    "end_to_end": {
+      "n": 10000,
+      "p50": 248231.4,
+      "p95": 471791.8,
+      "p99": 494829.6,
+      "max": 504823.7,
+      "mean": 251646.6
+    },
+    "kafka_wait": {
+      "n": 10000,
+      "p50": 248147.6,
+      "p95": 471685.4,
+      "p99": 494744.1,
+      "max": 504729.6,
+      "mean": 251551.5
+    },
+    "inference": {
+      "n": 10000,
+      "p50": 40.6,
+      "p95": 82.6,
+      "p99": 160.5,
+      "max": 824.6,
+      "mean": 47.0
+    },
+    "elasticsearch": {
+      "n": 10000,
+      "p50": 47.0,
+      "p95": 51.5,
+      "p99": 56.3,
+      "max": 371.6,
+      "mean": 47.4
+    }
+  },
+  "balance": {
+    "per_node": {
+      "WIX": 10000
+    },
+    "per_processor": {
+      "WIX#18524": 5061,
+      "WIX#4664": 4939
+    },
+    "per_partition": {
+      "0": 5061,
+      "1": 4939
+    },
+    "processor_max_min_ratio": 1.02
+  },
+  "clock": {
+    "min_kafka_wait_ms_by_node": {
+      "WIX": 19712.4
+    },
+    "skewed_nodes": []
+  }
+}

@@ -1,0 +1,33 @@
+Sampling every 2s for 1000s -> F:\hate-speech-pipeline\reports\scaling\20260923-123433_p2_c2_r1\resource_WIX.csv
+Run your load (throughput_bench.py / a live stream) now in another terminal.
+
+[12:34:39] host CPU 87.5% RAM 95.3% | GPU 334MB/20% | kafka=1.57%/463MiB / 4.804GiB ; elasticsearch=1.11%/1.551GiB / 4.804Gi
+[12:34:43] host CPU 35.4% RAM 97.4% | GPU 351MB/1% | kafka=0.73%/463MiB / 4.804GiB ; elasticsearch=0.39%/1.551GiB / 4.804Gi
+[12:34:47] host CPU 43.5% RAM 97.5% | GPU 344MB/1% | kafka=0.65%/463MiB / 4.804GiB ; elasticsearch=0.72%/1.551GiB / 4.804Gi
+[12:34:51] host CPU 51.8% RAM 98.5% | GPU 356MB/18% | kafka=0.65%/463MiB / 4.804GiB ; elasticsearch=0.95%/1.551GiB / 4.804Gi
+[12:34:56] host CPU 39.3% RAM 98.3% | GPU 337MB/0% | kafka=0.92%/463MiB / 4.804GiB ; elasticsearch=0.58%/1.551GiB / 4.804Gi
+[12:35:01] host CPU 13.9% RAM 96.4% | GPU 323MB/0% | kafka=37.63%/463.1MiB / 4.804GiB ; elasticsearch=105.47%/1.551GiB / 4.
+[12:35:05] host CPU 28.7% RAM 95.5% | GPU 322MB/0% | kafka=0.82%/463.1MiB / 4.804GiB ; elasticsearch=39.38%/1.552GiB / 4.80
+[12:35:10] host CPU 28.8% RAM 95.9% | GPU 322MB/3% | kafka=0.77%/463.1MiB / 4.804GiB ; elasticsearch=167.01%/1.569GiB / 4.8
+[12:35:14] host CPU 42.6% RAM 97.0% | GPU 363MB/4% | kafka=0.79%/463.1MiB / 4.804GiB ; elasticsearch=40.29%/1.565GiB / 4.80
+[12:35:19] host CPU 29.1% RAM 97.0% | GPU 340MB/8% | kafka=0.75%/463.1MiB / 4.804GiB ; elasticsearch=43.51%/1.565GiB / 4.80
+[12:35:23] host CPU 27.9% RAM 97.2% | GPU 333MB/1% | kafka=181.68%/525.1MiB / 4.804GiB ; elasticsearch=21.49%/1.565GiB / 4.
+[12:35:27] host CPU 45.3% RAM 97.4% | GPU 373MB/10% | kafka=0.83%/463.1MiB / 4.804GiB ; elasticsearch=43.63%/1.571GiB / 4.80
+[12:35:32] host CPU 44.7% RAM 98.1% | GPU 320MB/0% | kafka=2.04%/463.1MiB / 4.804GiB ; elasticsearch=33.07%/1.561GiB / 4.80
+[12:35:36] host CPU 69.7% RAM 98.3% | GPU 310MB/0% | kafka=50.27%/463.1MiB / 4.804GiB ; elasticsearch=24.37%/1.561GiB / 4.8
+[12:35:41] host CPU 82.7% RAM 97.6% | GPU 310MB/0% | kafka=2.79%/463.1MiB / 4.804GiB ; elasticsearch=21.10%/1.561GiB / 4.80
+[12:35:46] host CPU 79.3% RAM 98.2% | GPU 310MB/0% | kafka=7.21%/464.8MiB / 4.804GiB ; elasticsearch=27.88%/1.561GiB / 4.80
+[12:35:51] host CPU 94.7% RAM 98.3% | GPU 310MB/0% | kafka=169.63%/513.1MiB / 4.804GiB ; elasticsearch=49.36%/1.561GiB / 4.
+[12:35:55] host CPU 96.7% RAM 99.4% | GPU 310MB/0% | kafka=0.78%/463.1MiB / 4.804GiB ; elasticsearch=30.87%/1.566GiB / 4.80
+[12:36:00] host CPU 41.5% RAM 98.6% | GPU 310MB/0% | kafka=3.70%/463.2MiB / 4.804GiB ; elasticsearch=13.80%/1.577GiB / 4.80
+[12:36:05] host CPU 32.2% RAM 98.5% | GPU 310MB/0% | kafka=155.47%/529.7MiB / 4.804GiB ; elasticsearch=33.10%/1.566GiB / 4.
+[12:36:09] host CPU 33.1% RAM 97.3% | GPU 310MB/0% | kafka=0.73%/463.5MiB / 4.804GiB ; elasticsearch=10.72%/1.567GiB / 4.80
+[12:36:14] host CPU 25.6% RAM 97.4% | GPU 310MB/0% | kafka=16.02%/476.9MiB / 4.804GiB ; elasticsearch=13.01%/1.567GiB / 4.8
+[12:36:18] host CPU 34.4% RAM 96.7% | GPU 310MB/0% | kafka=0.77%/463.5MiB / 4.804GiB ; elasticsearch=13.13%/1.568GiB / 4.80
+[12:36:23] host CPU 20.5% RAM 96.7% | GPU 310MB/0% | kafka=0.84%/463.5MiB / 4.804GiB ; elasticsearch=12.31%/1.567GiB / 4.80
+[12:36:26] host CPU 24.4% RAM 96.6% | GPU 310MB/0% | kafka=163.92%/542.9MiB / 4.804GiB ; elasticsearch=13.33%/1.567GiB / 4.
+[12:36:31] host CPU 33.2% RAM 96.8% | GPU 310MB/0% | kafka=1.20%/463.5MiB / 4.804GiB ; elasticsearch=8.03%/1.567GiB / 4.804
+[12:36:35] host CPU 61.6% RAM 97.4% | GPU 310MB/0% | kafka=4.13%/463.5MiB / 4.804GiB ; elasticsearch=28.21%/1.569GiB / 4.80
+[12:36:40] host CPU 31.5% RAM 96.1% | GPU 310MB/0% | kafka=1.05%/463.6MiB / 4.804GiB ; elasticsearch=40.33%/1.568GiB / 4.80
+[12:36:44] host CPU 19.8% RAM 94.1% | GPU 310MB/0% | kafka=1.54%/463.6MiB / 4.804GiB ; elasticsearch=6.70%/1.568GiB / 4.804
+[12:36:49] host CPU 20.7% RAM 94.0% | GPU 310MB/0% | kafka=142.01%/549.7MiB / 4.804GiB ; elasticsearch=5.01%/1.567GiB / 4.8

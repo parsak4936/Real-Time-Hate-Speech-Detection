@@ -49,7 +49,10 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--seconds", type=int, default=120)
     ap.add_argument("--interval", type=int, default=2)
+    ap.add_argument("--out", default=str(OUT),
+                    help="where to write the samples (default: reports/resource_log.csv)")
     args = ap.parse_args()
+    out_path = Path(args.out)
 
     try:
         import psutil
@@ -58,27 +61,32 @@ def main():
         print("(psutil not installed — host CPU/RAM will be blank; "
               "GPU + docker still captured. `pip install psutil` to enable.)")
 
-    OUT.parent.mkdir(exist_ok=True)
+    out_path.parent.mkdir(parents=True, exist_ok=True)
     rows, t_end = [], time.time() + args.seconds
-    print(f"Sampling every {args.interval}s for {args.seconds}s -> {OUT}")
+    print(f"Sampling every {args.interval}s for {args.seconds}s -> {out_path}")
     print("Run your load (throughput_bench.py / a live stream) now in another terminal.\n")
 
-    while time.time() < t_end:
-        cpu = psutil.cpu_percent(interval=None) if psutil else ""
-        ram = psutil.virtual_memory().percent if psutil else ""
-        gmem, gutil = gpu_mem()
-        dock = docker_stats()
-        ts = datetime.now().strftime("%H:%M:%S")
-        rows.append({"time": ts, "host_cpu_%": cpu, "host_ram_%": ram,
-                     "gpu_mem_MB": gmem, "gpu_util_%": gutil, "docker": dock})
-        print(f"[{ts}] host CPU {cpu}% RAM {ram}% | GPU {gmem}MB/{gutil}% | {dock[:70]}")
-        time.sleep(args.interval)
-
-    with open(OUT, "w", newline="", encoding="utf-8") as f:
-        w = csv.DictWriter(f, fieldnames=list(rows[0].keys()))
+    fields = ["time", "host_cpu_%", "host_ram_%", "gpu_mem_MB", "gpu_util_%", "docker"]
+    # Line-buffered and written sample by sample, so an interrupted run keeps everything.
+    with open(out_path, "w", newline="", encoding="utf-8", buffering=1) as f:
+        w = csv.DictWriter(f, fieldnames=fields)
         w.writeheader()
-        w.writerows(rows)
-    print(f"\nSaved {len(rows)} samples -> {OUT}")
+        try:
+            while time.time() < t_end:
+                cpu = psutil.cpu_percent(interval=None) if psutil else ""
+                ram = psutil.virtual_memory().percent if psutil else ""
+                gmem, gutil = gpu_mem()
+                dock = docker_stats()
+                ts = datetime.now().strftime("%H:%M:%S")
+                row = {"time": ts, "host_cpu_%": cpu, "host_ram_%": ram,
+                       "gpu_mem_MB": gmem, "gpu_util_%": gutil, "docker": dock}
+                rows.append(row)
+                w.writerow(row)
+                print(f"[{ts}] host CPU {cpu}% RAM {ram}% | GPU {gmem}MB/{gutil}% | {dock[:70]}")
+                time.sleep(args.interval)
+        except KeyboardInterrupt:
+            print("\nStopped early; samples so far are already saved.")
+    print(f"\nSaved {len(rows)} samples -> {out_path}")
     if psutil and rows:
         cpus = [float(r["host_cpu_%"]) for r in rows if r["host_cpu_%"] != ""]
         if cpus:
