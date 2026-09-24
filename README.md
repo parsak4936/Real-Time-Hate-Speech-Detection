@@ -55,6 +55,14 @@ The full architectural rationale lives in `Internship_report_Draft_1 (1).pdf`. T
 
 - **Datasets:** [OneDrive link](https://unimeit-my.sharepoint.com/:u:/g/personal/kzmprs99h12z224y_studenti_unime_it/IQALdCPwnEgERaCJu7DbUNOTAfZ656fGZeJzMy4RAtntCXI?e=yLHFRa) — extract into `data/`.
 - **Trained DistilBERT:** [OneDrive link](https://unimeit-my.sharepoint.com/:u:/g/personal/kzmprs99h12z224y_studenti_unime_it/IQCbk51AuA3DQoF0l4almQK4AQW3uwICBwxVIqRSceczPec?e=bBY8vE) — extract the `bert_final` folder into `models/`.
+- **Worker bundle (scaling experiments):** [OneDrive link](https://unimeit-my.sharepoint.com/:u:/g/personal/kzmprs99h12z224y_studenti_unime_it/IQC0efg98sJfRb3EbQGlyFVRASwJOlZfTgcpdD91Q5Kj4f0?e=dBZsug) — the trained model plus `data/stream_log.csv` (the replay workload) in one ~290 MB zip, for setting up an extra machine quickly. Unzip it **at the repository root** so `models/` and `data/` land in place:
+
+  ```bash
+  curl -L "https://unimeit-my.sharepoint.com/:u:/g/personal/kzmprs99h12z224y_studenti_unime_it/IQC0efg98sJfRb3EbQGlyFVRASwJOlZfTgcpdD91Q5Kj4f0?e=dBZsug&download=1" -o worker_bundle.zip
+  unzip -o worker_bundle.zip -d .
+  ```
+
+  `models/` and `data/` are git-ignored, so a clone alone does not include them.
 
 ### Install Python deps
 
