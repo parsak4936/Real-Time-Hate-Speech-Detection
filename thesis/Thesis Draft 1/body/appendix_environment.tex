@@ -22,7 +22,7 @@ Processor (CPU) & Intel Core i5-8265U, 8th generation, 4 physical cores and 8 lo
 System memory & 12 GB DDR4 RAM (8 GB + 4 GB, 2400 MHz) \\
 Graphics (GPU) & NVIDIA GTX 1650 with Max-Q Design, 4 GB VRAM \\
 Operating system & Windows 11 Pro \\
-Tier-1 inference & CPU; the classifier runs without GPU offload, as Section~\ref{throughput-scalability} shows \\
+Tier-1 inference & CPU by default; the GPU is selectable through one configuration value, and both were measured (Section~\ref{throughput-scalability}) \\
 Tier-2 inference & \texttt{gpt-oss:120b} (Ollama tag \texttt{gpt-oss:120b-cloud}) served through Ollama's hosted endpoint, a 116.8-billion-parameter model far larger than the local GPU can hold \\
 \end{longtable}
 

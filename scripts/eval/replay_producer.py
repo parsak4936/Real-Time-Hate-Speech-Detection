@@ -197,6 +197,9 @@ def main():
     ap.add_argument("--brokers", default=default_brokers())
     ap.add_argument("--run-id", default="")
     ap.add_argument("--dry-run", action="store_true", help="build and show the workload, send nothing")
+    ap.add_argument("--create-topic-only", action="store_true",
+                    help="create the topic with the right partition count and exit "
+                         "(used before consumers start, so Kafka cannot auto-create it with 1 partition)")
     a = ap.parse_args()
 
     if not a.topic.startswith("perf_"):
@@ -207,6 +210,12 @@ def main():
         sys.exit("rate mode needs --rate > 0 (messages per second).")
 
     run_id = a.run_id or f"{datetime.datetime.now():%Y%m%d-%H%M%S}_{a.topic}"
+
+    if a.create_topic_only:
+        ensure_topic(a.brokers, a.topic, a.partitions)
+        print("-> Topic ready; no messages sent.")
+        return
+
     rows, skipped = load_day(a.source, a.date)
     work = build_workload(rows, a.n, a.seed)
     platforms = dict(collections.Counter(r["platform"] for r in work))

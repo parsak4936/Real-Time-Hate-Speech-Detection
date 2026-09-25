@@ -1,0 +1,1 @@
+Invalid: rate-mode run made before the launcher fix of 2026-09-25. The producer sent the whole workload BEFORE the processors were started, so every message queued and the latency figures measure backlog, not latency. Throughput is still a valid drain rate. Superseded by 20260925-145555 (18 msg/s) and 20260925-151752 (29 msg/s).

@@ -1,0 +1,14 @@
+{
+  "rate": 29.0,
+  "device": "cpu",
+  "processors": 4,
+  "messages": 6000,
+  "mode": "rate",
+  "partitions": 4,
+  "started_at": "2026-09-25T15:17:53",
+  "run_id": "20260925-151752_p4_c4_r1",
+  "threads_per_process": 1,
+  "python": "F:\\hate-speech-pipeline\\Hate_speach_env\\Scripts\\python.exe",
+  "host": "WIX",
+  "model_dir": "models/bert_final (default)"
+}

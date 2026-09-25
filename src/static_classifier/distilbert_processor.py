@@ -38,6 +38,10 @@ if src_dir not in sys.path:
 from shared_utils.config import ES_HOST, INDEX_NAME, KAFKA_BROKERS, KAFKA_TOPICS
 
 MODELS_DIR = os.path.join(src_dir, "../models")
+# Opt-in: which checkpoint to load and where to run it. Defaults reproduce the
+# original behaviour exactly (the fine-tuned DistilBERT, on CPU).
+MODEL_DIR = os.getenv("MODEL_DIR", os.path.join(MODELS_DIR, "bert_final"))
+DEVICE = os.getenv("DEVICE", "cpu").strip().lower()
 LOG_FILE = os.getenv("PROCESSOR_LOG_FILE", os.path.join(src_dir, "../data/stream_log.csv"))
 
 # Opt-in benchmark settings for the scaling experiments. Unset = original behaviour.
@@ -63,13 +67,21 @@ except Exception as e:
 # ---------------------------------------------------------------------------
 # 2. DistilBERT model
 # ---------------------------------------------------------------------------
-print("-> Loading DistilBERT Model...")
+if DEVICE == "auto":
+    DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
+if DEVICE.startswith("cuda") and not torch.cuda.is_available():
+    # Fail loudly: silently falling back to CPU would make the measurements a lie.
+    print("-> [FATAL] DEVICE=cuda but no CUDA device is available to torch.")
+    sys.exit(1)
+
+print(f"-> Loading model from {MODEL_DIR} on {DEVICE}...")
 try:
-    tokenizer = DistilBertTokenizer.from_pretrained(os.path.join(MODELS_DIR, "bert_final"))
-    model_bert = DistilBertForSequenceClassification.from_pretrained(
-        os.path.join(MODELS_DIR, "bert_final")
-    )
+    tokenizer = DistilBertTokenizer.from_pretrained(MODEL_DIR)
+    model_bert = DistilBertForSequenceClassification.from_pretrained(MODEL_DIR)
     model_bert.eval()
+    model_bert.to(DEVICE)
+    if DEVICE.startswith("cuda"):
+        print(f"-> GPU: {torch.cuda.get_device_name(0)}")
     print("-> BERT Model Loaded successfully.")
 except Exception as e:
     print(f"-> [FATAL] Error loading model: {e}")
@@ -80,9 +92,13 @@ def get_bert_prediction(text):
     start_time = time.time()
     text = str(text)
     inputs = tokenizer(text, return_tensors="pt", truncation=True, padding=True, max_length=128)
+    if DEVICE != "cpu":
+        inputs = {k: v.to(DEVICE) for k, v in inputs.items()}
     with torch.no_grad():
         outputs = model_bert(**inputs)
-    probs = torch.nn.functional.softmax(outputs.logits, dim=-1).numpy()[0]
+    if DEVICE.startswith("cuda"):
+        torch.cuda.synchronize()  # GPU work is asynchronous; without this the timing would be wrong
+    probs = torch.nn.functional.softmax(outputs.logits, dim=-1).cpu().numpy()[0]
     pred_label = np.argmax(probs)
     calc_time_ms = (time.time() - start_time) * 1000
     labels_map = {0: "HATE", 1: "OFFENSIVE", 2: "Normal"}

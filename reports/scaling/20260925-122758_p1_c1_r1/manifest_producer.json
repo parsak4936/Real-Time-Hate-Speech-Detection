@@ -1,0 +1,31 @@
+{
+  "status": "done",
+  "run_id": "20260925-122758_p1_c1_r1",
+  "started_at": "2026-09-25T12:27:59.659641",
+  "topic": "perf_20260925-122758_p1_c1_r1",
+  "partitions": 1,
+  "n": 2000,
+  "seed": 42,
+  "date": "2026-06-13",
+  "mode": "preload",
+  "rate": null,
+  "brokers": "127.0.0.1:9093",
+  "source": "F:\\hate-speech-pipeline\\data\\stream_log.csv",
+  "workload_platforms": {
+    "YouTube": 1947,
+    "Twitch": 53
+  },
+  "host": "wix",
+  "git_commit": "8b88efc",
+  "python": "3.10.11",
+  "finished_at": "2026-09-25T12:28:00.736835",
+  "sent_ok": 2000,
+  "send_errors": 0,
+  "first_errors": [],
+  "per_partition": {
+    "0": 2000
+  },
+  "send_seconds": 0.652,
+  "achieved_rate": 3065.96,
+  "max_schedule_lag_ms": null
+}

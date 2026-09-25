@@ -1,0 +1,1 @@
+node,pid,run_id,seq,topic,partition,offset,kafka_ts_ms,kafka_ts_type,t_recv_ms,infer_ms,es_ms,t_done_ms,label,confidence

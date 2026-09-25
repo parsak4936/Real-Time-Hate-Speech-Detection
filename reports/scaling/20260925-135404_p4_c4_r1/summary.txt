@@ -1,0 +1,19 @@
+Run 20260925-135404_p4_c4_r1
+  mode=rate  partitions=4  sent=6000  processed_rows=6000  bench files=['bench_WIX_1.csv', 'bench_WIX_2.csv', 'bench_WIX_3.csv', 'bench_WIX_4.csv']
+
+Throughput (steady, first 10% dropped): 38.07 msg/s over 141.827s
+  WIX: 38.07 msg/s (6000 messages)
+
+Latency in ms
+  end_to_end     p50  202845.5 | p95  226698.8 | p99  229094.4 | max  229795.1
+  kafka_wait     p50  202740.8 | p95  226594.4 | p99  228974.3 | max  229655.1
+  inference      p50      47.7 | p95      90.8 | p99     161.0 | max     642.3
+  elasticsearch  p50      46.7 | p95      52.7 | p99      62.5 | max     276.9
+
+Balance: per processor {'WIX#15720': 1534, 'WIX#16556': 1439, 'WIX#10020': 1548, 'WIX#17556': 1479} (max/min 1.08)
+         per partition {0: 1548, 1: 1439, 2: 1479, 3: 1534}
+
+PASS delivery: 6000/6000 processed
+PASS duplicates: 0
+PASS no unknown extras: 0
+n/a  clock sanity: single machine

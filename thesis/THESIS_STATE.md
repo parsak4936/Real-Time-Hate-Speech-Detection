@@ -403,3 +403,64 @@ Full end-to-end path (Kafka -> Tier-1 -> Elasticsearch), 1 thread per process, o
 - **Important for the write-up:** these end-to-end numbers are NOT the old model-only figures (20.9 / 33.0 / 44.0 from `throughput_bench.py`). The new ones include the Kafka hop and the per-message Elasticsearch write, so §5.9 must distinguish "classifier alone" from "full pipeline".
 - A run without the venv active fails instantly (`No module named torch`); the launcher now defaults to `Hate_speach_env\Scripts\python.exe` and preflights the imports.
 - Raw data: `reports/scaling/2026092*_p{1,2,4}_c{1,2,4}_r{1,2,3}/`.
+
+---
+
+## 13. Scaling measurements — ALL RESULTS (single machine, laptop "WIX", 2026-09-23/25)
+
+**Where the raw data lives:** `reports/scaling/<run_id>/` (one folder per run, never overwritten), holding
+`metrics.json`, `summary.txt`, `manifest_producer.json`, `manifest_processors.json`, `sent.csv`,
+`bench_<host>_<i>.csv` (one row per message), `resource_<host>.csv`, and the processors' own logs.
+**Regenerate the tables with:** `python scripts/eval/compare_runs.py --min-n 5000`
+→ writes `reports/scaling/comparison.csv` and `comparison.md`. Never type these numbers by hand.
+
+**Conditions for every run below:** full path (Kafka → Tier-1 → Elasticsearch), 1 thread per process,
+only zookeeper + kafka + elasticsearch running, workload = the same 10,000 messages from 2026-06-13
+(seed 42), laptop = Intel i5-8265U (4 physical cores), 12 GB RAM, GTX 1650.
+
+### Throughput, preload mode (3 repeats each, median)
+
+| device | processors | median msg/s | runs | speed-up | efficiency | inference p50 | Elasticsearch p50 |
+|---|---|---|---|---|---|---|---|
+| CPU | 1 | **11.68** | 11.8 / 11.7 / 11.6 | 1.00x | - | 31.6 ms | 47.9 ms |
+| CPU | 2 | **21.93** | 20.5 / 21.9 / 21.9 | 1.88x | 0.94 | 37.5 ms | 46.8 ms |
+| CPU | 4 | **35.90** | 36.0 / 35.9 / 35.5 | 3.07x | 0.77 | 56.0 ms | 46.8 ms |
+| **GPU** | 1 | **13.90** | 13.91 / 13.87 / 13.90 | - | - | **22.0 ms** | 47.8 ms |
+
+### Latency, rate mode (4 processors, 4 partitions; warm-up = 10% + first 120 s, identical for both)
+
+| offered rate | delivered | e2e p50 | e2e p95 | e2e p99 | Kafka wait p50 | inference p50 | ES p50 |
+|---|---|---|---|---|---|---|---|
+| 18 msg/s (50% of capacity) | 18.35 | **92.4 ms** | 191 ms | 295 ms | 3.6 ms | 35.6 ms | 46.6 ms |
+| 29 msg/s (80% of capacity) | 29.02 | **145.0 ms** | ~394 ms | ~570 ms | ~53 ms | 43.6 ms | 46.5 ms |
+
+### Findings that belong in the thesis
+1. **Scaling is near-linear to 2 processors (0.94) and falls to 0.77 at 4**, because four classifiers share four physical cores with Kafka and Elasticsearch. This is the argument for going multi-node.
+2. **The Elasticsearch write costs as much as the model** (~47 ms vs 32 ms on CPU) and is flat across every configuration. It becomes the dominant cost on GPU.
+3. **The GPU buys only +19%** (11.68 → 13.90) although inference drops 30% (31.6 → 22.0 ms), because messages are processed one at a time and the storage write then dominates. Answer to "which hardware level": a GPU is the wrong upgrade for this pipeline until storage is faster.
+4. **CPU and GPU produce identical verdicts** (max probability difference 9e-08), so device choice affects speed only.
+5. **Reliability: 0 lost and 0 duplicated messages across ~100,000 messages**, with processor balance 1.02-1.08.
+6. Startup effect (not a thesis claim, recorded for us): a consumer group needs a few seconds to be assigned its partitions, and at low arrival rates the queue that builds takes ~2 minutes to clear. Excluded via the declared warm-up; the analyser also reports the figures including it.
+
+### Invalid runs, kept but excluded
+`20260925-133838_p4_c4_r1` and `20260925-135404_p4_c4_r1` carry an `INVALID.txt` explaining that they
+were rate runs made before the launcher fix (producer ran before the processors, so latency measured backlog).
+`compare_runs.py` skips any folder containing `INVALID.txt`.
+
+### Tooling built for this (all in `scripts/eval/`)
+`replay_producer.py` (fixed workload into a `perf_` topic, preload or rate mode, `--create-topic-only`),
+`analyze_scaling.py` (throughput, latency, balance, delivery/duplicate/clock checks, `--warmup-seconds`),
+`compare_runs.py` (merges every run into one table), `run_scaling_local.ps1` and `run_scaling_local.sh`
+(one command per configuration), plus the opt-in processor instrumentation (`BENCH_LOG`, `PROCESSOR_GROUP_ID`,
+`PROCESSOR_LOG_FILE`, `NODE_NAME`, `DEVICE`, `MODEL_DIR`).
+
+**THESIS UPDATED WITH THESE RESULTS, 2026-09-25** (10 edits; `git diff` shows them):
+- `results.tex` §5.9 now reports **two** measurements and says which is which: the classifier alone (20.9/33.0/44.0, 35.8, 27.2 msg/s — unchanged, relabelled) and the **whole pipeline end to end** (new `tab:pipeline-scaling`: 11.7 / 21.9 / 35.9 msg/s, speed-up 1.88/3.07, efficiency 0.94/0.77, plus the GPU row 13.9). **This resolves the conflict**; no number was deleted.
+- New `tab:pipeline-latency`: 18 msg/s → 92/191/295 ms; 29 msg/s → 145/382/522 ms, with the Kafka wait growing 4→51 ms as load rises. Latency is now evidence, not an estimate.
+- New protocol paragraph describing the replay producer, the fixed 10,000-message workload, 3 repeats, the warm-up rule and the loss/duplicate checks.
+- New paragraphs: the ~47 ms Elasticsearch write equalling the model's cost; the GPU giving +19% while verdicts stay identical (device is a config value); 0 lost / 0 duplicated in ~100k messages, balance ≤1.08.
+- RQ1 answer and `tab:rq` updated to the end-to-end figures; Ch7 RQ1 answer likewise.
+- `methods.tex` parameter table: added `MODEL_DIR` (checkpoint) and `DEVICE` (CPU/GPU) rows — the switchable static tier is now documented.
+- Appendix B: Tier-1 inference row says CPU by default with the GPU selectable, both measured.
+- `discussion.tex` limitation "Latency and cost": added that on the fast path storage, not the classifier, is the dominant per-message cost.
+- Still to do after the multi-node runs: the last paragraph of §5.9 still says multi-node validation is outstanding, and Ch7 future work still lists "Validate the scale-out path".

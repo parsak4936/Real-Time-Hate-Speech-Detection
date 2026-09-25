@@ -194,6 +194,8 @@ Tier-1 model & base checkpoint & \texttt{distilbert-\allowbreak base-\allowbreak
  & epochs / batch size & 2 / 8 & training notebook \\
  & optimiser & AdamW, lr 5e-5 (both library defaults), weight decay 0.01, 100 warm-up steps & training notebook \\
  & max sequence length & 128 tokens & training and inference \\
+ & checkpoint directory & \texttt{models/bert\_final} & \texttt{MODEL\_DIR} \\
+ & inference device & CPU by default, GPU selectable & \texttt{DEVICE} \\
  & train/evaluation split & 80/20; seeded for the baselines, unseeded for DistilBERT & training notebook \\
 \addlinespace[1em]
 

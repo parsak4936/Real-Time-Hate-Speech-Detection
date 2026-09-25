@@ -1,0 +1,15 @@
+run,device,model,processors,partitions,threads,messages,mode,rate,hosts,msgs_per_sec,e2e_p50_ms,e2e_p95_ms,kafka_wait_p50_ms,inference_p50_ms,inference_p95_ms,elasticsearch_p50_ms,lost,duplicates,balance_ratio
+20260923-224245_p1_c1_r1,cpu,models/bert_final (default),1,1,,10000,preload,,WIX,11.75,442918.4,825042.0,442840.9,31.6,58.5,48.0,0,0,1.0
+20260923-225718_p1_c1_r2,cpu,models/bert_final (default),1,1,,10000,preload,,WIX,11.68,442211.5,830320.7,442125.5,31.6,58.9,47.9,0,0,1.0
+20260923-231157_p1_c1_r3,cpu,models/bert_final (default),1,1,,10000,preload,,WIX,11.63,444830.2,833151.6,444748.8,32.5,60.6,47.7,0,0,1.0
+20260923-232815_p2_c2_r1,cpu,models/bert_final (default),2,2,,10000,preload,,WIX,20.53,248231.4,471791.8,248147.6,40.6,82.6,47.0,0,0,1.02
+20260923-233648_p2_c2_r2,cpu,models/bert_final (default),2,2,,10000,preload,,WIX,21.93,250031.4,452018.1,249923.1,37.4,71.5,46.8,0,0,1.02
+20260923-234455_p2_c2_r3,cpu,models/bert_final (default),2,2,,10000,preload,,WIX,21.93,258238.8,459422.2,258154.1,37.5,70.1,46.4,0,0,1.02
+20260923-235321_p4_c4_r1,cpu,models/bert_final (default),4,4,,10000,preload,,WIX,35.98,159298.8,282571.2,159172.5,56.0,99.3,46.7,0,0,1.04
+20260923-235829_p4_c4_r2,cpu,models/bert_final (default),4,4,,10000,preload,,WIX,35.9,158697.5,282091.8,158511.7,55.1,98.8,47.5,0,0,1.04
+20260924-000332_p4_c4_r3,cpu,models/bert_final (default),4,4,,10000,preload,,WIX,35.48,160837.6,286111.6,160709.9,57.4,101.9,46.8,0,0,1.04
+20260925-124022_p1_c1_cuda_r1,cuda,models/bert_final (default),1,1,1,10000,preload,,WIX,13.91,393736.3,717829.4,393668.1,22.0,29.3,47.8,0,0,1.0
+20260925-125301_p1_c1_cuda_r2,cuda,models/bert_final (default),1,1,1,10000,preload,,WIX,13.87,376904.9,701078.8,376833.1,22.0,29.1,47.8,0,0,1.0
+20260925-130525_p1_c1_cuda_r3,cuda,models/bert_final (default),1,1,1,10000,preload,,WIX,13.9,375711.1,699438.2,375642.7,22.0,29.1,47.6,0,0,1.0
+20260925-145555_p4_c4_r1,cpu,models/bert_final (default),4,4,1,10000,rate,18.0,WIX,18.35,92.4,191.4,3.6,35.6,77.4,46.6,0,0,1.04
+20260925-151752_p4_c4_r1,cpu,models/bert_final (default),4,4,1,6000,rate,29.0,WIX,29.02,145.0,381.6,50.8,43.6,82.6,46.5,0,0,1.08

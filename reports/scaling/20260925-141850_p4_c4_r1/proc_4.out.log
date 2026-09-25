@@ -1,0 +1,8 @@
+---- STARTING OMNI-PROCESSOR ----
+-> Connected to Elasticsearch at http://localhost:9200 | Index: perf_20260925-141850_p4_c4_r1
+-> Loading model from F:\hate-speech-pipeline\src\../models\bert_final on cpu...
+-> BERT Model Loaded successfully.
+-> Benchmark log: F:\hate-speech-pipeline\reports\scaling\20260925-141850_p4_c4_r1\bench_WIX_4.csv | node WIX | group grp_20260925-141850_p4_c4_r1
+------------------------------------------------------------------------------------------------------------------------
+DOMAIN       | SOURCE   | PREDICTION   | CONF.  | LATENCY  | TEXT
+------------------------------------------------------------------------------------------------------------------------

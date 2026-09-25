@@ -33,6 +33,8 @@ param(
     [ValidateSet('preload', 'rate')][string]$Mode = 'preload',
     [double]$Rate = 0,
     [int]$Threads = 1,
+    [ValidateSet('cpu', 'cuda', 'auto')][string]$Device = 'cpu',
+    [string]$ModelDir = '',
     [string]$Brokers = '',
     [string]$Python = 'python',
     [int]$TimeoutSec = 0,
@@ -62,7 +64,8 @@ if ($Mode -eq 'rate' -and $Rate -le 0) { throw "rate mode needs -Rate greater th
 
 foreach ($rep in 1..$Repeats) {
     $stamp = Get-Date -Format 'yyyyMMdd-HHmmss'
-    $runId = "{0}_p{1}_c{2}_r{3}" -f $stamp, $Partitions, $Processors, $rep
+    $devTag = if ($Device -eq 'cpu') { '' } else { "_$Device" }
+    $runId = "{0}_p{1}_c{2}{3}_r{4}" -f $stamp, $Partitions, $Processors, $devTag, $rep
     $topic = "perf_$($runId.ToLower())"
     $index = "perf_$($runId.ToLower())"
     $runDir = Join-Path $root "reports\scaling\$runId"
@@ -81,14 +84,29 @@ foreach ($rep in 1..$Repeats) {
     if ($Mode -eq 'rate') { $prodArgs += @("--rate", $Rate) }
     if ($Brokers)         { $prodArgs += @("--brokers", $Brokers) }
 
-    if ($DryRun) {
-        Write-Host "[dry run] $Python $($prodArgs -join ' ')" -ForegroundColor DarkGray
+    # In preload mode the workload is queued first, then the processors drain it.
+    # In rate mode the processors must already be running, or every message would
+    # wait in the queue and the latency figures would be meaningless.
+    if (-not $DryRun) { New-Item -ItemType Directory -Force -Path $runDir | Out-Null }
+    if ($Mode -eq 'preload') {
+        if ($DryRun) {
+            Write-Host "[dry run] $Python $($prodArgs -join ' ')" -ForegroundColor DarkGray
+        } else {
+            & $Python @prodArgs
+            if ($LASTEXITCODE -ne 0) { throw "producer failed (exit $LASTEXITCODE)" }
+        }
     } else {
-        & $Python @prodArgs
-        if ($LASTEXITCODE -ne 0) { throw "producer failed (exit $LASTEXITCODE)" }
+        Write-Host "  rate mode: processors start first, then the producer sends at $Rate msg/s"
+        # The topic must exist with the right partition count BEFORE any consumer
+        # subscribes, otherwise Kafka auto-creates it with a single partition.
+        if (-not $DryRun) {
+            $mkArgs = @("scripts/eval/replay_producer.py", "--topic", $topic, "--partitions", $Partitions,
+                        "--run-id", $runId, "--create-topic-only")
+            if ($Brokers) { $mkArgs += @("--brokers", $Brokers) }
+            & $Python @mkArgs
+            if ($LASTEXITCODE -ne 0) { throw "could not create topic $topic (exit $LASTEXITCODE)" }
+        }
     }
-
-    if (-not $DryRun -and -not (Test-Path $runDir)) { throw "run folder missing: $runDir" }
 
     # ---- 2. processors -----------------------------------------------------
     $procs = @()
@@ -100,6 +118,16 @@ foreach ($rep in 1..$Repeats) {
         OMP_NUM_THREADS = $env:OMP_NUM_THREADS; MKL_NUM_THREADS = $env:MKL_NUM_THREADS
         KAFKA_BROKERS = $env:KAFKA_BROKERS
         PYTHONIOENCODING = $env:PYTHONIOENCODING; PYTHONUNBUFFERED = $env:PYTHONUNBUFFERED
+        DEVICE = $env:DEVICE; MODEL_DIR = $env:MODEL_DIR
+    }
+    $env:DEVICE = $Device
+    if ($ModelDir) { $env:MODEL_DIR = $ModelDir } else { Remove-Item Env:MODEL_DIR -ErrorAction SilentlyContinue }
+    if (-not $DryRun) {
+        @{ run_id = $runId; device = $Device; model_dir = $(if ($ModelDir) { $ModelDir } else { 'models/bert_final (default)' })
+           processors = $Processors; partitions = $Partitions; threads_per_process = $Threads
+           messages = $N; mode = $Mode; rate = $(if ($Mode -eq 'rate') { $Rate } else { $null })
+           host = $env:COMPUTERNAME; python = $Python; started_at = (Get-Date).ToString('s')
+        } | ConvertTo-Json | Set-Content -Path (Join-Path $runDir "manifest_processors.json") -Encoding utf8
     }
     # emoji-safe, unbuffered logs for the redirected child processes
     $env:PYTHONIOENCODING = "utf-8"
@@ -139,9 +167,27 @@ foreach ($rep in 1..$Repeats) {
         }
 
         if ($DryRun) {
+            if ($Mode -eq 'rate') { Write-Host "[dry run] $Python $($prodArgs -join ' ')  (after the processors are ready)" -ForegroundColor DarkGray }
             Write-Host "[dry run] would wait for $N messages (timeout ${TimeoutSec}s), then stop the processors" -ForegroundColor DarkGray
             Write-Host "[dry run] $Python scripts/eval/analyze_scaling.py --run $runId" -ForegroundColor DarkGray
             continue
+        }
+
+        if ($Mode -eq 'rate') {
+            # A processor writes its timing-log header once the model is loaded.
+            # NOTE: PowerShell variable names are case-insensitive, so this counter
+            # must not be called $n - that would overwrite $N, the message count.
+            $readyDeadline = (Get-Date).AddSeconds(600)
+            while ((Get-Date) -lt $readyDeadline) {
+                $readyCount = @(Get-ChildItem -Path $runDir -Filter "bench_*.csv" -ErrorAction SilentlyContinue).Count
+                if ($readyCount -ge $Processors) { break }
+                Write-Host "  waiting for processors to load the model ($readyCount/$Processors ready)"
+                Start-Sleep -Seconds 5
+            }
+            Start-Sleep -Seconds 3
+            Write-Host "  processors ready, sending at $Rate msg/s"
+            & $Python @prodArgs
+            if ($LASTEXITCODE -ne 0) { Write-Warning "producer failed (exit $LASTEXITCODE)" }
         }
 
         # ---- 3. wait for the workload to drain -----------------------------

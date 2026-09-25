@@ -10,7 +10,7 @@ A containerised stack of Kafka, Elasticsearch, and Qdrant, with Spark in place f
 
 \section{Answers to the research questions}\label{answers-to-the-research-questions}
 
-\textbf{RQ1, the infrastructure, is answered in the affirmative.} The pipeline classifies live messages from YouTube and Twitch through one schema, at a median Tier-1 latency of 28 milliseconds and a sustained 27 to 36 messages a second on a single laptop, depending on whether the container stack shares the machine, and that rate rises as classifier processes are added. It also absorbed new context modules and an entire second retrieval backend during the project without any change to the layers beneath them. The modularity was not a claim made on paper. It was exercised repeatedly.
+\textbf{RQ1, the infrastructure, is answered in the affirmative.} The pipeline classifies live messages from YouTube and Twitch through one schema, taking a message from the queue to a stored verdict in 92 milliseconds at the median under half load, and sustaining 35.9 messages a second on a single laptop once four classifier processes share the work, against the 4.8 a second the watched streams produced. It also absorbed new context modules and an entire second retrieval backend during the project without any change to the layers beneath them. The modularity was not a claim made on paper. It was exercised repeatedly.
 
 \textbf{RQ2, the two-tier design, is answered clearly, and it is the study's strongest result.} Decoupling a fast static classifier from a selective LLM judge more than doubled toxic F1, from 0.13 to 0.37, and lifted precision from 0.07 to 0.27, by overturning 398 of the static model's 444 false alarms, nearly half of them in gaming streams. The effect is large and unambiguous.
 

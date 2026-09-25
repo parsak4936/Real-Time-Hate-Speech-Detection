@@ -127,6 +127,9 @@ def main():
     ap.add_argument("--baseline", default="", help="run id of the 1-processor run, for speed-up")
     ap.add_argument("--reference", default="", help="run id whose labels are the reference")
     ap.add_argument("--run-id", default="", help="override the run id used to filter bench rows")
+    ap.add_argument("--warmup-seconds", type=float, default=0.0,
+                    help="also drop messages sent in the first N seconds (rate runs: the consumer "
+                         "group needs a few seconds to be assigned its partitions)")
     a = ap.parse_args()
 
     folder = run_dir(a.run)
@@ -163,10 +166,25 @@ def main():
     dups = {s: c for s, c in dup_counts.items() if c > 1}
 
     uniq = list(first.values())
-    e2e = [r["t_done_ms"] - r["kafka_ts_ms"] for r in uniq]
-    wait = [r["t_recv_ms"] - r["kafka_ts_ms"] for r in uniq]
-    infer = [r["infer_ms"] for r in uniq]
-    es = [r["es_ms"] for r in uniq]
+    # Latency is reported over the same steady window as throughput: the first
+    # WARMUP fraction is dropped, because while the consumer group is still being
+    # assigned its partitions the early messages wait in the queue, which says
+    # nothing about steady-state behaviour. The figures including that warm-up are
+    # reported alongside, so nothing is hidden.
+    by_done = sorted(uniq, key=lambda r: r["t_done_ms"])
+    steady = by_done[int(len(by_done) * WARMUP):]
+    if a.warmup_seconds > 0 and uniq:
+        t0 = min(r["kafka_ts_ms"] for r in uniq)
+        cutoff = t0 + a.warmup_seconds * 1000
+        steady = [r for r in steady if r["kafka_ts_ms"] >= cutoff]
+
+    def lat(rows_):
+        return ([r["t_done_ms"] - r["kafka_ts_ms"] for r in rows_],
+                [r["t_recv_ms"] - r["kafka_ts_ms"] for r in rows_],
+                [r["infer_ms"] for r in rows_], [r["es_ms"] for r in rows_])
+
+    e2e, wait, infer, es = lat(steady)
+    e2e_all, wait_all, infer_all, es_all = lat(uniq)
 
     per_node = collections.Counter(r["node"] for r in uniq)
     per_proc = collections.Counter(f"{r['node']}#{r['pid']}" for r in uniq)
@@ -180,11 +198,16 @@ def main():
 
     metrics = {
         "run_id": run_id, "mode": mode, "partitions": manifest.get("partitions"),
+        "warmup": {"fraction_dropped": WARMUP, "seconds_dropped": a.warmup_seconds,
+                   "messages_in_steady_window": len(steady)},
         "sent": len(sent), "processed_unique": len(uniq), "processed_rows": len(rows),
         "missing": len(missing), "duplicates": len(dups), "extras": len(extras),
         "throughput": total, "throughput_by_node": by_node,
         "latency_ms": {"end_to_end": stats_block(e2e), "kafka_wait": stats_block(wait),
                        "inference": stats_block(infer), "elasticsearch": stats_block(es)},
+        "latency_ms_including_warmup": {
+            "end_to_end": stats_block(e2e_all), "kafka_wait": stats_block(wait_all),
+            "inference": stats_block(infer_all), "elasticsearch": stats_block(es_all)},
         "balance": {"per_node": dict(per_node), "per_processor": dict(per_proc),
                     "per_partition": dict(sorted(per_part.items())),
                     "processor_max_min_ratio": round(max(per_proc.values()) / min(per_proc.values()), 2)
@@ -220,11 +243,15 @@ def main():
         lines.append("Latency (preload mode: end-to-end includes backlog wait, so only the")
         lines.append("  model and Elasticsearch columns are meaningful; use a rate run for latency)")
     else:
-        lines.append("Latency in ms")
+        lines.append(f"Latency in ms (steady window, first {int(WARMUP*100)}% dropped)")
     for name, block in metrics["latency_ms"].items():
         if block:
             lines.append(f"  {name:<14} p50 {block['p50']:>9} | p95 {block['p95']:>9} | "
                          f"p99 {block['p99']:>9} | max {block['max']:>9}")
+    warm = metrics["latency_ms_including_warmup"]["end_to_end"]
+    if warm and metrics["latency_ms"]["end_to_end"]:
+        lines.append(f"  (including the warm-up, end-to-end p95 would be {warm['p95']} ms "
+                     f"and p99 {warm['p99']} ms: the consumer group is still being assigned)")
 
     lines.append("")
     lines.append(f"Balance: per processor {dict(per_proc)} (max/min "

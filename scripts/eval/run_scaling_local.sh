@@ -18,7 +18,7 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 cd "$ROOT" || exit 1
 
 PARTITIONS=1; PROCESSORS=1; N=10000; REPEATS=1; MODE=preload; RATE=0
-THREADS=1; BROKERS=""; PY=""; TIMEOUT=0; RESOURCES=0; DRYRUN=0
+THREADS=1; BROKERS=""; PY=""; TIMEOUT=0; RESOURCES=0; DRYRUN=0; DEVICE=cpu; MODEL_DIR_ARG=""
 
 usage() { sed -n '2,12p' "$0"; exit 0; }
 while [[ $# -gt 0 ]]; do
@@ -30,6 +30,8 @@ while [[ $# -gt 0 ]]; do
     --mode)       MODE="$2"; shift 2;;
     --rate)       RATE="$2"; shift 2;;
     --threads)    THREADS="$2"; shift 2;;
+    --device)     DEVICE="$2"; shift 2;;
+    --model-dir)  MODEL_DIR_ARG="$2"; shift 2;;
     --brokers)    BROKERS="$2"; shift 2;;
     --python)     PY="$2"; shift 2;;
     --timeout)    TIMEOUT="$2"; shift 2;;
@@ -62,7 +64,7 @@ fi
 if [[ "$PROCESSORS" -gt "$PARTITIONS" ]]; then
   echo "WARNING: $PROCESSORS processors but only $PARTITIONS partition(s); the extra consumers will sit idle."
 fi
-if [[ "$MODE" == "rate" ]] && [[ "$(echo "$RATE <= 0" | bc -l 2>/dev/null || echo 1)" == "1" ]]; then
+if [[ "$MODE" == "rate" ]] && ! awk -v r="$RATE" 'BEGIN{exit !(r>0)}'; then
   echo "rate mode needs --rate greater than 0" >&2; exit 2
 fi
 
@@ -78,7 +80,8 @@ HOSTN="$(hostname | tr -cd '[:alnum:]_-')"
 
 for (( rep=1; rep<=REPEATS; rep++ )); do
   stamp="$(date +%Y%m%d-%H%M%S)"
-  run_id="${stamp}_p${PARTITIONS}_c${PROCESSORS}_r${rep}"
+  dev_tag=""; [[ "$DEVICE" != "cpu" ]] && dev_tag="_${DEVICE}"
+  run_id="${stamp}_p${PARTITIONS}_c${PROCESSORS}${dev_tag}_r${rep}"
   topic="perf_$(echo "$run_id" | tr '[:upper:]' '[:lower:]')"
   index="$topic"
   run_dir="$ROOT/reports/scaling/$run_id"
@@ -97,11 +100,25 @@ for (( rep=1; rep<=REPEATS; rep++ )); do
   [[ "$MODE" == "rate" ]] && prod_args+=(--rate "$RATE")
   [[ -n "$BROKERS" ]] && prod_args+=(--brokers "$BROKERS")
 
-  if [[ "$DRYRUN" == "1" ]]; then
-    echo "[dry run] $PY ${prod_args[*]}"
+  # preload: queue everything first, then drain it. rate: the processors must be
+  # running before the producer starts, or the latency figures are meaningless.
+  [[ "$DRYRUN" != "1" ]] && mkdir -p "$run_dir"
+  if [[ "$MODE" == "preload" ]]; then
+    if [[ "$DRYRUN" == "1" ]]; then
+      echo "[dry run] $PY ${prod_args[*]}"
+    else
+      "$PY" "${prod_args[@]}" || { echo "producer failed" >&2; exit 1; }
+    fi
   else
-    "$PY" "${prod_args[@]}" || { echo "producer failed" >&2; exit 1; }
-    [[ -d "$run_dir" ]] || { echo "run folder missing: $run_dir" >&2; exit 1; }
+    echo "  rate mode: processors start first, then the producer sends at $RATE msg/s"
+    # Create the topic with the right partition count before any consumer
+    # subscribes, otherwise Kafka auto-creates it with a single partition.
+    if [[ "$DRYRUN" != "1" ]]; then
+      mk_args=(scripts/eval/replay_producer.py --topic "$topic" --partitions "$PARTITIONS"
+               --run-id "$run_id" --create-topic-only)
+      [[ -n "$BROKERS" ]] && mk_args+=(--brokers "$BROKERS")
+      "$PY" "${mk_args[@]}" || { echo "could not create topic $topic" >&2; exit 1; }
+    fi
   fi
 
   export KAFKA_TOPICS="$topic" PROCESSOR_GROUP_ID="$group" INDEX_NAME="$index" \
@@ -109,6 +126,26 @@ for (( rep=1; rep<=REPEATS; rep++ )); do
          PYTHONUNBUFFERED=1 PYTHONIOENCODING=utf-8 \
          PROCESSOR_LOG_FILE="$run_dir/stream_log_bench.csv"
   [[ -n "$BROKERS" ]] && export KAFKA_BROKERS="$BROKERS"
+  export DEVICE="$DEVICE"
+  [[ -n "$MODEL_DIR_ARG" ]] && export MODEL_DIR="$MODEL_DIR_ARG"
+
+  if [[ "$DRYRUN" != "1" ]]; then
+    cat > "$run_dir/manifest_processors.json" <<JSON
+{
+  "run_id": "$run_id",
+  "device": "$DEVICE",
+  "model_dir": "${MODEL_DIR_ARG:-models/bert_final (default)}",
+  "processors": $PROCESSORS,
+  "partitions": $PARTITIONS,
+  "threads_per_process": $THREADS,
+  "messages": $N,
+  "mode": "$MODE",
+  "host": "$HOSTN",
+  "python": "$PY",
+  "started_at": "$(date -Iseconds)"
+}
+JSON
+  fi
 
   for (( i=1; i<=PROCESSORS; i++ )); do
     export BENCH_LOG="$run_dir/bench_${HOSTN}_${i}.csv"
@@ -131,9 +168,23 @@ for (( rep=1; rep<=REPEATS; rep++ )); do
   fi
 
   if [[ "$DRYRUN" == "1" ]]; then
+    [[ "$MODE" == "rate" ]] && echo "[dry run] $PY ${prod_args[*]}  (after the processors are ready)"
     echo "[dry run] would wait for $N messages (timeout ${TIMEOUT}s), then stop the processors"
     echo "[dry run] $PY scripts/eval/analyze_scaling.py --run $run_id"
     continue
+  fi
+
+  if [[ "$MODE" == "rate" ]]; then
+    ready_deadline=$(( $(date +%s) + 600 ))
+    while [[ $(date +%s) -lt $ready_deadline ]]; do
+      ready=$(ls "$run_dir"/bench_*.csv 2>/dev/null | wc -l)
+      [[ "$ready" -ge "$PROCESSORS" ]] && break
+      echo "  waiting for processors to load the model ($ready/$PROCESSORS ready)"
+      sleep 5
+    done
+    sleep 3
+    echo "  processors ready, sending at $RATE msg/s"
+    "$PY" "${prod_args[@]}" || echo "WARNING: producer failed" >&2
   fi
 
   deadline=$(( $(date +%s) + TIMEOUT )); last=-1; stall=$(date +%s); done_n=0
