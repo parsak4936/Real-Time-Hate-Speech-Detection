@@ -1,0 +1,22 @@
+Run 20261002-134653_clu_vm14-vm24_twonode_r3
+  mode=preload  partitions=8  sent=10000  processed_rows=10000  bench files=['bench_vm1_1.csv', 'bench_vm1_2.csv', 'bench_vm1_3.csv', 'bench_vm1_4.csv', 'bench_vm2_1.csv', 'bench_vm2_2.csv', 'bench_vm2_3.csv', 'bench_vm2_4.csv']
+
+Throughput (steady, first 10% dropped): 61.08 msg/s over 147.336s
+  vm1: 30.52 msg/s (4956 messages)
+  vm2: 35.16 msg/s (5044 messages)
+
+Latency (preload mode: end-to-end includes backlog wait, so only the
+  model and Elasticsearch columns are meaningful; use a rate run for latency)
+  end_to_end     p50   95796.7 | p95  158766.0 | p99  168713.3 | max  174986.3
+  kafka_wait     p50   95676.0 | p95  158630.1 | p99  168633.3 | max  174918.5
+  inference      p50     101.7 | p95     188.4 | p99     308.3 | max     559.0
+  elasticsearch  p50       4.8 | p95      13.2 | p99      21.8 | max     266.7
+  (including the warm-up, end-to-end p95 would be 157392.8 ms and p99 168489.1 ms: the consumer group is still being assigned)
+
+Balance: per processor {'vm1#253576': 1263, 'vm1#253577': 1214, 'vm1#253558': 1229, 'vm1#253572': 1250, 'vm2#95717': 1321, 'vm2#95714': 1197, 'vm2#95715': 1265, 'vm2#95716': 1261} (max/min 1.1)
+         per partition {0: 1265, 1: 1229, 2: 1214, 3: 1263, 4: 1261, 5: 1197, 6: 1321, 7: 1250}
+
+PASS delivery: 10000/10000 processed
+PASS duplicates: 0
+PASS no unknown extras: 0
+PASS clock sanity across machines: min Kafka wait per node {'vm1': 14708.7, 'vm2': 14708.4}

@@ -1,0 +1,24 @@
+{
+  "run_id": "20261002-171144_clu_rasp14_pi4gb_r3",
+  "cluster": true,
+  "broker": "172.16.10.94:9093",
+  "es": "http://172.16.10.94:9200",
+  "producer_node": "vm1",
+  "nodes": {
+    "rasp1": {
+      "processors": 4,
+      "arch": "aarch64",
+      "cores": 4,
+      "ram_gb": 3.8,
+      "note": "Raspberry Pi 4 worker; reachable since the docker0 bridge on vm1 was moved off 172.17.0.0/16"
+    }
+  },
+  "processors_total": 4,
+  "partitions": 4,
+  "messages": 10000,
+  "mode": "preload",
+  "rate": null,
+  "threads_per_process": 1,
+  "device": "cpu",
+  "finished_at": "2026-10-02T18:02:36"
+}

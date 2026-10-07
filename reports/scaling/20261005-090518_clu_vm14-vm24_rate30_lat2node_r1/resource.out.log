@@ -1,0 +1,731 @@
+(psutil not installed — host CPU/RAM will be blank; GPU + docker still captured. `pip install psutil` to enable.)
+Sampling every 2s for 20000s -> /home/ubuntu/hsp/reports/scaling/20261005-090518_clu_vm14-vm24_rate30_lat2node_r1/resource_vm1.csv
+Run your load (throughput_bench.py / a live stream) now in another terminal.
+
+[09:05:22] host CPU % RAM % | GPU MB/% | kafka=0.79%/1.061GiB / 31.32GiB ; kibana=0.47%/526.7MiB / 31.32GiB ; z
+[09:05:27] host CPU % RAM % | GPU MB/% | kafka=1.39%/1.061GiB / 31.32GiB ; kibana=0.74%/526.5MiB / 31.32GiB ; z
+[09:05:31] host CPU % RAM % | GPU MB/% | kafka=244.69%/1.138GiB / 31.32GiB ; kibana=3.57%/526.1MiB / 31.32GiB ;
+[09:05:35] host CPU % RAM % | GPU MB/% | kafka=3.79%/1.061GiB / 31.32GiB ; kibana=1.55%/526.7MiB / 31.32GiB ; z
+[09:05:39] host CPU % RAM % | GPU MB/% | kafka=7.73%/1.061GiB / 31.32GiB ; kibana=2.15%/526.2MiB / 31.32GiB ; z
+[09:05:43] host CPU % RAM % | GPU MB/% | kafka=178.84%/1.144GiB / 31.32GiB ; kibana=0.82%/526.7MiB / 31.32GiB ;
+[09:05:47] host CPU % RAM % | GPU MB/% | kafka=7.01%/1.061GiB / 31.32GiB ; kibana=0.74%/526.6MiB / 31.32GiB ; z
+[09:05:51] host CPU % RAM % | GPU MB/% | kafka=8.26%/1.061GiB / 31.32GiB ; kibana=2.10%/526.1MiB / 31.32GiB ; z
+[09:05:56] host CPU % RAM % | GPU MB/% | kafka=142.85%/1.11GiB / 31.32GiB ; kibana=1.19%/526.7MiB / 31.32GiB ; 
+[09:06:00] host CPU % RAM % | GPU MB/% | kafka=8.31%/1.062GiB / 31.32GiB ; kibana=4.65%/526.6MiB / 31.32GiB ; z
+[09:06:04] host CPU % RAM % | GPU MB/% | kafka=8.47%/1.062GiB / 31.32GiB ; kibana=1.48%/526.9MiB / 31.32GiB ; z
+[09:06:08] host CPU % RAM % | GPU MB/% | kafka=173.65%/1.143GiB / 31.32GiB ; kibana=0.76%/526.7MiB / 31.32GiB ;
+[09:06:12] host CPU % RAM % | GPU MB/% | kafka=8.27%/1.062GiB / 31.32GiB ; kibana=4.82%/526.3MiB / 31.32GiB ; z
+[09:06:16] host CPU % RAM % | GPU MB/% | kafka=8.37%/1.062GiB / 31.32GiB ; kibana=1.94%/526.1MiB / 31.32GiB ; z
+[09:06:20] host CPU % RAM % | GPU MB/% | kafka=151.10%/1.137GiB / 31.32GiB ; kibana=1.38%/526.1MiB / 31.32GiB ;
+[09:06:25] host CPU % RAM % | GPU MB/% | kafka=8.60%/1.062GiB / 31.32GiB ; kibana=1.22%/526.5MiB / 31.32GiB ; z
+[09:06:29] host CPU % RAM % | GPU MB/% | kafka=8.11%/1.062GiB / 31.32GiB ; kibana=1.08%/526.8MiB / 31.32GiB ; z
+[09:06:33] host CPU % RAM % | GPU MB/% | kafka=134.53%/1.111GiB / 31.32GiB ; kibana=1.72%/526.3MiB / 31.32GiB ;
+[09:06:37] host CPU % RAM % | GPU MB/% | kafka=8.81%/1.062GiB / 31.32GiB ; kibana=0.83%/526.3MiB / 31.32GiB ; z
+[09:06:41] host CPU % RAM % | GPU MB/% | kafka=7.50%/1.062GiB / 31.32GiB ; kibana=0.90%/526.1MiB / 31.32GiB ; z
+[09:06:45] host CPU % RAM % | GPU MB/% | kafka=191.54%/1.142GiB / 31.32GiB ; kibana=2.20%/526.4MiB / 31.32GiB ;
+[09:06:49] host CPU % RAM % | GPU MB/% | kafka=8.44%/1.063GiB / 31.32GiB ; kibana=1.32%/526.3MiB / 31.32GiB ; z
+[09:06:54] host CPU % RAM % | GPU MB/% | kafka=49.76%/1.063GiB / 31.32GiB ; kibana=1.20%/526.8MiB / 31.32GiB ; 
+[09:06:58] host CPU % RAM % | GPU MB/% | kafka=170.23%/1.137GiB / 31.32GiB ; kibana=1.10%/526.8MiB / 31.32GiB ;
+[09:07:02] host CPU % RAM % | GPU MB/% | kafka=18.48%/1.063GiB / 31.32GiB ; kibana=1.04%/526.2MiB / 31.32GiB ; 
+[09:07:06] host CPU % RAM % | GPU MB/% | kafka=8.38%/1.063GiB / 31.32GiB ; kibana=4.42%/526.5MiB / 31.32GiB ; z
+[09:07:10] host CPU % RAM % | GPU MB/% | kafka=168.99%/1.139GiB / 31.32GiB ; kibana=1.20%/526.4MiB / 31.32GiB ;
+[09:07:14] host CPU % RAM % | GPU MB/% | kafka=8.83%/1.063GiB / 31.32GiB ; kibana=3.87%/526.3MiB / 31.32GiB ; z
+[09:07:18] host CPU % RAM % | GPU MB/% | kafka=10.98%/1.063GiB / 31.32GiB ; kibana=4.21%/526.4MiB / 31.32GiB ; 
+[09:07:23] host CPU % RAM % | GPU MB/% | kafka=174.98%/1.139GiB / 31.32GiB ; kibana=0.81%/526.1MiB / 31.32GiB ;
+[09:07:27] host CPU % RAM % | GPU MB/% | kafka=7.35%/1.063GiB / 31.32GiB ; kibana=2.22%/526.5MiB / 31.32GiB ; z
+[09:07:31] host CPU % RAM % | GPU MB/% | kafka=8.34%/1.063GiB / 31.32GiB ; kibana=1.28%/526.4MiB / 31.32GiB ; z
+[09:07:35] host CPU % RAM % | GPU MB/% | kafka=176.53%/1.148GiB / 31.32GiB ; kibana=1.63%/526.1MiB / 31.32GiB ;
+[09:07:39] host CPU % RAM % | GPU MB/% | kafka=9.51%/1.064GiB / 31.32GiB ; kibana=1.79%/526.5MiB / 31.32GiB ; z
+[09:07:43] host CPU % RAM % | GPU MB/% | kafka=8.22%/1.064GiB / 31.32GiB ; kibana=113.19%/525.9MiB / 31.32GiB ;
+[09:07:47] host CPU % RAM % | GPU MB/% | kafka=169.16%/1.151GiB / 31.32GiB ; kibana=0.70%/526.5MiB / 31.32GiB ;
+[09:07:52] host CPU % RAM % | GPU MB/% | kafka=8.06%/1.064GiB / 31.32GiB ; kibana=1.85%/526.3MiB / 31.32GiB ; z
+[09:07:56] host CPU % RAM % | GPU MB/% | kafka=7.89%/1.064GiB / 31.32GiB ; kibana=1.19%/526.5MiB / 31.32GiB ; z
+[09:08:00] host CPU % RAM % | GPU MB/% | kafka=122.57%/1.142GiB / 31.32GiB ; kibana=1.30%/526.2MiB / 31.32GiB ;
+[09:08:04] host CPU % RAM % | GPU MB/% | kafka=7.38%/1.064GiB / 31.32GiB ; kibana=1.50%/526.8MiB / 31.32GiB ; z
+[09:08:08] host CPU % RAM % | GPU MB/% | kafka=7.46%/1.064GiB / 31.32GiB ; kibana=0.71%/526.7MiB / 31.32GiB ; z
+[09:08:12] host CPU % RAM % | GPU MB/% | kafka=130.72%/1.142GiB / 31.32GiB ; kibana=2.94%/526.2MiB / 31.32GiB ;
+[09:08:16] host CPU % RAM % | GPU MB/% | kafka=7.99%/1.064GiB / 31.32GiB ; kibana=1.02%/526.8MiB / 31.32GiB ; z
+[09:08:21] host CPU % RAM % | GPU MB/% | kafka=11.73%/1.064GiB / 31.32GiB ; kibana=1.06%/526.6MiB / 31.32GiB ; 
+[09:08:25] host CPU % RAM % | GPU MB/% | kafka=145.51%/1.151GiB / 31.32GiB ; kibana=2.74%/526.7MiB / 31.32GiB ;
+[09:08:29] host CPU % RAM % | GPU MB/% | kafka=6.78%/1.065GiB / 31.32GiB ; kibana=1.06%/526.5MiB / 31.32GiB ; z
+[09:08:33] host CPU % RAM % | GPU MB/% | kafka=8.20%/1.065GiB / 31.32GiB ; kibana=1.35%/526.7MiB / 31.32GiB ; z
+[09:08:37] host CPU % RAM % | GPU MB/% | kafka=162.78%/1.156GiB / 31.32GiB ; kibana=0.86%/526.7MiB / 31.32GiB ;
+[09:08:41] host CPU % RAM % | GPU MB/% | kafka=7.84%/1.065GiB / 31.32GiB ; kibana=1.06%/526.5MiB / 31.32GiB ; z
+[09:08:45] host CPU % RAM % | GPU MB/% | kafka=7.83%/1.065GiB / 31.32GiB ; kibana=2.02%/526.6MiB / 31.32GiB ; z
+[09:08:50] host CPU % RAM % | GPU MB/% | kafka=163.80%/1.151GiB / 31.32GiB ; kibana=1.07%/526.5MiB / 31.32GiB ;
+[09:08:54] host CPU % RAM % | GPU MB/% | kafka=7.11%/1.065GiB / 31.32GiB ; kibana=1.13%/526.4MiB / 31.32GiB ; z
+[09:08:58] host CPU % RAM % | GPU MB/% | kafka=7.38%/1.065GiB / 31.32GiB ; kibana=1.67%/526.7MiB / 31.32GiB ; z
+[09:09:02] host CPU % RAM % | GPU MB/% | kafka=131.16%/1.065GiB / 31.32GiB ; kibana=0.94%/526.7MiB / 31.32GiB ;
+[09:09:06] host CPU % RAM % | GPU MB/% | kafka=7.04%/1.065GiB / 31.32GiB ; kibana=4.32%/526.3MiB / 31.32GiB ; z
+[09:09:10] host CPU % RAM % | GPU MB/% | kafka=10.52%/1.065GiB / 31.32GiB ; kibana=1.74%/526.7MiB / 31.32GiB ; 
+[09:09:14] host CPU % RAM % | GPU MB/% | kafka=81.49%/1.065GiB / 31.32GiB ; kibana=1.03%/526.7MiB / 31.32GiB ; 
+[09:09:19] host CPU % RAM % | GPU MB/% | kafka=7.02%/1.065GiB / 31.32GiB ; kibana=4.19%/526.2MiB / 31.32GiB ; z
+[09:09:23] host CPU % RAM % | GPU MB/% | kafka=7.42%/1.066GiB / 31.32GiB ; kibana=0.60%/526.7MiB / 31.32GiB ; z
+[09:09:27] host CPU % RAM % | GPU MB/% | kafka=40.64%/1.066GiB / 31.32GiB ; kibana=2.08%/526.2MiB / 31.32GiB ; 
+[09:09:31] host CPU % RAM % | GPU MB/% | kafka=7.37%/1.066GiB / 31.32GiB ; kibana=1.02%/526.3MiB / 31.32GiB ; z
+[09:09:35] host CPU % RAM % | GPU MB/% | kafka=14.51%/1.069GiB / 31.32GiB ; kibana=1.41%/526.7MiB / 31.32GiB ; 
+[09:09:39] host CPU % RAM % | GPU MB/% | kafka=8.22%/1.07GiB / 31.32GiB ; kibana=2.45%/526.3MiB / 31.32GiB ; zo
+[09:09:43] host CPU % RAM % | GPU MB/% | kafka=6.74%/1.069GiB / 31.32GiB ; kibana=0.86%/526.2MiB / 31.32GiB ; z
+[09:09:48] host CPU % RAM % | GPU MB/% | kafka=7.18%/1.07GiB / 31.32GiB ; kibana=0.66%/526.7MiB / 31.32GiB ; zo
+[09:09:52] host CPU % RAM % | GPU MB/% | kafka=8.43%/1.07GiB / 31.32GiB ; kibana=0.97%/526.3MiB / 31.32GiB ; zo
+[09:09:56] host CPU % RAM % | GPU MB/% | kafka=7.14%/1.07GiB / 31.32GiB ; kibana=0.66%/526.2MiB / 31.32GiB ; zo
+[09:10:00] host CPU % RAM % | GPU MB/% | kafka=7.02%/1.07GiB / 31.32GiB ; kibana=4.20%/526.5MiB / 31.32GiB ; zo
+[09:10:04] host CPU % RAM % | GPU MB/% | kafka=8.16%/1.07GiB / 31.32GiB ; kibana=1.53%/526.4MiB / 31.32GiB ; zo
+[09:10:08] host CPU % RAM % | GPU MB/% | kafka=6.26%/1.07GiB / 31.32GiB ; kibana=0.66%/526.2MiB / 31.32GiB ; zo
+[09:10:12] host CPU % RAM % | GPU MB/% | kafka=13.80%/1.075GiB / 31.32GiB ; kibana=3.90%/526.5MiB / 31.32GiB ; 
+[09:10:17] host CPU % RAM % | GPU MB/% | kafka=121.17%/1.075GiB / 31.32GiB ; kibana=0.99%/526.3MiB / 31.32GiB ;
+[09:10:21] host CPU % RAM % | GPU MB/% | kafka=6.54%/1.075GiB / 31.32GiB ; kibana=1.80%/526.6MiB / 31.32GiB ; z
+[09:10:25] host CPU % RAM % | GPU MB/% | kafka=6.66%/1.075GiB / 31.32GiB ; kibana=4.00%/526.4MiB / 31.32GiB ; z
+[09:10:29] host CPU % RAM % | GPU MB/% | kafka=102.93%/1.157GiB / 31.32GiB ; kibana=1.28%/526.3MiB / 31.32GiB ;
+[09:10:33] host CPU % RAM % | GPU MB/% | kafka=8.16%/1.075GiB / 31.32GiB ; kibana=1.49%/526.5MiB / 31.32GiB ; z
+[09:10:37] host CPU % RAM % | GPU MB/% | kafka=7.09%/1.075GiB / 31.32GiB ; kibana=0.66%/526.5MiB / 31.32GiB ; z
+[09:10:41] host CPU % RAM % | GPU MB/% | kafka=6.48%/1.075GiB / 31.32GiB ; kibana=0.86%/526.4MiB / 31.32GiB ; z
+[09:10:46] host CPU % RAM % | GPU MB/% | kafka=6.49%/1.075GiB / 31.32GiB ; kibana=1.86%/526.6MiB / 31.32GiB ; z
+[09:10:50] host CPU % RAM % | GPU MB/% | kafka=6.44%/1.075GiB / 31.32GiB ; kibana=0.65%/526.5MiB / 31.32GiB ; z
+[09:10:54] host CPU % RAM % | GPU MB/% | kafka=7.59%/1.075GiB / 31.32GiB ; kibana=5.16%/526.4MiB / 31.32GiB ; z
+[09:10:58] host CPU % RAM % | GPU MB/% | kafka=7.30%/1.075GiB / 31.32GiB ; kibana=0.77%/526.4MiB / 31.32GiB ; z
+[09:11:02] host CPU % RAM % | GPU MB/% | kafka=6.27%/1.076GiB / 31.32GiB ; kibana=0.71%/526.5MiB / 31.32GiB ; z
+[09:11:06] host CPU % RAM % | GPU MB/% | kafka=6.98%/1.076GiB / 31.32GiB ; kibana=3.72%/526.8MiB / 31.32GiB ; z
+[09:11:10] host CPU % RAM % | GPU MB/% | kafka=3.44%/1.076GiB / 31.32GiB ; kibana=2.02%/526.4MiB / 31.32GiB ; z
+[09:11:15] host CPU % RAM % | GPU MB/% | kafka=1.86%/1.076GiB / 31.32GiB ; kibana=0.88%/526.4MiB / 31.32GiB ; z
+[09:11:19] host CPU % RAM % | GPU MB/% | kafka=1.39%/1.076GiB / 31.32GiB ; kibana=3.26%/526.6MiB / 31.32GiB ; z
+[09:11:23] host CPU % RAM % | GPU MB/% | kafka=1.14%/1.076GiB / 31.32GiB ; kibana=0.77%/526.3MiB / 31.32GiB ; z
+[09:11:27] host CPU % RAM % | GPU MB/% | kafka=18.01%/1.085GiB / 31.32GiB ; kibana=1.66%/526.5MiB / 31.32GiB ; 
+[09:11:31] host CPU % RAM % | GPU MB/% | kafka=1.19%/1.076GiB / 31.32GiB ; kibana=4.98%/526.5MiB / 31.32GiB ; z
+[09:11:35] host CPU % RAM % | GPU MB/% | kafka=1.58%/1.076GiB / 31.32GiB ; kibana=1.22%/526.4MiB / 31.32GiB ; z
+[09:11:39] host CPU % RAM % | GPU MB/% | kafka=93.65%/1.11GiB / 31.32GiB ; kibana=1.70%/526.6MiB / 31.32GiB ; z
+[09:11:44] host CPU % RAM % | GPU MB/% | kafka=1.48%/1.076GiB / 31.32GiB ; kibana=1.23%/526.5MiB / 31.32GiB ; z
+[09:11:48] host CPU % RAM % | GPU MB/% | kafka=1.30%/1.076GiB / 31.32GiB ; kibana=2.52%/526.2MiB / 31.32GiB ; z
+[09:11:52] host CPU % RAM % | GPU MB/% | kafka=194.03%/1.132GiB / 31.32GiB ; kibana=0.93%/526.4MiB / 31.32GiB ;
+[09:11:56] host CPU % RAM % | GPU MB/% | kafka=20.46%/1.076GiB / 31.32GiB ; kibana=0.86%/526.4MiB / 31.32GiB ; 
+[09:12:00] host CPU % RAM % | GPU MB/% | kafka=1.60%/1.076GiB / 31.32GiB ; kibana=3.01%/526.7MiB / 31.32GiB ; z
+[09:12:04] host CPU % RAM % | GPU MB/% | kafka=239.38%/1.152GiB / 31.32GiB ; kibana=1.64%/526.5MiB / 31.32GiB ;
+[09:12:09] host CPU % RAM % | GPU MB/% | kafka=2.73%/1.076GiB / 31.32GiB ; kibana=0.53%/526.4MiB / 31.32GiB ; z
+[09:12:13] host CPU % RAM % | GPU MB/% | kafka=7.23%/1.076GiB / 31.32GiB ; kibana=2.79%/526.7MiB / 31.32GiB ; z
+[09:12:17] host CPU % RAM % | GPU MB/% | kafka=176.04%/1.153GiB / 31.32GiB ; kibana=0.84%/526.5MiB / 31.32GiB ;
+[09:12:21] host CPU % RAM % | GPU MB/% | kafka=7.76%/1.076GiB / 31.32GiB ; kibana=1.38%/526.7MiB / 31.32GiB ; z
+[09:12:25] host CPU % RAM % | GPU MB/% | kafka=8.58%/1.076GiB / 31.32GiB ; kibana=1.49%/526.6MiB / 31.32GiB ; z
+[09:12:29] host CPU % RAM % | GPU MB/% | kafka=168.37%/1.165GiB / 31.32GiB ; kibana=0.91%/526.4MiB / 31.32GiB ;
+[09:12:33] host CPU % RAM % | GPU MB/% | kafka=7.76%/1.077GiB / 31.32GiB ; kibana=1.58%/526.7MiB / 31.32GiB ; z
+[09:12:38] host CPU % RAM % | GPU MB/% | kafka=7.82%/1.077GiB / 31.32GiB ; kibana=0.65%/526.6MiB / 31.32GiB ; z
+[09:12:42] host CPU % RAM % | GPU MB/% | kafka=147.66%/1.156GiB / 31.32GiB ; kibana=0.87%/526.5MiB / 31.32GiB ;
+[09:12:46] host CPU % RAM % | GPU MB/% | kafka=6.69%/1.077GiB / 31.32GiB ; kibana=0.86%/526.8MiB / 31.32GiB ; z
+[09:12:50] host CPU % RAM % | GPU MB/% | kafka=7.52%/1.077GiB / 31.32GiB ; kibana=0.97%/526.6MiB / 31.32GiB ; z
+[09:12:54] host CPU % RAM % | GPU MB/% | kafka=160.90%/1.165GiB / 31.32GiB ; kibana=3.94%/526.8MiB / 31.32GiB ;
+[09:12:58] host CPU % RAM % | GPU MB/% | kafka=7.50%/1.077GiB / 31.32GiB ; kibana=0.75%/526.5MiB / 31.32GiB ; z
+[09:13:02] host CPU % RAM % | GPU MB/% | kafka=8.22%/1.077GiB / 31.32GiB ; kibana=1.20%/526.5MiB / 31.32GiB ; z
+[09:13:07] host CPU % RAM % | GPU MB/% | kafka=113.31%/1.162GiB / 31.32GiB ; kibana=3.09%/526.2MiB / 31.32GiB ;
+[09:13:11] host CPU % RAM % | GPU MB/% | kafka=7.66%/1.077GiB / 31.32GiB ; kibana=0.68%/526.7MiB / 31.32GiB ; z
+[09:13:15] host CPU % RAM % | GPU MB/% | kafka=7.81%/1.077GiB / 31.32GiB ; kibana=2.51%/526.3MiB / 31.32GiB ; z
+[09:13:19] host CPU % RAM % | GPU MB/% | kafka=90.83%/1.078GiB / 31.32GiB ; kibana=1.06%/526.2MiB / 31.32GiB ; 
+[09:13:23] host CPU % RAM % | GPU MB/% | kafka=7.11%/1.078GiB / 31.32GiB ; kibana=0.66%/526.6MiB / 31.32GiB ; z
+[09:13:27] host CPU % RAM % | GPU MB/% | kafka=7.42%/1.08GiB / 31.32GiB ; kibana=1.88%/526.2MiB / 31.32GiB ; zo
+[09:13:32] host CPU % RAM % | GPU MB/% | kafka=74.50%/1.08GiB / 31.32GiB ; kibana=1.21%/526.3MiB / 31.32GiB ; z
+[09:13:36] host CPU % RAM % | GPU MB/% | kafka=7.00%/1.08GiB / 31.32GiB ; kibana=2.78%/526.8MiB / 31.32GiB ; zo
+[09:13:40] host CPU % RAM % | GPU MB/% | kafka=7.79%/1.08GiB / 31.32GiB ; kibana=1.42%/526.3MiB / 31.32GiB ; zo
+[09:13:44] host CPU % RAM % | GPU MB/% | kafka=154.75%/1.152GiB / 31.32GiB ; kibana=1.90%/526.2MiB / 31.32GiB ;
+[09:13:48] host CPU % RAM % | GPU MB/% | kafka=7.11%/1.081GiB / 31.32GiB ; kibana=0.65%/526.6MiB / 31.32GiB ; z
+[09:13:52] host CPU % RAM % | GPU MB/% | kafka=7.46%/1.081GiB / 31.32GiB ; kibana=1.00%/526.8MiB / 31.32GiB ; z
+[09:13:57] host CPU % RAM % | GPU MB/% | kafka=49.58%/1.081GiB / 31.32GiB ; kibana=0.89%/526.6MiB / 31.32GiB ; 
+[09:14:01] host CPU % RAM % | GPU MB/% | kafka=6.94%/1.081GiB / 31.32GiB ; kibana=5.48%/526.3MiB / 31.32GiB ; z
+[09:14:05] host CPU % RAM % | GPU MB/% | kafka=7.56%/1.081GiB / 31.32GiB ; kibana=1.93%/526.2MiB / 31.32GiB ; z
+[09:14:09] host CPU % RAM % | GPU MB/% | kafka=35.06%/1.084GiB / 31.32GiB ; kibana=2.20%/526.4MiB / 31.32GiB ; 
+[09:14:13] host CPU % RAM % | GPU MB/% | kafka=7.60%/1.084GiB / 31.32GiB ; kibana=0.62%/526.2MiB / 31.32GiB ; z
+[09:14:17] host CPU % RAM % | GPU MB/% | kafka=7.23%/1.084GiB / 31.32GiB ; kibana=0.55%/526.8MiB / 31.32GiB ; z
+[09:14:21] host CPU % RAM % | GPU MB/% | kafka=169.96%/1.163GiB / 31.32GiB ; kibana=1.93%/526.3MiB / 31.32GiB ;
+[09:14:26] host CPU % RAM % | GPU MB/% | kafka=7.14%/1.084GiB / 31.32GiB ; kibana=1.35%/526.2MiB / 31.32GiB ; z
+[09:14:30] host CPU % RAM % | GPU MB/% | kafka=7.06%/1.084GiB / 31.32GiB ; kibana=2.48%/526.7MiB / 31.32GiB ; z
+[09:14:34] host CPU % RAM % | GPU MB/% | kafka=8.03%/1.084GiB / 31.32GiB ; kibana=1.14%/526.3MiB / 31.32GiB ; z
+[09:14:38] host CPU % RAM % | GPU MB/% | kafka=7.10%/1.084GiB / 31.32GiB ; kibana=0.72%/526.3MiB / 31.32GiB ; z
+[09:14:42] host CPU % RAM % | GPU MB/% | kafka=7.27%/1.084GiB / 31.32GiB ; kibana=4.08%/526.5MiB / 31.32GiB ; z
+[09:14:46] host CPU % RAM % | GPU MB/% | kafka=8.18%/1.084GiB / 31.32GiB ; kibana=0.92%/526.4MiB / 31.32GiB ; z
+[09:14:51] host CPU % RAM % | GPU MB/% | kafka=7.44%/1.086GiB / 31.32GiB ; kibana=1.45%/526.2MiB / 31.32GiB ; z
+[09:14:55] host CPU % RAM % | GPU MB/% | kafka=7.29%/1.086GiB / 31.32GiB ; kibana=4.64%/526.4MiB / 31.32GiB ; z
+[09:14:59] host CPU % RAM % | GPU MB/% | kafka=8.08%/1.086GiB / 31.32GiB ; kibana=1.05%/526.2MiB / 31.32GiB ; z
+[09:15:03] host CPU % RAM % | GPU MB/% | kafka=8.01%/1.087GiB / 31.32GiB ; kibana=1.38%/526.4MiB / 31.32GiB ; z
+[09:15:07] host CPU % RAM % | GPU MB/% | kafka=11.72%/1.087GiB / 31.32GiB ; kibana=0.73%/526.6MiB / 31.32GiB ; 
+[09:15:11] host CPU % RAM % | GPU MB/% | kafka=7.53%/1.087GiB / 31.32GiB ; kibana=0.96%/526.4MiB / 31.32GiB ; z
+[09:15:15] host CPU % RAM % | GPU MB/% | kafka=7.70%/1.087GiB / 31.32GiB ; kibana=2.01%/526.7MiB / 31.32GiB ; z
+[09:15:20] host CPU % RAM % | GPU MB/% | kafka=7.19%/1.087GiB / 31.32GiB ; kibana=1.09%/526.6MiB / 31.32GiB ; z
+[09:15:24] host CPU % RAM % | GPU MB/% | kafka=7.15%/1.087GiB / 31.32GiB ; kibana=2.67%/526.3MiB / 31.32GiB ; z
+[09:15:28] host CPU % RAM % | GPU MB/% | kafka=8.14%/1.087GiB / 31.32GiB ; kibana=0.70%/526.6MiB / 31.32GiB ; z
+[09:15:32] host CPU % RAM % | GPU MB/% | kafka=13.19%/1.089GiB / 31.32GiB ; kibana=1.11%/526MiB / 31.32GiB ; zo
+[09:15:36] host CPU % RAM % | GPU MB/% | kafka=6.68%/1.089GiB / 31.32GiB ; kibana=4.48%/526.6MiB / 31.32GiB ; z
+[09:15:40] host CPU % RAM % | GPU MB/% | kafka=7.59%/1.089GiB / 31.32GiB ; kibana=1.15%/526.3MiB / 31.32GiB ; z
+[09:15:45] host CPU % RAM % | GPU MB/% | kafka=7.90%/1.089GiB / 31.32GiB ; kibana=1.00%/526.5MiB / 31.32GiB ; z
+[09:15:49] host CPU % RAM % | GPU MB/% | kafka=7.29%/1.089GiB / 31.32GiB ; kibana=3.83%/526.3MiB / 31.32GiB ; z
+[09:15:53] host CPU % RAM % | GPU MB/% | kafka=7.91%/1.089GiB / 31.32GiB ; kibana=0.91%/526.7MiB / 31.32GiB ; z
+[09:15:57] host CPU % RAM % | GPU MB/% | kafka=6.58%/1.089GiB / 31.32GiB ; kibana=0.67%/526.6MiB / 31.32GiB ; z
+[09:16:01] host CPU % RAM % | GPU MB/% | kafka=7.21%/1.089GiB / 31.32GiB ; kibana=1.18%/526.3MiB / 31.32GiB ; z
+[09:16:05] host CPU % RAM % | GPU MB/% | kafka=7.13%/1.089GiB / 31.32GiB ; kibana=1.28%/526.2MiB / 31.32GiB ; z
+[09:16:10] host CPU % RAM % | GPU MB/% | kafka=7.44%/1.09GiB / 31.32GiB ; kibana=2.10%/526.4MiB / 31.32GiB ; zo
+[09:16:14] host CPU % RAM % | GPU MB/% | kafka=8.26%/1.09GiB / 31.32GiB ; kibana=1.30%/526.4MiB / 31.32GiB ; zo
+[09:16:18] host CPU % RAM % | GPU MB/% | kafka=6.70%/1.09GiB / 31.32GiB ; kibana=4.04%/526.4MiB / 31.32GiB ; zo
+[09:16:22] host CPU % RAM % | GPU MB/% | kafka=34.65%/1.105GiB / 31.32GiB ; kibana=0.92%/526.3MiB / 31.32GiB ; 
+[09:16:26] host CPU % RAM % | GPU MB/% | kafka=6.66%/1.09GiB / 31.32GiB ; kibana=1.02%/526.3MiB / 31.32GiB ; zo
+[09:16:30] host CPU % RAM % | GPU MB/% | kafka=7.40%/1.09GiB / 31.32GiB ; kibana=4.23%/526.7MiB / 31.32GiB ; zo
+[09:16:34] host CPU % RAM % | GPU MB/% | kafka=8.10%/1.09GiB / 31.32GiB ; kibana=1.23%/526.5MiB / 31.32GiB ; zo
+[09:16:39] host CPU % RAM % | GPU MB/% | kafka=6.82%/1.09GiB / 31.32GiB ; kibana=0.92%/526.4MiB / 31.32GiB ; zo
+[09:16:43] host CPU % RAM % | GPU MB/% | kafka=7.29%/1.09GiB / 31.32GiB ; kibana=3.73%/526.5MiB / 31.32GiB ; zo
+[09:16:47] host CPU % RAM % | GPU MB/% | kafka=109.08%/1.128GiB / 31.32GiB ; kibana=0.91%/526.4MiB / 31.32GiB ;
+[09:16:51] host CPU % RAM % | GPU MB/% | kafka=7.24%/1.09GiB / 31.32GiB ; kibana=1.93%/526.7MiB / 31.32GiB ; zo
+[09:16:55] host CPU % RAM % | GPU MB/% | kafka=7.58%/1.09GiB / 31.32GiB ; kibana=1.29%/526.6MiB / 31.32GiB ; zo
+[09:16:59] host CPU % RAM % | GPU MB/% | kafka=106.25%/1.131GiB / 31.32GiB ; kibana=1.11%/526.4MiB / 31.32GiB ;
+[09:17:03] host CPU % RAM % | GPU MB/% | kafka=7.34%/1.092GiB / 31.32GiB ; kibana=1.90%/526.6MiB / 31.32GiB ; z
+[09:17:08] host CPU % RAM % | GPU MB/% | kafka=6.44%/1.092GiB / 31.32GiB ; kibana=0.71%/526.7MiB / 31.32GiB ; z
+[09:17:12] host CPU % RAM % | GPU MB/% | kafka=142.61%/1.142GiB / 31.32GiB ; kibana=1.88%/526.5MiB / 31.32GiB ;
+[09:17:16] host CPU % RAM % | GPU MB/% | kafka=7.53%/1.092GiB / 31.32GiB ; kibana=0.99%/526.7MiB / 31.32GiB ; z
+[09:17:20] host CPU % RAM % | GPU MB/% | kafka=7.32%/1.092GiB / 31.32GiB ; kibana=1.33%/526.6MiB / 31.32GiB ; z
+[09:17:24] host CPU % RAM % | GPU MB/% | kafka=178.64%/1.15GiB / 31.32GiB ; kibana=3.26%/526.7MiB / 31.32GiB ; 
+[09:17:28] host CPU % RAM % | GPU MB/% | kafka=7.19%/1.093GiB / 31.32GiB ; kibana=0.67%/526.4MiB / 31.32GiB ; z
+[09:17:33] host CPU % RAM % | GPU MB/% | kafka=6.81%/1.093GiB / 31.32GiB ; kibana=0.67%/526.5MiB / 31.32GiB ; z
+[09:17:37] host CPU % RAM % | GPU MB/% | kafka=197.08%/1.154GiB / 31.32GiB ; kibana=3.74%/526.8MiB / 31.32GiB ;
+[09:17:41] host CPU % RAM % | GPU MB/% | kafka=6.93%/1.095GiB / 31.32GiB ; kibana=0.71%/526.6MiB / 31.32GiB ; z
+[09:17:45] host CPU % RAM % | GPU MB/% | kafka=4.27%/1.095GiB / 31.32GiB ; kibana=1.91%/526.8MiB / 31.32GiB ; z
+[09:17:49] host CPU % RAM % | GPU MB/% | kafka=229.54%/1.163GiB / 31.32GiB ; kibana=0.97%/526.6MiB / 31.32GiB ;
+[09:17:53] host CPU % RAM % | GPU MB/% | kafka=1.27%/1.095GiB / 31.32GiB ; kibana=0.51%/526.4MiB / 31.32GiB ; z
+[09:17:57] host CPU % RAM % | GPU MB/% | kafka=0.99%/1.095GiB / 31.32GiB ; kibana=1.09%/526.6MiB / 31.32GiB ; z
+[09:18:02] host CPU % RAM % | GPU MB/% | kafka=213.34%/1.174GiB / 31.32GiB ; kibana=1.23%/526.6MiB / 31.32GiB ;
+[09:18:06] host CPU % RAM % | GPU MB/% | kafka=1.35%/1.095GiB / 31.32GiB ; kibana=1.11%/526.8MiB / 31.32GiB ; z
+[09:18:10] host CPU % RAM % | GPU MB/% | kafka=1.72%/1.095GiB / 31.32GiB ; kibana=1.18%/526.8MiB / 31.32GiB ; z
+[09:18:14] host CPU % RAM % | GPU MB/% | kafka=222.75%/1.154GiB / 31.32GiB ; kibana=1.22%/526.7MiB / 31.32GiB ;
+[09:18:18] host CPU % RAM % | GPU MB/% | kafka=1.47%/1.095GiB / 31.32GiB ; kibana=0.59%/526.5MiB / 31.32GiB ; z
+[09:18:21] host CPU % RAM % | GPU MB/% | kafka=1.25%/1.095GiB / 31.32GiB ; kibana=1.23%/526.7MiB / 31.32GiB ; z
+[09:18:25] host CPU % RAM % | GPU MB/% | kafka=234.04%/1.176GiB / 31.32GiB ; kibana=1.16%/526.6MiB / 31.32GiB ;
+[09:18:30] host CPU % RAM % | GPU MB/% | kafka=1.46%/1.095GiB / 31.32GiB ; kibana=1.05%/526.4MiB / 31.32GiB ; z
+[09:18:34] host CPU % RAM % | GPU MB/% | kafka=0.88%/1.095GiB / 31.32GiB ; kibana=1.24%/526.7MiB / 31.32GiB ; z
+[09:18:38] host CPU % RAM % | GPU MB/% | kafka=218.50%/1.184GiB / 31.32GiB ; kibana=0.64%/526.6MiB / 31.32GiB ;
+[09:18:42] host CPU % RAM % | GPU MB/% | kafka=1.02%/1.095GiB / 31.32GiB ; kibana=4.24%/526.4MiB / 31.32GiB ; z
+[09:18:46] host CPU % RAM % | GPU MB/% | kafka=2.93%/1.095GiB / 31.32GiB ; kibana=1.23%/526.2MiB / 31.32GiB ; z
+[09:18:50] host CPU % RAM % | GPU MB/% | kafka=141.33%/1.173GiB / 31.32GiB ; kibana=1.24%/526.2MiB / 31.32GiB ;
+[09:18:55] host CPU % RAM % | GPU MB/% | kafka=7.81%/1.095GiB / 31.32GiB ; kibana=3.61%/526.3MiB / 31.32GiB ; z
+[09:18:59] host CPU % RAM % | GPU MB/% | kafka=6.90%/1.095GiB / 31.32GiB ; kibana=1.20%/526.9MiB / 31.32GiB ; z
+[09:19:03] host CPU % RAM % | GPU MB/% | kafka=136.00%/1.181GiB / 31.32GiB ; kibana=1.16%/526.5MiB / 31.32GiB ;
+[09:19:07] host CPU % RAM % | GPU MB/% | kafka=7.30%/1.095GiB / 31.32GiB ; kibana=0.68%/526.6MiB / 31.32GiB ; z
+[09:19:11] host CPU % RAM % | GPU MB/% | kafka=7.23%/1.095GiB / 31.32GiB ; kibana=0.99%/526.4MiB / 31.32GiB ; z
+[09:19:16] host CPU % RAM % | GPU MB/% | kafka=88.33%/1.097GiB / 31.32GiB ; kibana=1.66%/526.6MiB / 31.32GiB ; 
+[09:19:20] host CPU % RAM % | GPU MB/% | kafka=8.50%/1.097GiB / 31.32GiB ; kibana=1.38%/526.5MiB / 31.32GiB ; z
+[09:19:24] host CPU % RAM % | GPU MB/% | kafka=7.33%/1.097GiB / 31.32GiB ; kibana=4.51%/526.6MiB / 31.32GiB ; z
+[09:19:28] host CPU % RAM % | GPU MB/% | kafka=57.39%/1.097GiB / 31.32GiB ; kibana=0.71%/526.3MiB / 31.32GiB ; 
+[09:19:32] host CPU % RAM % | GPU MB/% | kafka=7.30%/1.097GiB / 31.32GiB ; kibana=0.86%/526.3MiB / 31.32GiB ; z
+[09:19:36] host CPU % RAM % | GPU MB/% | kafka=7.46%/1.097GiB / 31.32GiB ; kibana=4.07%/526.6MiB / 31.32GiB ; z
+[09:19:41] host CPU % RAM % | GPU MB/% | kafka=58.92%/1.097GiB / 31.32GiB ; kibana=0.99%/526.4MiB / 31.32GiB ; 
+[09:19:45] host CPU % RAM % | GPU MB/% | kafka=7.90%/1.098GiB / 31.32GiB ; kibana=1.91%/526.7MiB / 31.32GiB ; z
+[09:19:49] host CPU % RAM % | GPU MB/% | kafka=7.09%/1.098GiB / 31.32GiB ; kibana=1.31%/526.6MiB / 31.32GiB ; z
+[09:19:53] host CPU % RAM % | GPU MB/% | kafka=50.26%/1.098GiB / 31.32GiB ; kibana=0.60%/526.3MiB / 31.32GiB ; 
+[09:19:57] host CPU % RAM % | GPU MB/% | kafka=6.45%/1.101GiB / 31.32GiB ; kibana=1.53%/526.5MiB / 31.32GiB ; z
+[09:20:02] host CPU % RAM % | GPU MB/% | kafka=7.23%/1.101GiB / 31.32GiB ; kibana=1.31%/526.6MiB / 31.32GiB ; z
+[09:20:06] host CPU % RAM % | GPU MB/% | kafka=34.84%/1.101GiB / 31.32GiB ; kibana=1.23%/526.6MiB / 31.32GiB ; 
+[09:20:10] host CPU % RAM % | GPU MB/% | kafka=7.93%/1.101GiB / 31.32GiB ; kibana=1.70%/526.1MiB / 31.32GiB ; z
+[09:20:14] host CPU % RAM % | GPU MB/% | kafka=7.72%/1.101GiB / 31.32GiB ; kibana=1.45%/526.8MiB / 31.32GiB ; z
+[09:20:18] host CPU % RAM % | GPU MB/% | kafka=49.93%/1.101GiB / 31.32GiB ; kibana=4.24%/526.9MiB / 31.32GiB ; 
+[09:20:23] host CPU % RAM % | GPU MB/% | kafka=6.80%/1.101GiB / 31.32GiB ; kibana=0.70%/526.6MiB / 31.32GiB ; z
+[09:20:27] host CPU % RAM % | GPU MB/% | kafka=7.39%/1.101GiB / 31.32GiB ; kibana=1.05%/526.6MiB / 31.32GiB ; z
+[09:20:31] host CPU % RAM % | GPU MB/% | kafka=8.85%/1.102GiB / 31.32GiB ; kibana=0.81%/526.1MiB / 31.32GiB ; z
+[09:20:35] host CPU % RAM % | GPU MB/% | kafka=7.99%/1.102GiB / 31.32GiB ; kibana=1.47%/526.7MiB / 31.32GiB ; z
+[09:20:39] host CPU % RAM % | GPU MB/% | kafka=7.78%/1.104GiB / 31.32GiB ; kibana=2.38%/526.1MiB / 31.32GiB ; z
+[09:20:44] host CPU % RAM % | GPU MB/% | kafka=10.71%/1.104GiB / 31.32GiB ; kibana=0.99%/526.7MiB / 31.32GiB ; 
+[09:20:48] host CPU % RAM % | GPU MB/% | kafka=6.82%/1.104GiB / 31.32GiB ; kibana=0.71%/526.6MiB / 31.32GiB ; z
+[09:20:52] host CPU % RAM % | GPU MB/% | kafka=6.96%/1.104GiB / 31.32GiB ; kibana=1.64%/526.7MiB / 31.32GiB ; z
+[09:20:56] host CPU % RAM % | GPU MB/% | kafka=24.86%/1.104GiB / 31.32GiB ; kibana=0.69%/526.7MiB / 31.32GiB ; 
+[09:21:00] host CPU % RAM % | GPU MB/% | kafka=8.23%/1.104GiB / 31.32GiB ; kibana=5.69%/526.4MiB / 31.32GiB ; z
+[09:21:04] host CPU % RAM % | GPU MB/% | kafka=7.98%/1.104GiB / 31.32GiB ; kibana=4.07%/526.3MiB / 31.32GiB ; z
+[09:21:09] host CPU % RAM % | GPU MB/% | kafka=33.09%/1.105GiB / 31.32GiB ; kibana=1.02%/526.2MiB / 31.32GiB ; 
+[09:21:13] host CPU % RAM % | GPU MB/% | kafka=7.62%/1.105GiB / 31.32GiB ; kibana=4.02%/526.3MiB / 31.32GiB ; z
+[09:21:17] host CPU % RAM % | GPU MB/% | kafka=7.02%/1.105GiB / 31.32GiB ; kibana=0.98%/526.1MiB / 31.32GiB ; z
+[09:21:21] host CPU % RAM % | GPU MB/% | kafka=9.10%/1.107GiB / 31.32GiB ; kibana=1.74%/526.4MiB / 31.32GiB ; z
+[09:21:25] host CPU % RAM % | GPU MB/% | kafka=6.89%/1.107GiB / 31.32GiB ; kibana=1.32%/526.3MiB / 31.32GiB ; z
+[09:21:30] host CPU % RAM % | GPU MB/% | kafka=7.99%/1.107GiB / 31.32GiB ; kibana=0.88%/526.7MiB / 31.32GiB ; z
+[09:21:34] host CPU % RAM % | GPU MB/% | kafka=9.61%/1.107GiB / 31.32GiB ; kibana=2.29%/526.4MiB / 31.32GiB ; z
+[09:21:38] host CPU % RAM % | GPU MB/% | kafka=7.22%/1.107GiB / 31.32GiB ; kibana=0.66%/526.3MiB / 31.32GiB ; z
+[09:21:42] host CPU % RAM % | GPU MB/% | kafka=7.20%/1.107GiB / 31.32GiB ; kibana=4.49%/526.6MiB / 31.32GiB ; z
+[09:21:46] host CPU % RAM % | GPU MB/% | kafka=8.09%/1.107GiB / 31.32GiB ; kibana=1.05%/526.5MiB / 31.32GiB ; z
+[09:21:50] host CPU % RAM % | GPU MB/% | kafka=7.32%/1.107GiB / 31.32GiB ; kibana=1.17%/526.3MiB / 31.32GiB ; z
+[09:21:55] host CPU % RAM % | GPU MB/% | kafka=7.52%/1.107GiB / 31.32GiB ; kibana=4.61%/526.5MiB / 31.32GiB ; z
+[09:21:59] host CPU % RAM % | GPU MB/% | kafka=7.98%/1.108GiB / 31.32GiB ; kibana=1.15%/526.3MiB / 31.32GiB ; z
+[09:22:03] host CPU % RAM % | GPU MB/% | kafka=14.27%/1.11GiB / 31.32GiB ; kibana=1.36%/526.6MiB / 31.32GiB ; z
+[09:22:07] host CPU % RAM % | GPU MB/% | kafka=6.90%/1.11GiB / 31.32GiB ; kibana=0.68%/526.7MiB / 31.32GiB ; zo
+[09:22:11] host CPU % RAM % | GPU MB/% | kafka=7.11%/1.11GiB / 31.32GiB ; kibana=1.16%/526.6MiB / 31.32GiB ; zo
+[09:22:16] host CPU % RAM % | GPU MB/% | kafka=7.12%/1.11GiB / 31.32GiB ; kibana=2.18%/526.8MiB / 31.32GiB ; zo
+[09:22:20] host CPU % RAM % | GPU MB/% | kafka=8.15%/1.11GiB / 31.32GiB ; kibana=0.71%/526.7MiB / 31.32GiB ; zo
+[09:22:24] host CPU % RAM % | GPU MB/% | kafka=7.74%/1.11GiB / 31.32GiB ; kibana=4.15%/526.1MiB / 31.32GiB ; zo
+[09:22:28] host CPU % RAM % | GPU MB/% | kafka=6.48%/1.11GiB / 31.32GiB ; kibana=0.71%/526.6MiB / 31.32GiB ; zo
+[09:22:32] host CPU % RAM % | GPU MB/% | kafka=8.06%/1.114GiB / 31.32GiB ; kibana=0.68%/526.7MiB / 31.32GiB ; z
+[09:22:36] host CPU % RAM % | GPU MB/% | kafka=7.21%/1.11GiB / 31.32GiB ; kibana=4.63%/526.3MiB / 31.32GiB ; zo
+[09:22:41] host CPU % RAM % | GPU MB/% | kafka=6.03%/1.11GiB / 31.32GiB ; kibana=1.90%/526.1MiB / 31.32GiB ; zo
+[09:22:45] host CPU % RAM % | GPU MB/% | kafka=34.00%/1.125GiB / 31.32GiB ; kibana=0.64%/526.7MiB / 31.32GiB ; 
+[09:22:49] host CPU % RAM % | GPU MB/% | kafka=6.91%/1.11GiB / 31.32GiB ; kibana=2.29%/526.3MiB / 31.32GiB ; zo
+[09:22:53] host CPU % RAM % | GPU MB/% | kafka=6.48%/1.11GiB / 31.32GiB ; kibana=0.63%/526.7MiB / 31.32GiB ; zo
+[09:22:57] host CPU % RAM % | GPU MB/% | kafka=57.45%/1.136GiB / 31.32GiB ; kibana=1.67%/526.3MiB / 31.32GiB ; 
+[09:23:01] host CPU % RAM % | GPU MB/% | kafka=6.23%/1.11GiB / 31.32GiB ; kibana=1.08%/526.3MiB / 31.32GiB ; zo
+[09:23:05] host CPU % RAM % | GPU MB/% | kafka=7.06%/1.111GiB / 31.32GiB ; kibana=1.40%/526.2MiB / 31.32GiB ; z
+[09:23:10] host CPU % RAM % | GPU MB/% | kafka=108.40%/1.149GiB / 31.32GiB ; kibana=1.36%/526.5MiB / 31.32GiB ;
+[09:23:14] host CPU % RAM % | GPU MB/% | kafka=7.09%/1.111GiB / 31.32GiB ; kibana=1.61%/526.1MiB / 31.32GiB ; z
+[09:23:18] host CPU % RAM % | GPU MB/% | kafka=7.25%/1.111GiB / 31.32GiB ; kibana=4.52%/526.5MiB / 31.32GiB ; z
+[09:23:22] host CPU % RAM % | GPU MB/% | kafka=160.35%/1.163GiB / 31.32GiB ; kibana=0.71%/526.3MiB / 31.32GiB ;
+[09:23:26] host CPU % RAM % | GPU MB/% | kafka=7.58%/1.111GiB / 31.32GiB ; kibana=1.09%/526.5MiB / 31.32GiB ; z
+[09:23:31] host CPU % RAM % | GPU MB/% | kafka=7.11%/1.113GiB / 31.32GiB ; kibana=4.22%/526.2MiB / 31.32GiB ; z
+[09:23:35] host CPU % RAM % | GPU MB/% | kafka=172.89%/1.171GiB / 31.32GiB ; kibana=0.80%/526.8MiB / 31.32GiB ;
+[09:23:39] host CPU % RAM % | GPU MB/% | kafka=6.89%/1.113GiB / 31.32GiB ; kibana=2.23%/526.2MiB / 31.32GiB ; z
+[09:23:43] host CPU % RAM % | GPU MB/% | kafka=7.53%/1.113GiB / 31.32GiB ; kibana=0.68%/526.8MiB / 31.32GiB ; z
+[09:23:47] host CPU % RAM % | GPU MB/% | kafka=169.71%/1.169GiB / 31.32GiB ; kibana=0.71%/526.7MiB / 31.32GiB ;
+[09:23:51] host CPU % RAM % | GPU MB/% | kafka=7.15%/1.113GiB / 31.32GiB ; kibana=2.13%/526.1MiB / 31.32GiB ; z
+[09:23:56] host CPU % RAM % | GPU MB/% | kafka=6.99%/1.113GiB / 31.32GiB ; kibana=1.59%/526.1MiB / 31.32GiB ; z
+[09:24:00] host CPU % RAM % | GPU MB/% | kafka=194.68%/1.173GiB / 31.32GiB ; kibana=0.72%/526.6MiB / 31.32GiB ;
+[09:24:04] host CPU % RAM % | GPU MB/% | kafka=7.56%/1.113GiB / 31.32GiB ; kibana=1.46%/526.8MiB / 31.32GiB ; z
+[09:24:08] host CPU % RAM % | GPU MB/% | kafka=7.74%/1.113GiB / 31.32GiB ; kibana=0.81%/526.2MiB / 31.32GiB ; z
+[09:24:12] host CPU % RAM % | GPU MB/% | kafka=183.90%/1.171GiB / 31.32GiB ; kibana=2.90%/526.4MiB / 31.32GiB ;
+[09:24:16] host CPU % RAM % | GPU MB/% | kafka=7.42%/1.115GiB / 31.32GiB ; kibana=1.00%/526.2MiB / 31.32GiB ; z
+[09:24:21] host CPU % RAM % | GPU MB/% | kafka=6.71%/1.115GiB / 31.32GiB ; kibana=1.25%/526.3MiB / 31.32GiB ; z
+[09:24:25] host CPU % RAM % | GPU MB/% | kafka=229.68%/1.177GiB / 31.32GiB ; kibana=4.14%/526.4MiB / 31.32GiB ;
+[09:24:29] host CPU % RAM % | GPU MB/% | kafka=1.20%/1.115GiB / 31.32GiB ; kibana=1.45%/526.2MiB / 31.32GiB ; z
+[09:24:33] host CPU % RAM % | GPU MB/% | kafka=1.41%/1.115GiB / 31.32GiB ; kibana=1.11%/526.4MiB / 31.32GiB ; z
+[09:24:37] host CPU % RAM % | GPU MB/% | kafka=221.82%/1.192GiB / 31.32GiB ; kibana=0.58%/526.6MiB / 31.32GiB ;
+[09:24:41] host CPU % RAM % | GPU MB/% | kafka=1.15%/1.115GiB / 31.32GiB ; kibana=0.77%/526.4MiB / 31.32GiB ; z
+[09:24:45] host CPU % RAM % | GPU MB/% | kafka=1.47%/1.115GiB / 31.32GiB ; kibana=1.64%/526.6MiB / 31.32GiB ; z
+[09:24:50] host CPU % RAM % | GPU MB/% | kafka=173.02%/1.203GiB / 31.32GiB ; kibana=0.55%/526.5MiB / 31.32GiB ;
+[09:24:54] host CPU % RAM % | GPU MB/% | kafka=1.08%/1.115GiB / 31.32GiB ; kibana=2.43%/526.2MiB / 31.32GiB ; z
+[09:24:58] host CPU % RAM % | GPU MB/% | kafka=1.37%/1.115GiB / 31.32GiB ; kibana=0.55%/526.5MiB / 31.32GiB ; z
+[09:25:02] host CPU % RAM % | GPU MB/% | kafka=68.00%/1.115GiB / 31.32GiB ; kibana=0.63%/526.5MiB / 31.32GiB ; 
+[09:25:06] host CPU % RAM % | GPU MB/% | kafka=1.20%/1.115GiB / 31.32GiB ; kibana=4.04%/526.2MiB / 31.32GiB ; z
+[09:25:10] host CPU % RAM % | GPU MB/% | kafka=1.51%/1.115GiB / 31.32GiB ; kibana=1.10%/526.7MiB / 31.32GiB ; z
+[09:25:15] host CPU % RAM % | GPU MB/% | kafka=21.63%/1.115GiB / 31.32GiB ; kibana=0.81%/526.7MiB / 31.32GiB ; 
+[09:25:19] host CPU % RAM % | GPU MB/% | kafka=1.23%/1.115GiB / 31.32GiB ; kibana=0.50%/526.4MiB / 31.32GiB ; z
+[09:25:23] host CPU % RAM % | GPU MB/% | kafka=1.72%/1.115GiB / 31.32GiB ; kibana=0.59%/526.6MiB / 31.32GiB ; z
+[09:25:27] host CPU % RAM % | GPU MB/% | kafka=2.88%/1.115GiB / 31.32GiB ; kibana=1.78%/526.1MiB / 31.32GiB ; z
+[09:25:31] host CPU % RAM % | GPU MB/% | kafka=2.31%/1.115GiB / 31.32GiB ; kibana=1.14%/526.2MiB / 31.32GiB ; z
+[09:25:35] host CPU % RAM % | GPU MB/% | kafka=5.50%/1.115GiB / 31.32GiB ; kibana=1.16%/526.8MiB / 31.32GiB ; z
+[09:25:40] host CPU % RAM % | GPU MB/% | kafka=5.58%/1.115GiB / 31.32GiB ; kibana=2.37%/526.3MiB / 31.32GiB ; z
+[09:25:44] host CPU % RAM % | GPU MB/% | kafka=5.97%/1.115GiB / 31.32GiB ; kibana=1.49%/526.4MiB / 31.32GiB ; z
+[09:25:48] host CPU % RAM % | GPU MB/% | kafka=10.64%/1.116GiB / 31.32GiB ; kibana=3.80%/526.3MiB / 31.32GiB ; 
+[09:25:52] host CPU % RAM % | GPU MB/% | kafka=5.01%/1.116GiB / 31.32GiB ; kibana=0.97%/526.2MiB / 31.32GiB ; z
+[09:25:56] host CPU % RAM % | GPU MB/% | kafka=5.45%/1.116GiB / 31.32GiB ; kibana=1.00%/526.2MiB / 31.32GiB ; z
+[09:26:00] host CPU % RAM % | GPU MB/% | kafka=5.56%/1.116GiB / 31.32GiB ; kibana=5.56%/526.4MiB / 31.32GiB ; z
+[09:26:05] host CPU % RAM % | GPU MB/% | kafka=17.26%/1.117GiB / 31.32GiB ; kibana=1.15%/526.3MiB / 31.32GiB ; 
+[09:26:09] host CPU % RAM % | GPU MB/% | kafka=5.29%/1.117GiB / 31.32GiB ; kibana=1.30%/526.5MiB / 31.32GiB ; z
+[09:26:13] host CPU % RAM % | GPU MB/% | kafka=31.95%/1.132GiB / 31.32GiB ; kibana=1.05%/526.3MiB / 31.32GiB ; 
+[09:26:17] host CPU % RAM % | GPU MB/% | kafka=4.68%/1.118GiB / 31.32GiB ; kibana=0.89%/526.2MiB / 31.32GiB ; z
+[09:26:21] host CPU % RAM % | GPU MB/% | kafka=4.33%/1.118GiB / 31.32GiB ; kibana=1.56%/526.4MiB / 31.32GiB ; z
+[09:26:25] host CPU % RAM % | GPU MB/% | kafka=133.22%/1.157GiB / 31.32GiB ; kibana=1.72%/526.3MiB / 31.32GiB ;
+[09:26:30] host CPU % RAM % | GPU MB/% | kafka=5.47%/1.118GiB / 31.32GiB ; kibana=0.88%/526.8MiB / 31.32GiB ; z
+[09:26:34] host CPU % RAM % | GPU MB/% | kafka=5.34%/1.118GiB / 31.32GiB ; kibana=2.59%/526.3MiB / 31.32GiB ; z
+[09:26:38] host CPU % RAM % | GPU MB/% | kafka=226.12%/1.177GiB / 31.32GiB ; kibana=0.72%/526.2MiB / 31.32GiB ;
+[09:26:42] host CPU % RAM % | GPU MB/% | kafka=4.65%/1.118GiB / 31.32GiB ; kibana=4.60%/526.6MiB / 31.32GiB ; z
+[09:26:46] host CPU % RAM % | GPU MB/% | kafka=5.19%/1.118GiB / 31.32GiB ; kibana=0.90%/526.4MiB / 31.32GiB ; z
+[09:26:50] host CPU % RAM % | GPU MB/% | kafka=229.57%/1.185GiB / 31.32GiB ; kibana=1.47%/526.3MiB / 31.32GiB ;
+[09:26:55] host CPU % RAM % | GPU MB/% | kafka=5.53%/1.118GiB / 31.32GiB ; kibana=4.26%/526.4MiB / 31.32GiB ; z
+[09:26:59] host CPU % RAM % | GPU MB/% | kafka=6.00%/1.118GiB / 31.32GiB ; kibana=1.61%/526.2MiB / 31.32GiB ; z
+[09:27:03] host CPU % RAM % | GPU MB/% | kafka=232.32%/1.204GiB / 31.32GiB ; kibana=1.33%/526.4MiB / 31.32GiB ;
+[09:27:07] host CPU % RAM % | GPU MB/% | kafka=17.40%/1.121GiB / 31.32GiB ; kibana=0.71%/526.6MiB / 31.32GiB ; 
+[09:27:11] host CPU % RAM % | GPU MB/% | kafka=5.37%/1.121GiB / 31.32GiB ; kibana=0.84%/526.4MiB / 31.32GiB ; z
+[09:27:15] host CPU % RAM % | GPU MB/% | kafka=193.35%/1.211GiB / 31.32GiB ; kibana=1.49%/526.7MiB / 31.32GiB ;
+[09:27:20] host CPU % RAM % | GPU MB/% | kafka=5.50%/1.121GiB / 31.32GiB ; kibana=1.06%/526.5MiB / 31.32GiB ; z
+[09:27:24] host CPU % RAM % | GPU MB/% | kafka=5.56%/1.121GiB / 31.32GiB ; kibana=1.02%/526.3MiB / 31.32GiB ; z
+[09:27:28] host CPU % RAM % | GPU MB/% | kafka=101.50%/1.121GiB / 31.32GiB ; kibana=0.76%/526.5MiB / 31.32GiB ;
+[09:27:32] host CPU % RAM % | GPU MB/% | kafka=4.89%/1.122GiB / 31.32GiB ; kibana=0.97%/526.5MiB / 31.32GiB ; z
+[09:27:36] host CPU % RAM % | GPU MB/% | kafka=5.28%/1.122GiB / 31.32GiB ; kibana=5.68%/526.2MiB / 31.32GiB ; z
+[09:27:40] host CPU % RAM % | GPU MB/% | kafka=39.41%/1.122GiB / 31.32GiB ; kibana=1.23%/526.7MiB / 31.32GiB ; 
+[09:27:45] host CPU % RAM % | GPU MB/% | kafka=5.33%/1.122GiB / 31.32GiB ; kibana=0.99%/526.6MiB / 31.32GiB ; z
+[09:27:49] host CPU % RAM % | GPU MB/% | kafka=5.63%/1.122GiB / 31.32GiB ; kibana=4.24%/526.8MiB / 31.32GiB ; z
+[09:27:53] host CPU % RAM % | GPU MB/% | kafka=7.24%/1.122GiB / 31.32GiB ; kibana=0.67%/526.4MiB / 31.32GiB ; z
+[09:27:57] host CPU % RAM % | GPU MB/% | kafka=4.61%/1.122GiB / 31.32GiB ; kibana=1.58%/526.6MiB / 31.32GiB ; z
+[09:28:01] host CPU % RAM % | GPU MB/% | kafka=5.30%/1.122GiB / 31.32GiB ; kibana=0.96%/526.7MiB / 31.32GiB ; z
+[09:28:05] host CPU % RAM % | GPU MB/% | kafka=5.48%/1.122GiB / 31.32GiB ; kibana=1.23%/526.7MiB / 31.32GiB ; z
+[09:28:09] host CPU % RAM % | GPU MB/% | kafka=16.77%/1.124GiB / 31.32GiB ; kibana=2.15%/526.1MiB / 31.32GiB ; 
+[09:28:14] host CPU % RAM % | GPU MB/% | kafka=5.45%/1.124GiB / 31.32GiB ; kibana=2.38%/526.1MiB / 31.32GiB ; z
+[09:28:18] host CPU % RAM % | GPU MB/% | kafka=4.99%/1.124GiB / 31.32GiB ; kibana=1.06%/526.7MiB / 31.32GiB ; z
+[09:28:22] host CPU % RAM % | GPU MB/% | kafka=4.55%/1.124GiB / 31.32GiB ; kibana=0.85%/526.8MiB / 31.32GiB ; z
+[09:28:26] host CPU % RAM % | GPU MB/% | kafka=5.31%/1.124GiB / 31.32GiB ; kibana=0.85%/526.8MiB / 31.32GiB ; z
+[09:28:30] host CPU % RAM % | GPU MB/% | kafka=5.91%/1.125GiB / 31.32GiB ; kibana=4.94%/526.4MiB / 31.32GiB ; z
+[09:28:34] host CPU % RAM % | GPU MB/% | kafka=5.72%/1.124GiB / 31.32GiB ; kibana=1.99%/526.1MiB / 31.32GiB ; z
+[09:28:39] host CPU % RAM % | GPU MB/% | kafka=21.11%/1.134GiB / 31.32GiB ; kibana=1.59%/526.2MiB / 31.32GiB ; 
+[09:28:43] host CPU % RAM % | GPU MB/% | kafka=5.25%/1.125GiB / 31.32GiB ; kibana=4.27%/526.3MiB / 31.32GiB ; z
+[09:28:47] host CPU % RAM % | GPU MB/% | kafka=4.56%/1.125GiB / 31.32GiB ; kibana=0.82%/526.8MiB / 31.32GiB ; z
+[09:28:51] host CPU % RAM % | GPU MB/% | kafka=104.77%/1.16GiB / 31.32GiB ; kibana=1.78%/526.3MiB / 31.32GiB ; 
+[09:28:55] host CPU % RAM % | GPU MB/% | kafka=4.88%/1.125GiB / 31.32GiB ; kibana=1.33%/526.3MiB / 31.32GiB ; z
+[09:28:59] host CPU % RAM % | GPU MB/% | kafka=6.05%/1.125GiB / 31.32GiB ; kibana=0.62%/526.6MiB / 31.32GiB ; z
+[09:29:04] host CPU % RAM % | GPU MB/% | kafka=166.75%/1.176GiB / 31.32GiB ; kibana=10.37%/526.2MiB / 31.32GiB 
+[09:29:08] host CPU % RAM % | GPU MB/% | kafka=4.82%/1.125GiB / 31.32GiB ; kibana=0.55%/526.6MiB / 31.32GiB ; z
+[09:29:12] host CPU % RAM % | GPU MB/% | kafka=15.15%/1.128GiB / 31.32GiB ; kibana=0.61%/526.4MiB / 31.32GiB ; 
+[09:29:16] host CPU % RAM % | GPU MB/% | kafka=232.34%/1.19GiB / 31.32GiB ; kibana=0.71%/526.6MiB / 31.32GiB ; 
+[09:29:20] host CPU % RAM % | GPU MB/% | kafka=5.05%/1.128GiB / 31.32GiB ; kibana=1.21%/526.6MiB / 31.32GiB ; z
+[09:29:24] host CPU % RAM % | GPU MB/% | kafka=5.80%/1.128GiB / 31.32GiB ; kibana=4.63%/526.7MiB / 31.32GiB ; z
+[09:29:29] host CPU % RAM % | GPU MB/% | kafka=220.26%/1.204GiB / 31.32GiB ; kibana=0.98%/526.4MiB / 31.32GiB ;
+[09:29:33] host CPU % RAM % | GPU MB/% | kafka=5.09%/1.128GiB / 31.32GiB ; kibana=0.64%/526.4MiB / 31.32GiB ; z
+[09:29:37] host CPU % RAM % | GPU MB/% | kafka=4.66%/1.128GiB / 31.32GiB ; kibana=1.96%/526.6MiB / 31.32GiB ; z
+[09:29:41] host CPU % RAM % | GPU MB/% | kafka=180.10%/1.215GiB / 31.32GiB ; kibana=0.74%/526.4MiB / 31.32GiB ;
+[09:29:45] host CPU % RAM % | GPU MB/% | kafka=5.32%/1.128GiB / 31.32GiB ; kibana=1.97%/526.2MiB / 31.32GiB ; z
+[09:29:49] host CPU % RAM % | GPU MB/% | kafka=5.45%/1.128GiB / 31.32GiB ; kibana=1.01%/526.4MiB / 31.32GiB ; z
+[09:29:54] host CPU % RAM % | GPU MB/% | kafka=130.32%/1.128GiB / 31.32GiB ; kibana=0.92%/526.9MiB / 31.32GiB ;
+[09:29:58] host CPU % RAM % | GPU MB/% | kafka=5.09%/1.128GiB / 31.32GiB ; kibana=1.91%/526.3MiB / 31.32GiB ; z
+[09:30:02] host CPU % RAM % | GPU MB/% | kafka=4.61%/1.128GiB / 31.32GiB ; kibana=1.02%/526.4MiB / 31.32GiB ; z
+[09:30:06] host CPU % RAM % | GPU MB/% | kafka=31.89%/1.128GiB / 31.32GiB ; kibana=3.78%/526.7MiB / 31.32GiB ; 
+[09:30:10] host CPU % RAM % | GPU MB/% | kafka=5.96%/1.128GiB / 31.32GiB ; kibana=1.14%/526.6MiB / 31.32GiB ; z
+[09:30:14] host CPU % RAM % | GPU MB/% | kafka=17.26%/1.131GiB / 31.32GiB ; kibana=1.27%/526.5MiB / 31.32GiB ; 
+[09:30:19] host CPU % RAM % | GPU MB/% | kafka=6.94%/1.131GiB / 31.32GiB ; kibana=4.24%/526.7MiB / 31.32GiB ; z
+[09:30:23] host CPU % RAM % | GPU MB/% | kafka=5.32%/1.131GiB / 31.32GiB ; kibana=0.66%/526.5MiB / 31.32GiB ; z
+[09:30:27] host CPU % RAM % | GPU MB/% | kafka=4.85%/1.131GiB / 31.32GiB ; kibana=1.43%/526.7MiB / 31.32GiB ; z
+[09:30:31] host CPU % RAM % | GPU MB/% | kafka=4.99%/1.131GiB / 31.32GiB ; kibana=0.78%/526.7MiB / 31.32GiB ; z
+[09:30:35] host CPU % RAM % | GPU MB/% | kafka=5.57%/1.131GiB / 31.32GiB ; kibana=1.26%/526.6MiB / 31.32GiB ; z
+[09:30:39] host CPU % RAM % | GPU MB/% | kafka=5.24%/1.131GiB / 31.32GiB ; kibana=1.66%/526.8MiB / 31.32GiB ; z
+[09:30:44] host CPU % RAM % | GPU MB/% | kafka=15.22%/1.131GiB / 31.32GiB ; kibana=0.85%/526.7MiB / 31.32GiB ; 
+[09:30:48] host CPU % RAM % | GPU MB/% | kafka=5.03%/1.131GiB / 31.32GiB ; kibana=0.54%/526.5MiB / 31.32GiB ; z
+[09:30:52] host CPU % RAM % | GPU MB/% | kafka=4.81%/1.131GiB / 31.32GiB ; kibana=0.77%/526.7MiB / 31.32GiB ; z
+[09:30:56] host CPU % RAM % | GPU MB/% | kafka=5.14%/1.131GiB / 31.32GiB ; kibana=0.75%/526.7MiB / 31.32GiB ; z
+[09:31:00] host CPU % RAM % | GPU MB/% | kafka=5.48%/1.131GiB / 31.32GiB ; kibana=123.13%/525.9MiB / 31.32GiB ;
+[09:31:04] host CPU % RAM % | GPU MB/% | kafka=62.26%/1.156GiB / 31.32GiB ; kibana=1.69%/526.6MiB / 31.32GiB ; 
+[09:31:09] host CPU % RAM % | GPU MB/% | kafka=4.99%/1.131GiB / 31.32GiB ; kibana=0.58%/526.7MiB / 31.32GiB ; z
+[09:31:13] host CPU % RAM % | GPU MB/% | kafka=5.27%/1.131GiB / 31.32GiB ; kibana=4.72%/526.5MiB / 31.32GiB ; z
+[09:31:17] host CPU % RAM % | GPU MB/% | kafka=184.49%/1.185GiB / 31.32GiB ; kibana=0.86%/526.4MiB / 31.32GiB ;
+[09:31:21] host CPU % RAM % | GPU MB/% | kafka=4.77%/1.134GiB / 31.32GiB ; kibana=1.21%/526.6MiB / 31.32GiB ; z
+[09:31:25] host CPU % RAM % | GPU MB/% | kafka=5.52%/1.134GiB / 31.32GiB ; kibana=1.27%/526.5MiB / 31.32GiB ; z
+[09:31:29] host CPU % RAM % | GPU MB/% | kafka=231.14%/1.196GiB / 31.32GiB ; kibana=1.55%/526.2MiB / 31.32GiB ;
+[09:31:33] host CPU % RAM % | GPU MB/% | kafka=5.58%/1.134GiB / 31.32GiB ; kibana=0.60%/526.2MiB / 31.32GiB ; z
+[09:31:38] host CPU % RAM % | GPU MB/% | kafka=5.04%/1.134GiB / 31.32GiB ; kibana=0.57%/526.6MiB / 31.32GiB ; z
+[09:31:42] host CPU % RAM % | GPU MB/% | kafka=211.58%/1.209GiB / 31.32GiB ; kibana=0.83%/526.4MiB / 31.32GiB ;
+[09:31:46] host CPU % RAM % | GPU MB/% | kafka=4.90%/1.134GiB / 31.32GiB ; kibana=0.69%/526.6MiB / 31.32GiB ; z
+[09:31:50] host CPU % RAM % | GPU MB/% | kafka=5.62%/1.134GiB / 31.32GiB ; kibana=1.24%/526.5MiB / 31.32GiB ; z
+[09:31:54] host CPU % RAM % | GPU MB/% | kafka=156.51%/1.212GiB / 31.32GiB ; kibana=3.99%/526.7MiB / 31.32GiB ;
+[09:31:58] host CPU % RAM % | GPU MB/% | kafka=5.55%/1.134GiB / 31.32GiB ; kibana=0.57%/526.5MiB / 31.32GiB ; z
+[09:32:03] host CPU % RAM % | GPU MB/% | kafka=4.78%/1.134GiB / 31.32GiB ; kibana=0.61%/526.5MiB / 31.32GiB ; z
+[09:32:07] host CPU % RAM % | GPU MB/% | kafka=98.00%/1.134GiB / 31.32GiB ; kibana=3.55%/526.2MiB / 31.32GiB ; 
+[09:32:11] host CPU % RAM % | GPU MB/% | kafka=5.64%/1.135GiB / 31.32GiB ; kibana=0.95%/526.7MiB / 31.32GiB ; z
+[09:32:15] host CPU % RAM % | GPU MB/% | kafka=5.67%/1.135GiB / 31.32GiB ; kibana=2.43%/526.3MiB / 31.32GiB ; z
+[09:32:19] host CPU % RAM % | GPU MB/% | kafka=25.32%/1.135GiB / 31.32GiB ; kibana=1.50%/526.2MiB / 31.32GiB ; 
+[09:32:23] host CPU % RAM % | GPU MB/% | kafka=5.31%/1.137GiB / 31.32GiB ; kibana=0.60%/526.6MiB / 31.32GiB ; z
+[09:32:28] host CPU % RAM % | GPU MB/% | kafka=5.13%/1.137GiB / 31.32GiB ; kibana=1.74%/526.1MiB / 31.32GiB ; z
+[09:32:32] host CPU % RAM % | GPU MB/% | kafka=4.33%/1.137GiB / 31.32GiB ; kibana=0.99%/526.2MiB / 31.32GiB ; z
+[09:32:36] host CPU % RAM % | GPU MB/% | kafka=5.47%/1.137GiB / 31.32GiB ; kibana=3.50%/526.2MiB / 31.32GiB ; z
+[09:32:40] host CPU % RAM % | GPU MB/% | kafka=5.33%/1.137GiB / 31.32GiB ; kibana=1.24%/526.3MiB / 31.32GiB ; z
+[09:32:44] host CPU % RAM % | GPU MB/% | kafka=53.55%/1.137GiB / 31.32GiB ; kibana=1.83%/526.3MiB / 31.32GiB ; 
+[09:32:48] host CPU % RAM % | GPU MB/% | kafka=5.18%/1.137GiB / 31.32GiB ; kibana=4.38%/526.4MiB / 31.32GiB ; z
+[09:32:53] host CPU % RAM % | GPU MB/% | kafka=4.86%/1.137GiB / 31.32GiB ; kibana=0.75%/526.2MiB / 31.32GiB ; z
+[09:32:57] host CPU % RAM % | GPU MB/% | kafka=4.88%/1.137GiB / 31.32GiB ; kibana=0.87%/526.2MiB / 31.32GiB ; z
+[09:33:01] host CPU % RAM % | GPU MB/% | kafka=4.86%/1.137GiB / 31.32GiB ; kibana=3.62%/526.5MiB / 31.32GiB ; z
+[09:33:05] host CPU % RAM % | GPU MB/% | kafka=12.30%/1.139GiB / 31.32GiB ; kibana=1.55%/526.5MiB / 31.32GiB ; 
+[09:33:09] host CPU % RAM % | GPU MB/% | kafka=5.25%/1.137GiB / 31.32GiB ; kibana=1.72%/526.7MiB / 31.32GiB ; z
+[09:33:13] host CPU % RAM % | GPU MB/% | kafka=5.06%/1.137GiB / 31.32GiB ; kibana=0.57%/526.5MiB / 31.32GiB ; z
+[09:33:17] host CPU % RAM % | GPU MB/% | kafka=78.59%/1.168GiB / 31.32GiB ; kibana=0.64%/526.4MiB / 31.32GiB ; 
+[09:33:22] host CPU % RAM % | GPU MB/% | kafka=4.87%/1.138GiB / 31.32GiB ; kibana=1.85%/526.6MiB / 31.32GiB ; z
+[09:33:26] host CPU % RAM % | GPU MB/% | kafka=5.40%/1.14GiB / 31.32GiB ; kibana=1.16%/526.5MiB / 31.32GiB ; zo
+[09:33:30] host CPU % RAM % | GPU MB/% | kafka=172.01%/1.191GiB / 31.32GiB ; kibana=3.65%/526.7MiB / 31.32GiB ;
+[09:33:34] host CPU % RAM % | GPU MB/% | kafka=5.27%/1.14GiB / 31.32GiB ; kibana=1.11%/526.6MiB / 31.32GiB ; zo
+[09:33:38] host CPU % RAM % | GPU MB/% | kafka=4.93%/1.14GiB / 31.32GiB ; kibana=0.59%/526.5MiB / 31.32GiB ; zo
+[09:33:42] host CPU % RAM % | GPU MB/% | kafka=29.17%/1.152GiB / 31.32GiB ; kibana=2.91%/526.1MiB / 31.32GiB ; 
+[09:33:47] host CPU % RAM % | GPU MB/% | kafka=4.86%/1.14GiB / 31.32GiB ; kibana=0.88%/526.7MiB / 31.32GiB ; zo
+[09:33:51] host CPU % RAM % | GPU MB/% | kafka=5.43%/1.14GiB / 31.32GiB ; kibana=1.23%/526.6MiB / 31.32GiB ; zo
+[09:33:55] host CPU % RAM % | GPU MB/% | kafka=219.66%/1.226GiB / 31.32GiB ; kibana=2.44%/526.7MiB / 31.32GiB ;
+[09:33:59] host CPU % RAM % | GPU MB/% | kafka=1.73%/1.14GiB / 31.32GiB ; kibana=1.03%/526.4MiB / 31.32GiB ; zo
+[09:34:03] host CPU % RAM % | GPU MB/% | kafka=1.69%/1.14GiB / 31.32GiB ; kibana=1.11%/526.6MiB / 31.32GiB ; zo
+[09:34:07] host CPU % RAM % | GPU MB/% | kafka=161.54%/1.14GiB / 31.32GiB ; kibana=1.42%/526.6MiB / 31.32GiB ; 
+[09:34:11] host CPU % RAM % | GPU MB/% | kafka=1.26%/1.14GiB / 31.32GiB ; kibana=0.93%/526.5MiB / 31.32GiB ; zo
+[09:34:16] host CPU % RAM % | GPU MB/% | kafka=1.51%/1.14GiB / 31.32GiB ; kibana=1.82%/526.7MiB / 31.32GiB ; zo
+[09:34:20] host CPU % RAM % | GPU MB/% | kafka=51.72%/1.14GiB / 31.32GiB ; kibana=0.53%/526.6MiB / 31.32GiB ; z
+[09:34:24] host CPU % RAM % | GPU MB/% | kafka=3.36%/1.14GiB / 31.32GiB ; kibana=3.75%/526.6MiB / 31.32GiB ; zo
+[09:34:28] host CPU % RAM % | GPU MB/% | kafka=3.51%/1.14GiB / 31.32GiB ; kibana=0.59%/526.5MiB / 31.32GiB ; zo
+[09:34:32] host CPU % RAM % | GPU MB/% | kafka=7.32%/1.14GiB / 31.32GiB ; kibana=0.64%/526.4MiB / 31.32GiB ; zo
+[09:34:36] host CPU % RAM % | GPU MB/% | kafka=5.01%/1.14GiB / 31.32GiB ; kibana=3.93%/526.7MiB / 31.32GiB ; zo
+[09:34:41] host CPU % RAM % | GPU MB/% | kafka=5.09%/1.14GiB / 31.32GiB ; kibana=1.22%/526.4MiB / 31.32GiB ; zo
+[09:34:45] host CPU % RAM % | GPU MB/% | kafka=5.73%/1.14GiB / 31.32GiB ; kibana=0.92%/526.4MiB / 31.32GiB ; zo
+[09:34:49] host CPU % RAM % | GPU MB/% | kafka=6.03%/1.141GiB / 31.32GiB ; kibana=2.13%/526.6MiB / 31.32GiB ; z
+[09:34:53] host CPU % RAM % | GPU MB/% | kafka=5.53%/1.141GiB / 31.32GiB ; kibana=0.56%/526.3MiB / 31.32GiB ; z
+[09:34:57] host CPU % RAM % | GPU MB/% | kafka=4.80%/1.141GiB / 31.32GiB ; kibana=1.32%/526.6MiB / 31.32GiB ; z
+[09:35:01] host CPU % RAM % | GPU MB/% | kafka=4.69%/1.143GiB / 31.32GiB ; kibana=1.05%/526.6MiB / 31.32GiB ; z
+[09:35:06] host CPU % RAM % | GPU MB/% | kafka=5.51%/1.143GiB / 31.32GiB ; kibana=1.18%/526.5MiB / 31.32GiB ; z
+[09:35:10] host CPU % RAM % | GPU MB/% | kafka=5.58%/1.143GiB / 31.32GiB ; kibana=1.30%/526.6MiB / 31.32GiB ; z
+[09:35:14] host CPU % RAM % | GPU MB/% | kafka=5.60%/1.143GiB / 31.32GiB ; kibana=1.33%/526.7MiB / 31.32GiB ; z
+[09:35:18] host CPU % RAM % | GPU MB/% | kafka=4.81%/1.143GiB / 31.32GiB ; kibana=3.78%/526.8MiB / 31.32GiB ; z
+[09:35:22] host CPU % RAM % | GPU MB/% | kafka=4.74%/1.143GiB / 31.32GiB ; kibana=0.55%/526.6MiB / 31.32GiB ; z
+[09:35:26] host CPU % RAM % | GPU MB/% | kafka=5.29%/1.143GiB / 31.32GiB ; kibana=0.78%/526.5MiB / 31.32GiB ; z
+[09:35:31] host CPU % RAM % | GPU MB/% | kafka=5.34%/1.143GiB / 31.32GiB ; kibana=5.42%/526.1MiB / 31.32GiB ; z
+[09:35:35] host CPU % RAM % | GPU MB/% | kafka=5.44%/1.143GiB / 31.32GiB ; kibana=0.86%/526.7MiB / 31.32GiB ; z
+[09:35:39] host CPU % RAM % | GPU MB/% | kafka=5.71%/1.144GiB / 31.32GiB ; kibana=2.17%/526.2MiB / 31.32GiB ; z
+[09:35:43] host CPU % RAM % | GPU MB/% | kafka=181.50%/1.198GiB / 31.32GiB ; kibana=0.64%/526.7MiB / 31.32GiB ;
+[09:35:47] host CPU % RAM % | GPU MB/% | kafka=4.88%/1.144GiB / 31.32GiB ; kibana=0.53%/526.7MiB / 31.32GiB ; z
+[09:35:51] host CPU % RAM % | GPU MB/% | kafka=4.58%/1.144GiB / 31.32GiB ; kibana=1.99%/526.2MiB / 31.32GiB ; z
+[09:35:55] host CPU % RAM % | GPU MB/% | kafka=228.29%/1.209GiB / 31.32GiB ; kibana=1.06%/526.8MiB / 31.32GiB ;
+[09:36:00] host CPU % RAM % | GPU MB/% | kafka=5.87%/1.144GiB / 31.32GiB ; kibana=0.85%/526.6MiB / 31.32GiB ; z
+[09:36:04] host CPU % RAM % | GPU MB/% | kafka=5.59%/1.146GiB / 31.32GiB ; kibana=2.39%/526.2MiB / 31.32GiB ; z
+[09:36:08] host CPU % RAM % | GPU MB/% | kafka=209.42%/1.223GiB / 31.32GiB ; kibana=0.74%/526.2MiB / 31.32GiB ;
+[09:36:12] host CPU % RAM % | GPU MB/% | kafka=5.16%/1.146GiB / 31.32GiB ; kibana=4.94%/526.4MiB / 31.32GiB ; z
+[09:36:16] host CPU % RAM % | GPU MB/% | kafka=5.61%/1.146GiB / 31.32GiB ; kibana=0.96%/526.3MiB / 31.32GiB ; z
+[09:36:20] host CPU % RAM % | GPU MB/% | kafka=216.93%/1.205GiB / 31.32GiB ; kibana=1.24%/526.3MiB / 31.32GiB ;
+[09:36:25] host CPU % RAM % | GPU MB/% | kafka=6.04%/1.146GiB / 31.32GiB ; kibana=4.64%/526.4MiB / 31.32GiB ; z
+[09:36:29] host CPU % RAM % | GPU MB/% | kafka=4.87%/1.146GiB / 31.32GiB ; kibana=1.50%/526.2MiB / 31.32GiB ; z
+[09:36:33] host CPU % RAM % | GPU MB/% | kafka=64.62%/1.146GiB / 31.32GiB ; kibana=1.30%/526.5MiB / 31.32GiB ; 
+[09:36:37] host CPU % RAM % | GPU MB/% | kafka=5.20%/1.146GiB / 31.32GiB ; kibana=0.74%/526.6MiB / 31.32GiB ; z
+[09:36:41] host CPU % RAM % | GPU MB/% | kafka=4.91%/1.146GiB / 31.32GiB ; kibana=0.78%/526.4MiB / 31.32GiB ; z
+[09:36:45] host CPU % RAM % | GPU MB/% | kafka=13.10%/1.147GiB / 31.32GiB ; kibana=1.87%/526.7MiB / 31.32GiB ; 
+[09:36:49] host CPU % RAM % | GPU MB/% | kafka=5.81%/1.147GiB / 31.32GiB ; kibana=1.08%/526.5MiB / 31.32GiB ; z
+[09:36:54] host CPU % RAM % | GPU MB/% | kafka=4.97%/1.147GiB / 31.32GiB ; kibana=0.82%/526.2MiB / 31.32GiB ; z
+[09:36:58] host CPU % RAM % | GPU MB/% | kafka=4.60%/1.147GiB / 31.32GiB ; kibana=4.50%/526.5MiB / 31.32GiB ; z
+[09:37:02] host CPU % RAM % | GPU MB/% | kafka=5.15%/1.147GiB / 31.32GiB ; kibana=1.11%/526.5MiB / 31.32GiB ; z
+[09:37:06] host CPU % RAM % | GPU MB/% | kafka=5.16%/1.149GiB / 31.32GiB ; kibana=4.31%/526.2MiB / 31.32GiB ; z
+[09:37:10] host CPU % RAM % | GPU MB/% | kafka=4.86%/1.149GiB / 31.32GiB ; kibana=1.20%/526.7MiB / 31.32GiB ; z
+[09:37:14] host CPU % RAM % | GPU MB/% | kafka=5.97%/1.149GiB / 31.32GiB ; kibana=1.08%/526.6MiB / 31.32GiB ; z
+[09:37:19] host CPU % RAM % | GPU MB/% | kafka=5.74%/1.149GiB / 31.32GiB ; kibana=4.45%/526.2MiB / 31.32GiB ; z
+[09:37:23] host CPU % RAM % | GPU MB/% | kafka=4.97%/1.149GiB / 31.32GiB ; kibana=0.61%/526.6MiB / 31.32GiB ; z
+[09:37:27] host CPU % RAM % | GPU MB/% | kafka=5.11%/1.15GiB / 31.32GiB ; kibana=1.44%/526.8MiB / 31.32GiB ; zo
+[09:37:31] host CPU % RAM % | GPU MB/% | kafka=22.17%/1.159GiB / 31.32GiB ; kibana=0.85%/526.2MiB / 31.32GiB ; 
+[09:37:35] host CPU % RAM % | GPU MB/% | kafka=5.25%/1.15GiB / 31.32GiB ; kibana=1.26%/526.8MiB / 31.32GiB ; zo
+[09:37:39] host CPU % RAM % | GPU MB/% | kafka=6.15%/1.15GiB / 31.32GiB ; kibana=2.22%/526.3MiB / 31.32GiB ; zo
+[09:37:44] host CPU % RAM % | GPU MB/% | kafka=115.98%/1.186GiB / 31.32GiB ; kibana=1.57%/526.2MiB / 31.32GiB ;
+[09:37:48] host CPU % RAM % | GPU MB/% | kafka=5.06%/1.15GiB / 31.32GiB ; kibana=0.53%/526.7MiB / 31.32GiB ; zo
+[09:37:52] host CPU % RAM % | GPU MB/% | kafka=5.11%/1.15GiB / 31.32GiB ; kibana=0.78%/526.8MiB / 31.32GiB ; zo
+[09:37:56] host CPU % RAM % | GPU MB/% | kafka=221.24%/1.209GiB / 31.32GiB ; kibana=0.78%/526.7MiB / 31.32GiB ;
+[09:38:00] host CPU % RAM % | GPU MB/% | kafka=5.45%/1.15GiB / 31.32GiB ; kibana=4.97%/526.3MiB / 31.32GiB ; zo
+[09:38:04] host CPU % RAM % | GPU MB/% | kafka=5.92%/1.15GiB / 31.32GiB ; kibana=2.26%/526.1MiB / 31.32GiB ; zo
+[09:38:09] host CPU % RAM % | GPU MB/% | kafka=240.44%/1.235GiB / 31.32GiB ; kibana=0.67%/526.7MiB / 31.32GiB ;
+[09:38:13] host CPU % RAM % | GPU MB/% | kafka=5.06%/1.153GiB / 31.32GiB ; kibana=0.76%/526.7MiB / 31.32GiB ; z
+[09:38:17] host CPU % RAM % | GPU MB/% | kafka=4.69%/1.153GiB / 31.32GiB ; kibana=0.83%/526.8MiB / 31.32GiB ; z
+[09:38:21] host CPU % RAM % | GPU MB/% | kafka=167.98%/1.232GiB / 31.32GiB ; kibana=1.98%/526.3MiB / 31.32GiB ;
+[09:38:25] host CPU % RAM % | GPU MB/% | kafka=5.28%/1.153GiB / 31.32GiB ; kibana=1.67%/526.2MiB / 31.32GiB ; z
+[09:38:29] host CPU % RAM % | GPU MB/% | kafka=5.72%/1.153GiB / 31.32GiB ; kibana=1.01%/526.6MiB / 31.32GiB ; z
+[09:38:33] host CPU % RAM % | GPU MB/% | kafka=227.86%/1.221GiB / 31.32GiB ; kibana=1.48%/526.9MiB / 31.32GiB ;
+[09:38:38] host CPU % RAM % | GPU MB/% | kafka=5.36%/1.153GiB / 31.32GiB ; kibana=0.67%/526.8MiB / 31.32GiB ; z
+[09:38:42] host CPU % RAM % | GPU MB/% | kafka=5.16%/1.153GiB / 31.32GiB ; kibana=0.79%/526.6MiB / 31.32GiB ; z
+[09:38:46] host CPU % RAM % | GPU MB/% | kafka=28.11%/1.153GiB / 31.32GiB ; kibana=0.64%/526.8MiB / 31.32GiB ; 
+[09:38:50] host CPU % RAM % | GPU MB/% | kafka=5.72%/1.153GiB / 31.32GiB ; kibana=1.20%/526.7MiB / 31.32GiB ; z
+[09:38:54] host CPU % RAM % | GPU MB/% | kafka=5.33%/1.153GiB / 31.32GiB ; kibana=128.87%/526.2MiB / 31.32GiB ;
+[09:38:58] host CPU % RAM % | GPU MB/% | kafka=5.33%/1.153GiB / 31.32GiB ; kibana=0.62%/526.7MiB / 31.32GiB ; z
+[09:39:03] host CPU % RAM % | GPU MB/% | kafka=4.92%/1.153GiB / 31.32GiB ; kibana=0.56%/526.4MiB / 31.32GiB ; z
+[09:39:07] host CPU % RAM % | GPU MB/% | kafka=5.06%/1.153GiB / 31.32GiB ; kibana=4.81%/527.1MiB / 31.32GiB ; z
+[09:39:11] host CPU % RAM % | GPU MB/% | kafka=5.15%/1.156GiB / 31.32GiB ; kibana=0.92%/526.9MiB / 31.32GiB ; z
+[09:39:15] host CPU % RAM % | GPU MB/% | kafka=5.80%/1.156GiB / 31.32GiB ; kibana=3.06%/526.8MiB / 31.32GiB ; z
+[09:39:19] host CPU % RAM % | GPU MB/% | kafka=5.91%/1.156GiB / 31.32GiB ; kibana=1.01%/526.6MiB / 31.32GiB ; z
+[09:39:23] host CPU % RAM % | GPU MB/% | kafka=5.56%/1.156GiB / 31.32GiB ; kibana=0.64%/526.8MiB / 31.32GiB ; z
+[09:39:28] host CPU % RAM % | GPU MB/% | kafka=5.26%/1.156GiB / 31.32GiB ; kibana=1.17%/526.9MiB / 31.32GiB ; z
+[09:39:32] host CPU % RAM % | GPU MB/% | kafka=18.42%/1.163GiB / 31.32GiB ; kibana=1.05%/527.1MiB / 31.32GiB ; 
+[09:39:36] host CPU % RAM % | GPU MB/% | kafka=5.03%/1.156GiB / 31.32GiB ; kibana=3.20%/527MiB / 31.32GiB ; zoo
+[09:39:40] host CPU % RAM % | GPU MB/% | kafka=5.82%/1.156GiB / 31.32GiB ; kibana=1.13%/527.1MiB / 31.32GiB ; z
+[09:39:44] host CPU % RAM % | GPU MB/% | kafka=107.18%/1.192GiB / 31.32GiB ; kibana=1.41%/527MiB / 31.32GiB ; z
+[09:39:48] host CPU % RAM % | GPU MB/% | kafka=5.45%/1.156GiB / 31.32GiB ; kibana=4.32%/526.4MiB / 31.32GiB ; z
+[09:39:52] host CPU % RAM % | GPU MB/% | kafka=4.59%/1.156GiB / 31.32GiB ; kibana=0.61%/526.9MiB / 31.32GiB ; z
+[09:39:57] host CPU % RAM % | GPU MB/% | kafka=209.20%/1.212GiB / 31.32GiB ; kibana=0.95%/526.9MiB / 31.32GiB ;
+[09:40:01] host CPU % RAM % | GPU MB/% | kafka=5.65%/1.157GiB / 31.32GiB ; kibana=5.15%/526.6MiB / 31.32GiB ; z
+[09:40:05] host CPU % RAM % | GPU MB/% | kafka=6.04%/1.157GiB / 31.32GiB ; kibana=2.02%/526.6MiB / 31.32GiB ; z
+[09:40:09] host CPU % RAM % | GPU MB/% | kafka=227.94%/1.229GiB / 31.32GiB ; kibana=1.63%/526.8MiB / 31.32GiB ;
+[09:40:13] host CPU % RAM % | GPU MB/% | kafka=5.16%/1.159GiB / 31.32GiB ; kibana=0.59%/526.6MiB / 31.32GiB ; z
+[09:40:17] host CPU % RAM % | GPU MB/% | kafka=4.49%/1.159GiB / 31.32GiB ; kibana=0.54%/526.4MiB / 31.32GiB ; z
+[09:40:22] host CPU % RAM % | GPU MB/% | kafka=207.78%/1.236GiB / 31.32GiB ; kibana=1.63%/526.8MiB / 31.32GiB ;
+[09:40:26] host CPU % RAM % | GPU MB/% | kafka=4.71%/1.159GiB / 31.32GiB ; kibana=1.12%/526.7MiB / 31.32GiB ; z
+[09:40:30] host CPU % RAM % | GPU MB/% | kafka=6.11%/1.159GiB / 31.32GiB ; kibana=3.28%/526.7MiB / 31.32GiB ; z
+[09:40:34] host CPU % RAM % | GPU MB/% | kafka=145.77%/1.159GiB / 31.32GiB ; kibana=1.07%/526.7MiB / 31.32GiB ;
+[09:40:38] host CPU % RAM % | GPU MB/% | kafka=5.02%/1.159GiB / 31.32GiB ; kibana=0.60%/526.7MiB / 31.32GiB ; z
+[09:40:42] host CPU % RAM % | GPU MB/% | kafka=4.73%/1.159GiB / 31.32GiB ; kibana=3.49%/526.9MiB / 31.32GiB ; z
+[09:40:47] host CPU % RAM % | GPU MB/% | kafka=59.34%/1.159GiB / 31.32GiB ; kibana=1.30%/526.8MiB / 31.32GiB ; 
+[09:40:51] host CPU % RAM % | GPU MB/% | kafka=5.26%/1.159GiB / 31.32GiB ; kibana=1.36%/526.7MiB / 31.32GiB ; z
+[09:40:55] host CPU % RAM % | GPU MB/% | kafka=6.25%/1.16GiB / 31.32GiB ; kibana=4.39%/526.8MiB / 31.32GiB ; zo
+[09:40:59] host CPU % RAM % | GPU MB/% | kafka=7.33%/1.16GiB / 31.32GiB ; kibana=1.05%/526.6MiB / 31.32GiB ; zo
+[09:41:03] host CPU % RAM % | GPU MB/% | kafka=5.21%/1.16GiB / 31.32GiB ; kibana=1.41%/526.8MiB / 31.32GiB ; zo
+[09:41:07] host CPU % RAM % | GPU MB/% | kafka=4.69%/1.16GiB / 31.32GiB ; kibana=0.53%/526.9MiB / 31.32GiB ; zo
+[09:41:11] host CPU % RAM % | GPU MB/% | kafka=4.59%/1.16GiB / 31.32GiB ; kibana=0.77%/526.7MiB / 31.32GiB ; zo
+[09:41:16] host CPU % RAM % | GPU MB/% | kafka=5.64%/1.162GiB / 31.32GiB ; kibana=2.27%/526.9MiB / 31.32GiB ; z
+[09:41:20] host CPU % RAM % | GPU MB/% | kafka=5.49%/1.162GiB / 31.32GiB ; kibana=0.55%/526.8MiB / 31.32GiB ; z
+[09:41:24] host CPU % RAM % | GPU MB/% | kafka=5.44%/1.162GiB / 31.32GiB ; kibana=3.64%/526.8MiB / 31.32GiB ; z
+[09:41:28] host CPU % RAM % | GPU MB/% | kafka=4.96%/1.162GiB / 31.32GiB ; kibana=0.61%/526.7MiB / 31.32GiB ; z
+[09:41:32] host CPU % RAM % | GPU MB/% | kafka=4.93%/1.162GiB / 31.32GiB ; kibana=0.58%/526.8MiB / 31.32GiB ; z
+[09:41:36] host CPU % RAM % | GPU MB/% | kafka=4.95%/1.162GiB / 31.32GiB ; kibana=4.30%/526.4MiB / 31.32GiB ; z
+[09:41:41] host CPU % RAM % | GPU MB/% | kafka=5.63%/1.162GiB / 31.32GiB ; kibana=1.44%/526.9MiB / 31.32GiB ; z
+[09:41:45] host CPU % RAM % | GPU MB/% | kafka=56.35%/1.183GiB / 31.32GiB ; kibana=0.91%/526.8MiB / 31.32GiB ; 
+[09:41:49] host CPU % RAM % | GPU MB/% | kafka=5.24%/1.162GiB / 31.32GiB ; kibana=2.30%/527.1MiB / 31.32GiB ; z
+[09:41:53] host CPU % RAM % | GPU MB/% | kafka=5.15%/1.162GiB / 31.32GiB ; kibana=0.52%/526.8MiB / 31.32GiB ; z
+[09:41:57] host CPU % RAM % | GPU MB/% | kafka=159.65%/1.213GiB / 31.32GiB ; kibana=1.31%/527MiB / 31.32GiB ; z
+[09:42:01] host CPU % RAM % | GPU MB/% | kafka=5.11%/1.162GiB / 31.32GiB ; kibana=1.79%/526.4MiB / 31.32GiB ; z
+[09:42:06] host CPU % RAM % | GPU MB/% | kafka=5.61%/1.163GiB / 31.32GiB ; kibana=1.25%/527.2MiB / 31.32GiB ; z
+[09:42:10] host CPU % RAM % | GPU MB/% | kafka=219.71%/1.226GiB / 31.32GiB ; kibana=1.69%/526.5MiB / 31.32GiB ;
+[09:42:14] host CPU % RAM % | GPU MB/% | kafka=4.96%/1.163GiB / 31.32GiB ; kibana=1.58%/526.5MiB / 31.32GiB ; z
+[09:42:18] host CPU % RAM % | GPU MB/% | kafka=5.39%/1.165GiB / 31.32GiB ; kibana=4.23%/526.6MiB / 31.32GiB ; z
+[09:42:22] host CPU % RAM % | GPU MB/% | kafka=230.54%/1.24GiB / 31.32GiB ; kibana=0.77%/526.4MiB / 31.32GiB ; 
+[09:42:26] host CPU % RAM % | GPU MB/% | kafka=5.17%/1.165GiB / 31.32GiB ; kibana=1.53%/526.5MiB / 31.32GiB ; z
+[09:42:31] host CPU % RAM % | GPU MB/% | kafka=5.70%/1.165GiB / 31.32GiB ; kibana=4.66%/526.7MiB / 31.32GiB ; z
+[09:42:35] host CPU % RAM % | GPU MB/% | kafka=167.19%/1.252GiB / 31.32GiB ; kibana=1.08%/526.5MiB / 31.32GiB ;
+[09:42:39] host CPU % RAM % | GPU MB/% | kafka=4.98%/1.165GiB / 31.32GiB ; kibana=1.42%/526.9MiB / 31.32GiB ; z
+[09:42:43] host CPU % RAM % | GPU MB/% | kafka=4.92%/1.165GiB / 31.32GiB ; kibana=1.24%/526.7MiB / 31.32GiB ; z
+[09:42:47] host CPU % RAM % | GPU MB/% | kafka=69.32%/1.165GiB / 31.32GiB ; kibana=0.80%/526.5MiB / 31.32GiB ; 
+[09:42:51] host CPU % RAM % | GPU MB/% | kafka=5.67%/1.165GiB / 31.32GiB ; kibana=1.50%/526.8MiB / 31.32GiB ; z
+[09:42:55] host CPU % RAM % | GPU MB/% | kafka=1.66%/1.165GiB / 31.32GiB ; kibana=1.05%/526.7MiB / 31.32GiB ; z
+[09:43:00] host CPU % RAM % | GPU MB/% | kafka=10.09%/1.165GiB / 31.32GiB ; kibana=1.00%/526.4MiB / 31.32GiB ; 
+[09:43:04] host CPU % RAM % | GPU MB/% | kafka=1.30%/1.165GiB / 31.32GiB ; kibana=2.06%/527MiB / 31.32GiB ; zoo
+[09:43:08] host CPU % RAM % | GPU MB/% | kafka=1.45%/1.165GiB / 31.32GiB ; kibana=0.55%/527MiB / 31.32GiB ; zoo
+[09:43:12] host CPU % RAM % | GPU MB/% | kafka=1.21%/1.165GiB / 31.32GiB ; kibana=3.98%/527.1MiB / 31.32GiB ; z
+[09:43:16] host CPU % RAM % | GPU MB/% | kafka=1.36%/1.165GiB / 31.32GiB ; kibana=1.32%/526.9MiB / 31.32GiB ; z
+[09:43:20] host CPU % RAM % | GPU MB/% | kafka=1.56%/1.165GiB / 31.32GiB ; kibana=1.29%/526.8MiB / 31.32GiB ; z
+[09:43:25] host CPU % RAM % | GPU MB/% | kafka=1.90%/1.165GiB / 31.32GiB ; kibana=3.71%/526.9MiB / 31.32GiB ; z
+[09:43:29] host CPU % RAM % | GPU MB/% | kafka=3.26%/1.165GiB / 31.32GiB ; kibana=1.00%/526.7MiB / 31.32GiB ; z
+[09:43:33] host CPU % RAM % | GPU MB/% | kafka=5.96%/1.165GiB / 31.32GiB ; kibana=1.32%/527MiB / 31.32GiB ; zoo
+[09:43:37] host CPU % RAM % | GPU MB/% | kafka=5.06%/1.165GiB / 31.32GiB ; kibana=0.86%/527MiB / 31.32GiB ; zoo
+[09:43:41] host CPU % RAM % | GPU MB/% | kafka=4.96%/1.166GiB / 31.32GiB ; kibana=0.75%/526.9MiB / 31.32GiB ; z
+[09:43:45] host CPU % RAM % | GPU MB/% | kafka=38.77%/1.18GiB / 31.32GiB ; kibana=2.06%/527.1MiB / 31.32GiB ; z
+[09:43:50] host CPU % RAM % | GPU MB/% | kafka=5.74%/1.166GiB / 31.32GiB ; kibana=1.10%/527MiB / 31.32GiB ; zoo
+[09:43:54] host CPU % RAM % | GPU MB/% | kafka=5.54%/1.168GiB / 31.32GiB ; kibana=1.13%/526.8MiB / 31.32GiB ; z
+[09:43:58] host CPU % RAM % | GPU MB/% | kafka=108.71%/1.203GiB / 31.32GiB ; kibana=0.62%/526.9MiB / 31.32GiB ;
+[09:44:02] host CPU % RAM % | GPU MB/% | kafka=4.86%/1.168GiB / 31.32GiB ; kibana=0.79%/527MiB / 31.32GiB ; zoo
+[09:44:06] host CPU % RAM % | GPU MB/% | kafka=4.98%/1.168GiB / 31.32GiB ; kibana=4.71%/526.7MiB / 31.32GiB ; z
+[09:44:10] host CPU % RAM % | GPU MB/% | kafka=212.18%/1.228GiB / 31.32GiB ; kibana=2.09%/526.4MiB / 31.32GiB ;
+[09:44:15] host CPU % RAM % | GPU MB/% | kafka=5.67%/1.168GiB / 31.32GiB ; kibana=1.36%/527.1MiB / 31.32GiB ; z
+[09:44:19] host CPU % RAM % | GPU MB/% | kafka=5.20%/1.168GiB / 31.32GiB ; kibana=4.71%/526.5MiB / 31.32GiB ; z
+[09:44:23] host CPU % RAM % | GPU MB/% | kafka=231.80%/1.241GiB / 31.32GiB ; kibana=0.65%/527MiB / 31.32GiB ; z
+[09:44:27] host CPU % RAM % | GPU MB/% | kafka=4.93%/1.168GiB / 31.32GiB ; kibana=1.43%/527.1MiB / 31.32GiB ; z
+[09:44:31] host CPU % RAM % | GPU MB/% | kafka=5.47%/1.168GiB / 31.32GiB ; kibana=0.85%/526.6MiB / 31.32GiB ; z
+[09:44:35] host CPU % RAM % | GPU MB/% | kafka=185.01%/1.247GiB / 31.32GiB ; kibana=1.29%/527.1MiB / 31.32GiB ;
+[09:44:39] host CPU % RAM % | GPU MB/% | kafka=5.18%/1.169GiB / 31.32GiB ; kibana=1.61%/527.1MiB / 31.32GiB ; z
+[09:44:44] host CPU % RAM % | GPU MB/% | kafka=5.90%/1.169GiB / 31.32GiB ; kibana=0.87%/527MiB / 31.32GiB ; zoo
+[09:44:48] host CPU % RAM % | GPU MB/% | kafka=116.32%/1.169GiB / 31.32GiB ; kibana=0.60%/526.8MiB / 31.32GiB ;
+[09:44:52] host CPU % RAM % | GPU MB/% | kafka=4.30%/1.169GiB / 31.32GiB ; kibana=0.79%/527MiB / 31.32GiB ; zoo
+[09:44:56] host CPU % RAM % | GPU MB/% | kafka=5.07%/1.169GiB / 31.32GiB ; kibana=0.65%/526.8MiB / 31.32GiB ; z
+[09:45:00] host CPU % RAM % | GPU MB/% | kafka=37.87%/1.171GiB / 31.32GiB ; kibana=5.19%/526.4MiB / 31.32GiB ; 
+[09:45:04] host CPU % RAM % | GPU MB/% | kafka=5.97%/1.171GiB / 31.32GiB ; kibana=1.62%/527MiB / 31.32GiB ; zoo
+[09:45:09] host CPU % RAM % | GPU MB/% | kafka=5.35%/1.171GiB / 31.32GiB ; kibana=0.58%/526.9MiB / 31.32GiB ; z
+[09:45:13] host CPU % RAM % | GPU MB/% | kafka=6.95%/1.171GiB / 31.32GiB ; kibana=4.53%/526.4MiB / 31.32GiB ; z
+[09:45:17] host CPU % RAM % | GPU MB/% | kafka=4.84%/1.171GiB / 31.32GiB ; kibana=0.75%/527MiB / 31.32GiB ; zoo
+[09:45:21] host CPU % RAM % | GPU MB/% | kafka=5.21%/1.171GiB / 31.32GiB ; kibana=1.61%/526.4MiB / 31.32GiB ; z
+[09:45:25] host CPU % RAM % | GPU MB/% | kafka=5.29%/1.171GiB / 31.32GiB ; kibana=1.93%/526.5MiB / 31.32GiB ; z
+[09:45:29] host CPU % RAM % | GPU MB/% | kafka=5.80%/1.171GiB / 31.32GiB ; kibana=1.02%/526.9MiB / 31.32GiB ; z
+[09:45:34] host CPU % RAM % | GPU MB/% | kafka=6.09%/1.171GiB / 31.32GiB ; kibana=1.89%/526.5MiB / 31.32GiB ; z
+[09:45:38] host CPU % RAM % | GPU MB/% | kafka=4.94%/1.172GiB / 31.32GiB ; kibana=0.56%/526.5MiB / 31.32GiB ; z
+[09:45:42] host CPU % RAM % | GPU MB/% | kafka=4.73%/1.172GiB / 31.32GiB ; kibana=0.73%/527MiB / 31.32GiB ; zoo
+[09:45:46] host CPU % RAM % | GPU MB/% | kafka=19.06%/1.18GiB / 31.32GiB ; kibana=0.84%/526.6MiB / 31.32GiB ; z
+[09:45:50] host CPU % RAM % | GPU MB/% | kafka=5.84%/1.172GiB / 31.32GiB ; kibana=1.26%/526.6MiB / 31.32GiB ; z
+[09:45:54] host CPU % RAM % | GPU MB/% | kafka=6.43%/1.172GiB / 31.32GiB ; kibana=4.64%/526.7MiB / 31.32GiB ; z
+[09:45:58] host CPU % RAM % | GPU MB/% | kafka=115.84%/1.21GiB / 31.32GiB ; kibana=0.73%/527.1MiB / 31.32GiB ; 
+[09:46:03] host CPU % RAM % | GPU MB/% | kafka=4.91%/1.174GiB / 31.32GiB ; kibana=0.57%/526.5MiB / 31.32GiB ; z
+[09:46:07] host CPU % RAM % | GPU MB/% | kafka=5.00%/1.174GiB / 31.32GiB ; kibana=4.38%/526.8MiB / 31.32GiB ; z
+[09:46:11] host CPU % RAM % | GPU MB/% | kafka=200.69%/1.232GiB / 31.32GiB ; kibana=0.62%/526.5MiB / 31.32GiB ;
+[09:46:15] host CPU % RAM % | GPU MB/% | kafka=5.28%/1.174GiB / 31.32GiB ; kibana=1.82%/526.8MiB / 31.32GiB ; z
+[09:46:19] host CPU % RAM % | GPU MB/% | kafka=5.64%/1.174GiB / 31.32GiB ; kibana=1.10%/526.7MiB / 31.32GiB ; z
+[09:46:23] host CPU % RAM % | GPU MB/% | kafka=232.82%/1.247GiB / 31.32GiB ; kibana=0.61%/526.4MiB / 31.32GiB ;
+[09:46:28] host CPU % RAM % | GPU MB/% | kafka=4.66%/1.175GiB / 31.32GiB ; kibana=0.81%/527.1MiB / 31.32GiB ; z
+[09:46:32] host CPU % RAM % | GPU MB/% | kafka=4.87%/1.175GiB / 31.32GiB ; kibana=5.28%/526.7MiB / 31.32GiB ; z
+[09:46:36] host CPU % RAM % | GPU MB/% | kafka=204.52%/1.252GiB / 31.32GiB ; kibana=2.74%/526.5MiB / 31.32GiB ;
+[09:46:40] host CPU % RAM % | GPU MB/% | kafka=5.45%/1.175GiB / 31.32GiB ; kibana=1.17%/526.8MiB / 31.32GiB ; z
+[09:46:44] host CPU % RAM % | GPU MB/% | kafka=5.72%/1.175GiB / 31.32GiB ; kibana=1.32%/526.7MiB / 31.32GiB ; z
+[09:46:48] host CPU % RAM % | GPU MB/% | kafka=146.86%/1.262GiB / 31.32GiB ; kibana=119.58%/525.5MiB / 31.32GiB
+[09:46:53] host CPU % RAM % | GPU MB/% | kafka=5.16%/1.175GiB / 31.32GiB ; kibana=0.56%/526MiB / 31.32GiB ; zoo
+[09:46:57] host CPU % RAM % | GPU MB/% | kafka=15.91%/1.178GiB / 31.32GiB ; kibana=0.79%/526.2MiB / 31.32GiB ; 
+[09:47:01] host CPU % RAM % | GPU MB/% | kafka=239.40%/1.254GiB / 31.32GiB ; kibana=5.19%/526.1MiB / 31.32GiB ;
+[09:47:05] host CPU % RAM % | GPU MB/% | kafka=6.01%/1.178GiB / 31.32GiB ; kibana=1.54%/526MiB / 31.32GiB ; zoo
+[09:47:09] host CPU % RAM % | GPU MB/% | kafka=6.10%/1.178GiB / 31.32GiB ; kibana=1.57%/526.1MiB / 31.32GiB ; z
+[09:47:13] host CPU % RAM % | GPU MB/% | kafka=19.69%/1.178GiB / 31.32GiB ; kibana=0.53%/525.9MiB / 31.32GiB ; 
+[09:47:17] host CPU % RAM % | GPU MB/% | kafka=5.00%/1.178GiB / 31.32GiB ; kibana=1.02%/525.8MiB / 31.32GiB ; z
+[09:47:22] host CPU % RAM % | GPU MB/% | kafka=5.45%/1.178GiB / 31.32GiB ; kibana=1.51%/526.1MiB / 31.32GiB ; z
+[09:47:26] host CPU % RAM % | GPU MB/% | kafka=4.82%/1.178GiB / 31.32GiB ; kibana=1.37%/526MiB / 31.32GiB ; zoo
+[09:47:30] host CPU % RAM % | GPU MB/% | kafka=6.18%/1.178GiB / 31.32GiB ; kibana=3.02%/525.8MiB / 31.32GiB ; z
+[09:47:34] host CPU % RAM % | GPU MB/% | kafka=5.80%/1.178GiB / 31.32GiB ; kibana=1.03%/526.1MiB / 31.32GiB ; z
+[09:47:38] host CPU % RAM % | GPU MB/% | kafka=5.33%/1.178GiB / 31.32GiB ; kibana=0.58%/526.1MiB / 31.32GiB ; z
+[09:47:42] host CPU % RAM % | GPU MB/% | kafka=4.94%/1.178GiB / 31.32GiB ; kibana=3.99%/526.3MiB / 31.32GiB ; z
+[09:47:47] host CPU % RAM % | GPU MB/% | kafka=5.32%/1.178GiB / 31.32GiB ; kibana=1.80%/526.2MiB / 31.32GiB ; z
+[09:47:51] host CPU % RAM % | GPU MB/% | kafka=5.15%/1.178GiB / 31.32GiB ; kibana=1.21%/526.1MiB / 31.32GiB ; z
+[09:47:55] host CPU % RAM % | GPU MB/% | kafka=5.67%/1.178GiB / 31.32GiB ; kibana=3.87%/526.2MiB / 31.32GiB ; z
+[09:47:59] host CPU % RAM % | GPU MB/% | kafka=34.27%/1.199GiB / 31.32GiB ; kibana=1.07%/526.1MiB / 31.32GiB ; 
+[09:48:03] host CPU % RAM % | GPU MB/% | kafka=5.31%/1.184GiB / 31.32GiB ; kibana=1.11%/526.3MiB / 31.32GiB ; z
+[09:48:07] host CPU % RAM % | GPU MB/% | kafka=4.81%/1.184GiB / 31.32GiB ; kibana=0.54%/525.7MiB / 31.32GiB ; z
+[09:48:11] host CPU % RAM % | GPU MB/% | kafka=149.57%/1.231GiB / 31.32GiB ; kibana=0.91%/526.2MiB / 31.32GiB ;
+[09:48:16] host CPU % RAM % | GPU MB/% | kafka=5.16%/1.184GiB / 31.32GiB ; kibana=2.64%/525.7MiB / 31.32GiB ; z
+[09:48:20] host CPU % RAM % | GPU MB/% | kafka=6.11%/1.184GiB / 31.32GiB ; kibana=1.03%/525.7MiB / 31.32GiB ; z
+[09:48:24] host CPU % RAM % | GPU MB/% | kafka=221.94%/1.247GiB / 31.32GiB ; kibana=2.96%/526.3MiB / 31.32GiB ;
+[09:48:28] host CPU % RAM % | GPU MB/% | kafka=5.27%/1.185GiB / 31.32GiB ; kibana=0.58%/526.2MiB / 31.32GiB ; z
+[09:48:32] host CPU % RAM % | GPU MB/% | kafka=5.21%/1.185GiB / 31.32GiB ; kibana=0.58%/525.7MiB / 31.32GiB ; z
+[09:48:36] host CPU % RAM % | GPU MB/% | kafka=218.01%/1.259GiB / 31.32GiB ; kibana=3.74%/526MiB / 31.32GiB ; z
+[09:48:41] host CPU % RAM % | GPU MB/% | kafka=5.15%/1.185GiB / 31.32GiB ; kibana=1.20%/525.9MiB / 31.32GiB ; z
+[09:48:45] host CPU % RAM % | GPU MB/% | kafka=8.67%/1.185GiB / 31.32GiB ; kibana=1.08%/525.8MiB / 31.32GiB ; z
+[09:48:49] host CPU % RAM % | GPU MB/% | kafka=158.21%/1.264GiB / 31.32GiB ; kibana=3.88%/526MiB / 31.32GiB ; z
+[09:48:53] host CPU % RAM % | GPU MB/% | kafka=5.54%/1.185GiB / 31.32GiB ; kibana=0.62%/525.6MiB / 31.32GiB ; z
+[09:48:57] host CPU % RAM % | GPU MB/% | kafka=5.45%/1.185GiB / 31.32GiB ; kibana=2.03%/525.8MiB / 31.32GiB ; z
+[09:49:01] host CPU % RAM % | GPU MB/% | kafka=98.03%/1.185GiB / 31.32GiB ; kibana=1.04%/525.9MiB / 31.32GiB ; 
+[09:49:05] host CPU % RAM % | GPU MB/% | kafka=5.11%/1.185GiB / 31.32GiB ; kibana=1.18%/525.9MiB / 31.32GiB ; z
+[09:49:10] host CPU % RAM % | GPU MB/% | kafka=5.79%/1.185GiB / 31.32GiB ; kibana=1.43%/526.1MiB / 31.32GiB ; z
+[09:49:14] host CPU % RAM % | GPU MB/% | kafka=31.92%/1.185GiB / 31.32GiB ; kibana=1.02%/526MiB / 31.32GiB ; zo
+[09:49:18] host CPU % RAM % | GPU MB/% | kafka=5.21%/1.185GiB / 31.32GiB ; kibana=3.37%/526.1MiB / 31.32GiB ; z
+[09:49:22] host CPU % RAM % | GPU MB/% | kafka=5.12%/1.185GiB / 31.32GiB ; kibana=1.33%/526.1MiB / 31.32GiB ; z
+[09:49:26] host CPU % RAM % | GPU MB/% | kafka=7.46%/1.185GiB / 31.32GiB ; kibana=1.04%/526.1MiB / 31.32GiB ; z
+[09:49:30] host CPU % RAM % | GPU MB/% | kafka=5.95%/1.185GiB / 31.32GiB ; kibana=4.59%/526.3MiB / 31.32GiB ; z
+[09:49:35] host CPU % RAM % | GPU MB/% | kafka=5.67%/1.185GiB / 31.32GiB ; kibana=1.05%/526.1MiB / 31.32GiB ; z
+[09:49:39] host CPU % RAM % | GPU MB/% | kafka=5.16%/1.186GiB / 31.32GiB ; kibana=1.05%/526MiB / 31.32GiB ; zoo
+[09:49:43] host CPU % RAM % | GPU MB/% | kafka=5.08%/1.186GiB / 31.32GiB ; kibana=0.92%/526.1MiB / 31.32GiB ; z
+[09:49:47] host CPU % RAM % | GPU MB/% | kafka=4.96%/1.186GiB / 31.32GiB ; kibana=0.66%/525.9MiB / 31.32GiB ; z
+[09:49:51] host CPU % RAM % | GPU MB/% | kafka=5.26%/1.186GiB / 31.32GiB ; kibana=1.73%/526.3MiB / 31.32GiB ; z
+[09:49:55] host CPU % RAM % | GPU MB/% | kafka=5.37%/1.186GiB / 31.32GiB ; kibana=1.27%/526.2MiB / 31.32GiB ; z
+[09:50:00] host CPU % RAM % | GPU MB/% | kafka=6.15%/1.186GiB / 31.32GiB ; kibana=0.76%/526MiB / 31.32GiB ; zoo
+[09:50:04] host CPU % RAM % | GPU MB/% | kafka=4.68%/1.186GiB / 31.32GiB ; kibana=2.60%/525.6MiB / 31.32GiB ; z
+[09:50:08] host CPU % RAM % | GPU MB/% | kafka=4.76%/1.188GiB / 31.32GiB ; kibana=0.58%/525.7MiB / 31.32GiB ; z
+[09:50:12] host CPU % RAM % | GPU MB/% | kafka=64.22%/1.214GiB / 31.32GiB ; kibana=4.49%/525.9MiB / 31.32GiB ; 
+[09:50:16] host CPU % RAM % | GPU MB/% | kafka=4.88%/1.188GiB / 31.32GiB ; kibana=0.88%/525.7MiB / 31.32GiB ; z
+[09:50:20] host CPU % RAM % | GPU MB/% | kafka=5.16%/1.188GiB / 31.32GiB ; kibana=1.64%/525.7MiB / 31.32GiB ; z
+[09:50:25] host CPU % RAM % | GPU MB/% | kafka=169.26%/1.239GiB / 31.32GiB ; kibana=5.44%/525.8MiB / 31.32GiB ;
+[09:50:29] host CPU % RAM % | GPU MB/% | kafka=4.87%/1.188GiB / 31.32GiB ; kibana=1.02%/526.4MiB / 31.32GiB ; z
+[09:50:33] host CPU % RAM % | GPU MB/% | kafka=5.72%/1.188GiB / 31.32GiB ; kibana=1.48%/525.7MiB / 31.32GiB ; z
+[09:50:37] host CPU % RAM % | GPU MB/% | kafka=230.85%/1.253GiB / 31.32GiB ; kibana=1.68%/525.8MiB / 31.32GiB ;
+[09:50:41] host CPU % RAM % | GPU MB/% | kafka=4.94%/1.188GiB / 31.32GiB ; kibana=0.57%/526.3MiB / 31.32GiB ; z
+[09:50:45] host CPU % RAM % | GPU MB/% | kafka=6.84%/1.188GiB / 31.32GiB ; kibana=2.34%/525.9MiB / 31.32GiB ; z
+[09:50:49] host CPU % RAM % | GPU MB/% | kafka=231.35%/1.275GiB / 31.32GiB ; kibana=1.16%/525.8MiB / 31.32GiB ;
+[09:50:54] host CPU % RAM % | GPU MB/% | kafka=4.54%/1.189GiB / 31.32GiB ; kibana=0.81%/526.3MiB / 31.32GiB ; z
+[09:50:58] host CPU % RAM % | GPU MB/% | kafka=5.44%/1.189GiB / 31.32GiB ; kibana=1.88%/525.7MiB / 31.32GiB ; z
+[09:51:02] host CPU % RAM % | GPU MB/% | kafka=111.61%/1.189GiB / 31.32GiB ; kibana=1.04%/525.8MiB / 31.32GiB ;
+[09:51:06] host CPU % RAM % | GPU MB/% | kafka=5.78%/1.189GiB / 31.32GiB ; kibana=3.91%/526.2MiB / 31.32GiB ; z
+[09:51:10] host CPU % RAM % | GPU MB/% | kafka=5.63%/1.191GiB / 31.32GiB ; kibana=1.27%/526.1MiB / 31.32GiB ; z
+[09:51:14] host CPU % RAM % | GPU MB/% | kafka=54.75%/1.191GiB / 31.32GiB ; kibana=1.39%/526MiB / 31.32GiB ; zo
+[09:51:19] host CPU % RAM % | GPU MB/% | kafka=5.29%/1.191GiB / 31.32GiB ; kibana=3.94%/526.2MiB / 31.32GiB ; z
+[09:51:23] host CPU % RAM % | GPU MB/% | kafka=4.57%/1.191GiB / 31.32GiB ; kibana=0.55%/525.9MiB / 31.32GiB ; z
+[09:51:27] host CPU % RAM % | GPU MB/% | kafka=6.90%/1.191GiB / 31.32GiB ; kibana=1.42%/526.2MiB / 31.32GiB ; z
+[09:51:31] host CPU % RAM % | GPU MB/% | kafka=5.42%/1.191GiB / 31.32GiB ; kibana=0.80%/526.3MiB / 31.32GiB ; z
+[09:51:35] host CPU % RAM % | GPU MB/% | kafka=5.92%/1.191GiB / 31.32GiB ; kibana=1.18%/526.2MiB / 31.32GiB ; z
+[09:51:39] host CPU % RAM % | GPU MB/% | kafka=5.68%/1.191GiB / 31.32GiB ; kibana=1.77%/526.3MiB / 31.32GiB ; z
+[09:51:44] host CPU % RAM % | GPU MB/% | kafka=5.20%/1.191GiB / 31.32GiB ; kibana=0.86%/526.2MiB / 31.32GiB ; z
+[09:51:48] host CPU % RAM % | GPU MB/% | kafka=4.85%/1.192GiB / 31.32GiB ; kibana=0.52%/526.1MiB / 31.32GiB ; z
+[09:51:52] host CPU % RAM % | GPU MB/% | kafka=3.32%/1.192GiB / 31.32GiB ; kibana=0.74%/526.3MiB / 31.32GiB ; z
+[09:51:56] host CPU % RAM % | GPU MB/% | kafka=1.41%/1.192GiB / 31.32GiB ; kibana=1.12%/526.2MiB / 31.32GiB ; z
+[09:52:00] host CPU % RAM % | GPU MB/% | kafka=1.84%/1.192GiB / 31.32GiB ; kibana=4.82%/525.8MiB / 31.32GiB ; z
+[09:52:04] host CPU % RAM % | GPU MB/% | kafka=1.79%/1.192GiB / 31.32GiB ; kibana=1.99%/525.7MiB / 31.32GiB ; z
+[09:52:09] host CPU % RAM % | GPU MB/% | kafka=1.59%/1.192GiB / 31.32GiB ; kibana=0.61%/525.7MiB / 31.32GiB ; z
+[09:52:13] host CPU % RAM % | GPU MB/% | kafka=58.77%/1.217GiB / 31.32GiB ; kibana=4.26%/525.9MiB / 31.32GiB ; 
+[09:52:17] host CPU % RAM % | GPU MB/% | kafka=1.22%/1.192GiB / 31.32GiB ; kibana=0.73%/525.8MiB / 31.32GiB ; z
+[09:52:21] host CPU % RAM % | GPU MB/% | kafka=1.20%/1.192GiB / 31.32GiB ; kibana=1.15%/526MiB / 31.32GiB ; zoo
+[09:52:25] host CPU % RAM % | GPU MB/% | kafka=158.54%/1.242GiB / 31.32GiB ; kibana=1.11%/525.9MiB / 31.32GiB ;
+[09:52:29] host CPU % RAM % | GPU MB/% | kafka=1.76%/1.192GiB / 31.32GiB ; kibana=1.62%/525.7MiB / 31.32GiB ; z
+[09:52:33] host CPU % RAM % | GPU MB/% | kafka=1.68%/1.192GiB / 31.32GiB ; kibana=2.01%/526MiB / 31.32GiB ; zoo
+[09:52:38] host CPU % RAM % | GPU MB/% | kafka=234.12%/1.257GiB / 31.32GiB ; kibana=0.55%/525.9MiB / 31.32GiB ;
+[09:52:42] host CPU % RAM % | GPU MB/% | kafka=1.37%/1.192GiB / 31.32GiB ; kibana=0.80%/525.7MiB / 31.32GiB ; z
+[09:52:46] host CPU % RAM % | GPU MB/% | kafka=1.40%/1.192GiB / 31.32GiB ; kibana=1.34%/526MiB / 31.32GiB ; zoo
+[09:52:50] host CPU % RAM % | GPU MB/% | kafka=218.01%/1.276GiB / 31.32GiB ; kibana=1.12%/525.9MiB / 31.32GiB ;
+[09:52:54] host CPU % RAM % | GPU MB/% | kafka=1.62%/1.192GiB / 31.32GiB ; kibana=4.21%/526MiB / 31.32GiB ; zoo
+[09:52:58] host CPU % RAM % | GPU MB/% | kafka=1.61%/1.192GiB / 31.32GiB ; kibana=0.53%/525.7MiB / 31.32GiB ; z
+[09:53:03] host CPU % RAM % | GPU MB/% | kafka=140.62%/1.192GiB / 31.32GiB ; kibana=0.60%/525.7MiB / 31.32GiB ;
+[09:53:07] host CPU % RAM % | GPU MB/% | kafka=1.34%/1.192GiB / 31.32GiB ; kibana=4.54%/526.1MiB / 31.32GiB ; z
+[09:53:11] host CPU % RAM % | GPU MB/% | kafka=1.38%/1.192GiB / 31.32GiB ; kibana=1.28%/525.9MiB / 31.32GiB ; z
+[09:53:15] host CPU % RAM % | GPU MB/% | kafka=44.43%/1.192GiB / 31.32GiB ; kibana=2.19%/526.2MiB / 31.32GiB ; 
+[09:53:19] host CPU % RAM % | GPU MB/% | kafka=1.66%/1.192GiB / 31.32GiB ; kibana=1.02%/526.1MiB / 31.32GiB ; z
+[09:53:23] host CPU % RAM % | GPU MB/% | kafka=1.45%/1.192GiB / 31.32GiB ; kibana=0.48%/525.8MiB / 31.32GiB ; z
+[09:53:27] host CPU % RAM % | GPU MB/% | kafka=3.84%/1.192GiB / 31.32GiB ; kibana=1.19%/526.1MiB / 31.32GiB ; z
+[09:53:32] host CPU % RAM % | GPU MB/% | kafka=1.23%/1.192GiB / 31.32GiB ; kibana=1.02%/526.1MiB / 31.32GiB ; z
+[09:53:36] host CPU % RAM % | GPU MB/% | kafka=1.68%/1.192GiB / 31.32GiB ; kibana=1.14%/526.1MiB / 31.32GiB ; z
+[09:53:40] host CPU % RAM % | GPU MB/% | kafka=1.75%/1.192GiB / 31.32GiB ; kibana=1.66%/526.2MiB / 31.32GiB ; z
+[09:53:44] host CPU % RAM % | GPU MB/% | kafka=1.83%/1.192GiB / 31.32GiB ; kibana=1.27%/526.2MiB / 31.32GiB ; z
+[09:53:48] host CPU % RAM % | GPU MB/% | kafka=1.79%/1.192GiB / 31.32GiB ; kibana=4.19%/525.7MiB / 31.32GiB ; z
+[09:53:52] host CPU % RAM % | GPU MB/% | kafka=1.06%/1.192GiB / 31.32GiB ; kibana=0.53%/526.2MiB / 31.32GiB ; z
+[09:53:57] host CPU % RAM % | GPU MB/% | kafka=1.60%/1.192GiB / 31.32GiB ; kibana=0.81%/526.1MiB / 31.32GiB ; z
+[09:54:01] host CPU % RAM % | GPU MB/% | kafka=4.47%/1.195GiB / 31.32GiB ; kibana=5.03%/525.7MiB / 31.32GiB ; z
+[09:54:05] host CPU % RAM % | GPU MB/% | kafka=1.71%/1.192GiB / 31.32GiB ; kibana=1.37%/526.4MiB / 31.32GiB ; z
+[09:54:09] host CPU % RAM % | GPU MB/% | kafka=2.05%/1.192GiB / 31.32GiB ; kibana=2.26%/525.8MiB / 31.32GiB ; z
+[09:54:13] host CPU % RAM % | GPU MB/% | kafka=98.11%/1.226GiB / 31.32GiB ; kibana=0.57%/526.4MiB / 31.32GiB ; 
+[09:54:17] host CPU % RAM % | GPU MB/% | kafka=1.21%/1.192GiB / 31.32GiB ; kibana=0.53%/526.2MiB / 31.32GiB ; z
+[09:54:22] host CPU % RAM % | GPU MB/% | kafka=1.70%/1.192GiB / 31.32GiB ; kibana=1.38%/526.4MiB / 31.32GiB ; z
+[09:54:26] host CPU % RAM % | GPU MB/% | kafka=202.77%/1.249GiB / 31.32GiB ; kibana=1.94%/525.7MiB / 31.32GiB ;
+[09:54:30] host CPU % RAM % | GPU MB/% | kafka=2.18%/1.192GiB / 31.32GiB ; kibana=0.59%/526.1MiB / 31.32GiB ; z
+[09:54:34] host CPU % RAM % | GPU MB/% | kafka=1.56%/1.192GiB / 31.32GiB ; kibana=1.78%/525.7MiB / 31.32GiB ; z
+[09:54:38] host CPU % RAM % | GPU MB/% | kafka=241.96%/1.266GiB / 31.32GiB ; kibana=0.58%/525.7MiB / 31.32GiB ;
+[09:54:42] host CPU % RAM % | GPU MB/% | kafka=1.44%/1.194GiB / 31.32GiB ; kibana=4.22%/525.9MiB / 31.32GiB ; z
+[09:54:46] host CPU % RAM % | GPU MB/% | kafka=1.54%/1.194GiB / 31.32GiB ; kibana=0.84%/525.7MiB / 31.32GiB ; z
+[09:54:51] host CPU % RAM % | GPU MB/% | kafka=213.07%/1.282GiB / 31.32GiB ; kibana=1.73%/525.7MiB / 31.32GiB ;
+[09:54:55] host CPU % RAM % | GPU MB/% | kafka=1.94%/1.194GiB / 31.32GiB ; kibana=4.13%/525.7MiB / 31.32GiB ; z
+[09:54:59] host CPU % RAM % | GPU MB/% | kafka=1.38%/1.194GiB / 31.32GiB ; kibana=1.01%/526.3MiB / 31.32GiB ; z
+[09:55:03] host CPU % RAM % | GPU MB/% | kafka=107.61%/1.194GiB / 31.32GiB ; kibana=1.92%/525.8MiB / 31.32GiB ;
+[09:55:07] host CPU % RAM % | GPU MB/% | kafka=1.18%/1.194GiB / 31.32GiB ; kibana=0.52%/525.9MiB / 31.32GiB ; z
+[09:55:11] host CPU % RAM % | GPU MB/% | kafka=1.36%/1.194GiB / 31.32GiB ; kibana=0.76%/525.7MiB / 31.32GiB ; z
+[09:55:16] host CPU % RAM % | GPU MB/% | kafka=33.80%/1.194GiB / 31.32GiB ; kibana=2.23%/525.9MiB / 31.32GiB ; 
+[09:55:20] host CPU % RAM % | GPU MB/% | kafka=2.01%/1.194GiB / 31.32GiB ; kibana=0.78%/525.8MiB / 31.32GiB ; z
+[09:55:24] host CPU % RAM % | GPU MB/% | kafka=1.71%/1.194GiB / 31.32GiB ; kibana=0.95%/526.4MiB / 31.32GiB ; z
+[09:55:28] host CPU % RAM % | GPU MB/% | kafka=3.14%/1.194GiB / 31.32GiB ; kibana=0.62%/525.7MiB / 31.32GiB ; z
+[09:55:32] host CPU % RAM % | GPU MB/% | kafka=1.22%/1.194GiB / 31.32GiB ; kibana=0.95%/525.9MiB / 31.32GiB ; z
+[09:55:36] host CPU % RAM % | GPU MB/% | kafka=1.63%/1.194GiB / 31.32GiB ; kibana=4.57%/526.1MiB / 31.32GiB ; z
+[09:55:41] host CPU % RAM % | GPU MB/% | kafka=1.53%/1.194GiB / 31.32GiB ; kibana=1.75%/525.8MiB / 31.32GiB ; z

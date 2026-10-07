@@ -1,0 +1,21 @@
+Run 20261002-150058_clu_vm22_base2_r3
+  mode=preload  partitions=2  sent=10000  processed_rows=10000  bench files=['bench_vm2_1.csv', 'bench_vm2_2.csv']
+
+Throughput (steady, first 10% dropped): 23.39 msg/s over 384.735s
+  vm2: 23.39 msg/s (10000 messages)
+
+Latency (preload mode: end-to-end includes backlog wait, so only the
+  model and Elasticsearch columns are meaningful; use a rate run for latency)
+  end_to_end     p50  245477.4 | p95  416103.5 | p99  436497.7 | max  442099.9
+  kafka_wait     p50  245402.8 | p95  416012.7 | p99  436446.9 | max  442011.6
+  inference      p50      69.3 | p95     134.8 | p99     242.8 | max     453.7
+  elasticsearch  p50       4.7 | p95       5.7 | p99       6.9 | max      57.2
+  (including the warm-up, end-to-end p95 would be 413946.8 ms and p99 435550.0 ms: the consumer group is still being assigned)
+
+Balance: per processor {'vm2#123352': 5061, 'vm2#123353': 4939} (max/min 1.02)
+         per partition {0: 5061, 1: 4939}
+
+PASS delivery: 10000/10000 processed
+PASS duplicates: 0
+PASS no unknown extras: 0
+n/a  clock sanity: single machine

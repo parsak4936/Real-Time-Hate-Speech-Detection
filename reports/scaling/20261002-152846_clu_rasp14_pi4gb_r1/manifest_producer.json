@@ -1,0 +1,34 @@
+{
+  "status": "done",
+  "run_id": "20261002-152846_clu_rasp14_pi4gb_r1",
+  "started_at": "2026-10-02T15:28:49.726688",
+  "topic": "perf_20261002-152846_clu_rasp14_pi4gb_r1",
+  "partitions": 4,
+  "n": 10000,
+  "seed": 42,
+  "date": "2026-06-13",
+  "mode": "preload",
+  "rate": null,
+  "brokers": "172.16.10.94:9093",
+  "source": "/home/ubuntu/hsp/data/stream_log.csv",
+  "workload_platforms": {
+    "YouTube": 9729,
+    "Twitch": 271
+  },
+  "host": "msgingest1",
+  "git_commit": "1e0af24",
+  "python": "3.10.12",
+  "finished_at": "2026-10-02T15:28:53.423705",
+  "sent_ok": 10000,
+  "send_errors": 0,
+  "first_errors": [],
+  "per_partition": {
+    "0": 2526,
+    "1": 2426,
+    "2": 2535,
+    "3": 2513
+  },
+  "send_seconds": 3.652,
+  "achieved_rate": 2738.19,
+  "max_schedule_lag_ms": null
+}

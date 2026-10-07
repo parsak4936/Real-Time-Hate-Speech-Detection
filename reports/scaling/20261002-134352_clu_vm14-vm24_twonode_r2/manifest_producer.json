@@ -1,0 +1,38 @@
+{
+  "status": "done",
+  "run_id": "20261002-134352_clu_vm14-vm24_twonode_r2",
+  "started_at": "2026-10-02T13:43:54.714579",
+  "topic": "perf_20261002-134352_clu_vm14-vm24_twonode_r2",
+  "partitions": 8,
+  "n": 10000,
+  "seed": 42,
+  "date": "2026-06-13",
+  "mode": "preload",
+  "rate": null,
+  "brokers": "172.16.10.94:9093",
+  "source": "/home/ubuntu/hsp/data/stream_log.csv",
+  "workload_platforms": {
+    "YouTube": 9729,
+    "Twitch": 271
+  },
+  "host": "msgingest1",
+  "git_commit": "1e0af24",
+  "python": "3.10.12",
+  "finished_at": "2026-10-02T13:43:58.607712",
+  "sent_ok": 10000,
+  "send_errors": 0,
+  "first_errors": [],
+  "per_partition": {
+    "0": 1265,
+    "1": 1229,
+    "2": 1214,
+    "3": 1263,
+    "4": 1261,
+    "5": 1197,
+    "6": 1321,
+    "7": 1250
+  },
+  "send_seconds": 3.84,
+  "achieved_rate": 2604.01,
+  "max_schedule_lag_ms": null
+}

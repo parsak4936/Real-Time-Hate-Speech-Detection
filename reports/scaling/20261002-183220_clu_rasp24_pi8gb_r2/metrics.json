@@ -1,0 +1,120 @@
+{
+  "run_id": "20261002-183220_clu_rasp24_pi8gb_r2",
+  "mode": "preload",
+  "partitions": 4,
+  "warmup": {
+    "fraction_dropped": 0.1,
+    "seconds_dropped": 0.0,
+    "messages_in_steady_window": 3600
+  },
+  "sent": 10000,
+  "processed_unique": 4000,
+  "processed_rows": 10074,
+  "missing": 6000,
+  "duplicates": 3049,
+  "extras": 0,
+  "throughput": {
+    "messages_steady": 3600,
+    "window_seconds": 1658.045,
+    "msgs_per_sec": 2.17
+  },
+  "throughput_by_node": {
+    "rasp2": {
+      "messages_steady": 3600,
+      "window_seconds": 1658.045,
+      "msgs_per_sec": 2.17
+    }
+  },
+  "latency_ms": {
+    "end_to_end": {
+      "n": 3600,
+      "p50": 598054.1,
+      "p95": 1689791.3,
+      "p99": 1733927.4,
+      "max": 1754726.5,
+      "mean": 779214.2
+    },
+    "kafka_wait": {
+      "n": 3600,
+      "p50": 596445.3,
+      "p95": 1689149.6,
+      "p99": 1733479.6,
+      "max": 1754064.0,
+      "mean": 778576.3
+    },
+    "inference": {
+      "n": 3600,
+      "p50": 555.7,
+      "p95": 1027.5,
+      "p99": 2044.2,
+      "max": 3536.7,
+      "mean": 627.0
+    },
+    "elasticsearch": {
+      "n": 3600,
+      "p50": 9.7,
+      "p95": 13.8,
+      "p99": 19.5,
+      "max": 34.7,
+      "mean": 10.0
+    }
+  },
+  "latency_ms_including_warmup": {
+    "end_to_end": {
+      "n": 4000,
+      "p50": 476467.7,
+      "p95": 1682692.6,
+      "p99": 1733080.7,
+      "max": 1754726.5,
+      "mean": 707907.2
+    },
+    "kafka_wait": {
+      "n": 4000,
+      "p50": 475888.9,
+      "p95": 1681585.1,
+      "p99": 1732604.3,
+      "max": 1754064.0,
+      "mean": 707269.3
+    },
+    "inference": {
+      "n": 4000,
+      "p50": 556.1,
+      "p95": 1032.0,
+      "p99": 2044.2,
+      "max": 3536.7,
+      "mean": 626.9
+    },
+    "elasticsearch": {
+      "n": 4000,
+      "p50": 9.7,
+      "p95": 13.9,
+      "p99": 19.7,
+      "max": 205.7,
+      "mean": 10.1
+    }
+  },
+  "balance": {
+    "per_node": {
+      "rasp2": 4000
+    },
+    "per_processor": {
+      "rasp2#38590": 1000,
+      "rasp2#38594": 1500,
+      "rasp2#38593": 500,
+      "rasp2#38595": 1000
+    },
+    "per_partition": {
+      "0": 1000,
+      "1": 500,
+      "2": 1500,
+      "3": 1000
+    },
+    "processor_max_min_ratio": 3.0
+  },
+  "clock": {
+    "min_kafka_wait_ms_by_node": {
+      "rasp2": 33629.8
+    },
+    "skewed_nodes": []
+  }
+}

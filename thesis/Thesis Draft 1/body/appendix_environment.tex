@@ -26,6 +26,28 @@ Tier-1 inference & CPU by default; the GPU is selectable through one configurati
 Tier-2 inference & \texttt{gpt-oss:120b} (Ollama tag \texttt{gpt-oss:120b-cloud}) served through Ollama's hosted endpoint, a 116.8-billion-parameter model far larger than the local GPU can hold \\
 \end{longtable}
 
+The multi-node measurements in Section~\ref{throughput-scalability} were taken on a separate cluster provided by the University of Messina. Table~\ref{tab:env-cluster} gives its specification. Every node ran the same checksum-verified model weights and the same pinned library versions as the laptop, so the only variable between the single-machine and multi-machine figures is the hardware. The three Raspberry Pi boards were provisioned identically. Reaching them required moving Docker's default bridge network on the broker's host, which by default occupies the same 172.17.0.0/16 range as the boards' subnet and so swallowed every reply addressed to them.
+
+\begin{longtable}{@{}
+  >{\raggedright\arraybackslash}p{\dimexpr 0.2200\linewidth - \tabcolsep \relax}
+  >{\raggedright\arraybackslash}p{\dimexpr 0.7800\linewidth - \tabcolsep \relax}@{}}
+\caption{The University of Messina cluster used for the multi-node measurements.}\label{tab:env-cluster}\tabularnewline
+\toprule
+Node & Specification \\
+\midrule
+\endfirsthead
+\toprule
+Node & Specification \\
+\midrule
+\endhead
+\bottomrule
+\endlastfoot
+Virtual machine 1 & 4 cores, 31 GB RAM, x86-64, Ubuntu 22.04; hosts Kafka, Zookeeper and Elasticsearch, and also ran Tier-1 processors \\
+Virtual machine 2 & 4 cores, 31 GB RAM, x86-64, Ubuntu 22.04; Tier-1 processors only \\
+Raspberry Pi 4 (3 boards) & 4 cores each, aarch64, Ubuntu 24.04; one board with 4 GB RAM and two with 8 GB; verified end to end on a short run, not measured under the full protocol \\
+Network & University network; the virtual machines reach the Raspberry Pi subnet but not the reverse \\
+\end{longtable}
+
 \section{Software}\label{appendix-software}
 
 The pipeline runs on \textbf{Python 3.10.11}. Table~\ref{tab:env-python} lists the Python packages that affect a reported result, and Table~\ref{tab:env-services} the containerised services, each pinned to the exact image tag used.

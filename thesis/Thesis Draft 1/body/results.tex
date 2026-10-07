@@ -247,16 +247,16 @@ Read together, that table changes how the multi-agent result looks. Its win on F
 
 \section{Throughput, scalability, and resource use}\label{throughput-scalability}
 
-Before the numbers, a word on how they were obtained, since a performance claim is only as good as its protocol. The latency figures in Table~\ref{tab:latency} are not estimates: the pipeline records the wall-clock time of every Tier-1 inference and every baseline Tier-2 judgement as a field on the stored record, so the percentiles are computed over all 1,748 benchmark messages rather than sampled. Throughput was measured in two complementary ways, and keeping them apart matters for reading the numbers that follow. The first isolates the classifier: the same fine-tuned model runs over messages drawn from the collected stream log in a loop, with a warm-up pass excluded, model loading timed apart from inference, and Kafka and Elasticsearch out of the path, so the figure reflects the model rather than the plumbing. The second measures the pipeline as it is deployed. A replay producer publishes a fixed workload of 10,000 collected messages, drawn once with a fixed seed and replayed identically in every run, into a dedicated Kafka topic; one or more Tier-1 processors consume it, classify each message and store it in Elasticsearch exactly as they do on the live path; and every message carries its own record of when it was sent, when it was received, how long inference took, how long the write took, and when it was finished. Each configuration was run three times, the first tenth of each run was discarded as warm-up, and every run was checked for lost or duplicated messages before its numbers were used. Resource use was sampled from the operating system and the container runtime during a two-minute sustained run with the full container stack up, 27 samples in all; the script asks for one every two seconds, but each query to the container runtime takes longer than that. All three are driven by scripts kept in the repository, and the raw output of every run reported here is stored alongside them under \texttt{reports/}, so a reader can check these figures or reproduce them on their own hardware.
+Before the numbers, a word on how they were obtained, since a performance claim is only as good as its protocol. The latency figures in Table~\ref{tab:latency} are not estimates: the pipeline records the wall-clock time of every Tier-1 inference and every baseline Tier-2 judgement as a field on the stored record, so the percentiles are computed over all 1,748 benchmark messages rather than sampled. Throughput was measured in two complementary ways, and keeping them apart matters for reading the numbers that follow. The first isolates the classifier: the same fine-tuned model runs over messages drawn from the collected stream log in a loop, with a warm-up pass excluded, model loading timed apart from inference, and Kafka and Elasticsearch out of the path, so the figure reflects the model rather than the plumbing. The second measures the pipeline as it is deployed. A replay producer publishes a fixed workload of 10,000 collected messages, drawn once with a fixed seed and replayed identically in every run, into a dedicated Kafka topic created with as many partitions as there are consumers, since a single-partition topic would leave every extra consumer idle; one or more Tier-1 processors consume it, classify each message and store it in a run-specific Elasticsearch index, never the live one, but otherwise exactly as they do on the live path; and every message carries its own record of when it was sent, when it was received, how long inference took, how long the write took, and when it was finished. Every configuration was run at least three times, the first tenth of each run was discarded as warm-up, and each run was checked for lost or duplicated messages before its numbers were used. Both devices were measured the same way, since the device Tier-1 runs on is a configuration value rather than a property of the code. Resource use was sampled from the operating system and the container runtime during a two-minute sustained run with the full container stack up, 27 samples in all; the script asks for one every two seconds, but each query to the container runtime takes longer than that. All three are driven by scripts kept in the repository, and the raw output of every run reported here is stored alongside them under \texttt{reports/}, so a reader can check these figures or reproduce them on their own hardware.
 
 Latency is how long one message takes. Throughput is how many the pipeline handles per second, and it is the figure that decides whether the system can keep up with a live stream. Taking the classifier on its own first, a single Tier-1 process using every core, as the live processor does, handles \textbf{35.8 messages a second} on the laptop used throughout, with full specifications in Appendix~\ref{hardware-and-software-environment}. With the whole container stack running on the same machine it handles 27.2, because the containers compete for the same processor and memory. That is roughly 1,600 to 2,100 messages a minute, all on CPU. The traffic the pipeline actually collected sits well inside that: over the 8.4-hour June collection run, all the watched streams together averaged just under five messages a second, so one machine has room to spare.
 
 The raw rate matters, but so does whether it grows when compute is added. Table~\ref{tab:scaling} shows what happens as classifier processes are added, each restricted to a single thread. One process manages 20.9 messages a second, two manage 33.0, and four manage 44.0, just over twice the rate of one. The gain shrinks with each step, because four processes share the laptop's four physical cores and each one slows from 20.9 to about 11 messages a second. Even so, four single-threaded processes outpace one process allowed to use every core, 44.0 against 35.8, so on this machine splitting the work across separate classifiers is the better use of the same hardware.
 
-How far that extends needs care. The deployed Kafka topic has a single partition, so in the live pipeline only one Tier-1 consumer reads the stream at a time (Section~\ref{layer-2-the-streaming-backbone}). The figures in Table~\ref{tab:scaling} come from running the classifier itself in parallel, which measures the compute tier; Table~\ref{tab:pipeline-scaling} measures the same scaling with the whole path in place. Running more consumers against the live stream means raising the partition count first, a step this deployment did not need and so did not measure.
+How far that extends needs care. The deployed Kafka topic has a single partition, so in the live pipeline only one Tier-1 consumer reads the stream at a time (Section~\ref{layer-2-the-streaming-backbone}). The figures in Table~\ref{tab:scaling} come from running the classifier itself in parallel, which measures the compute tier; Table~\ref{tab:pipeline-scaling} measures the same scaling with the whole path in place. Running more consumers against the live stream means raising the partition count first, a step this deployment never needed. The end-to-end runs below therefore use a separate replay topic whose partition count matches the number of consumers, which is the same one-line change an operator would make to the live topic.
 
 \begin{longtable}{@{}ll@{}}
-\caption{Tier-1 throughput as classifier processes are added (steady state, model loading excluded, container stack not running).}\label{tab:scaling}\tabularnewline
+\caption{Tier-1 throughput as classifier processes are added, with Kafka and Elasticsearch out of the path so the figure reflects the model alone (steady state, model loading excluded). The two blocks were measured on different days and under different conditions, which is why the processor figures differ between them; the second block measured both devices in one session.}\label{tab:scaling}\tabularnewline
 \toprule
 Classifier processes & Throughput \\
 \midrule
@@ -267,63 +267,93 @@ Classifier processes & Throughput \\
 \endhead
 \bottomrule
 \endlastfoot
+\multicolumn{2}{@{}l}{\emph{on the processor, container stack down}} \\
 1 process, 1 thread & 20.9 msg/s \\
 2 processes, 1 thread each & 33.0 msg/s \\
 4 processes, 1 thread each & 44.0 msg/s \\
 1 process, all cores & 35.8 msg/s \\
+\addlinespace[0.5em]
+\multicolumn{2}{@{}l}{\emph{both devices in one session, container stack up}} \\
+1 process, 1 thread, CPU & 18.3 msg/s \\
+2 processes, 1 thread each, CPU & 32.2 msg/s \\
+4 processes, 1 thread each, CPU & 40.5 msg/s \\
+1 process, all cores, CPU & 32.2 msg/s \\
+1 process, 1 thread, GPU & 132.4 msg/s \\
+2 processes, 1 thread each, GPU & 118.6 msg/s \\
+4 processes, 1 thread each, GPU & 119.3 msg/s \\
 \end{longtable}
+
+Two things in the second block deserve comment. The processor figures sit eight to twelve per cent below the first block because the container stack was running during those measurements, which is the same tax already visible in the drop from 35.8 to 27.2 messages a second reported above; the two blocks are therefore not directly comparable to each other, only within themselves. And the classifier on the GPU reaches about 130 messages a second on its own but gains nothing from extra processes, because there is one card and a single process already saturates it. That is the exact opposite of the pipeline in Table~\ref{tab:pipeline-scaling}, where extra processes on the same card take throughput from 13.9 to 64.6. The contrast localises the cost precisely: extra processes do nothing for the model and a great deal for the pipeline, because what they overlap is not computation but the wait on storage.
 
 Those figures describe the classifier in isolation. The deployed pipeline does more for every message: it reads from Kafka, classifies, and stores the labelled record in Elasticsearch before taking the next one. Table~\ref{tab:pipeline-scaling} repeats the same scaling exercise measured end to end over the fixed workload, three runs per configuration.
 
-\begin{longtable}{@{}lllll@{}}
-\caption{Throughput of the whole pipeline, from the Kafka queue to the stored record, as Tier-1 processors are added with one thread each. Three runs of 10,000 messages per configuration; the median is reported, with the spread across runs.}\label{tab:pipeline-scaling}\tabularnewline
+{\small\setlength{\tabcolsep}{3.5pt}
+\begin{longtable}{@{}lllllll@{}}
+\caption{Throughput of the whole pipeline, from the Kafka queue to the stored record, as Tier-1 processors are added with one thread each. Three runs of 10,000 messages per configuration; the median is reported, with the spread across runs. Speed-up and efficiency are measured within each device, against that device's own single-process run. The last two columns are the median time one message spends in the model and in the write to Elasticsearch.}\label{tab:pipeline-scaling}\tabularnewline
 \toprule
-Tier-1 processors & Throughput & Across runs & Speed-up & Efficiency \\
+Procs & Throughput & Range & Speed-up & Effic. & Inference & Store \\
 \midrule
 \endfirsthead
 \toprule
-Tier-1 processors & Throughput & Across runs & Speed-up & Efficiency \\
+Procs & Throughput & Range & Speed-up & Effic. & Inference & Store \\
 \midrule
 \endhead
 \bottomrule
 \endlastfoot
-1 & 11.7 msg/s & 11.6--11.8 & 1.00 & --- \\
-2 & 21.9 msg/s & 20.5--21.9 & 1.88 & 0.94 \\
-4 & 35.9 msg/s & 35.5--36.0 & 3.07 & 0.77 \\
+\multicolumn{7}{@{}l}{\emph{on the processor, the deployed default}} \\
+1 & 11.7 msg/s & 11.6--11.8 & 1.00 & 1.00 & 32 ms & 48 ms \\
+2 & 21.9 msg/s & 20.5--21.9 & 1.88 & 0.94 & 38 ms & 47 ms \\
+4 & 35.9 msg/s & 35.5--36.0 & 3.07 & 0.77 & 56 ms & 47 ms \\
 \addlinespace[0.5em]
-1, on the GPU & 13.9 msg/s & 13.9--13.9 & --- & --- \\
+\multicolumn{7}{@{}l}{\emph{on the GPU, selected by one configuration value}} \\
+1 & 13.9 msg/s & 13.9--13.9 & 1.00 & 1.00 & 22 ms & 48 ms \\
+2 & 30.4 msg/s & 30.2--30.4 & 2.18 & 1.09 & 12 ms & 48 ms \\
+4 & 64.6 msg/s & 64.6--64.7 & 4.65 & 1.16 & 13 ms & 46 ms \\
 \end{longtable}
+}
 
-Two things stand out. Four processors sustain 35.9 messages a second, about seven times the 4.8 a second the watched streams actually produced, so the headroom survives the stricter measurement. And the shape of the scaling repeats what the classifier alone showed: near-linear at two processors, an efficiency of 0.94, falling to 0.77 at four, because four classifiers now share four physical cores with Kafka and Elasticsearch. Where the two measurements differ is the level. One process moves 11.7 messages a second end to end against 20.9 for the classifier on its own, and the per-message records show exactly where the difference goes: writing the labelled record to Elasticsearch takes about 47 milliseconds, as much as the model itself, and that cost is flat across every configuration measured.
+Three things stand out. The first is that the headroom survives the stricter measurement: four processors on the processor sustain 35.9 messages a second, about seven times the 4.8 a second the watched streams actually produced. The shape of the scaling repeats what the classifier alone showed, near-linear at two processes with an efficiency of 0.94, falling to 0.77 at four, because four classifiers now share four physical cores with Kafka and Elasticsearch. The inference column shows that contention directly: the median time a message spends in the model grows from 32 to 38 to 56 milliseconds as processes are added, while the write to storage does not move.
 
-Throughput says how much the pipeline can absorb. It says nothing about what one message experiences, and for a moderation system that is the more important question. The same workload was therefore replayed at fixed arrival rates below capacity, 18 and 29 messages a second, half and eighty per cent of the four-processor figure. Table~\ref{tab:pipeline-latency} reports what a message met.
+The second is where the level is set. One process moves 11.7 messages a second end to end against 20.9 for the classifier on its own, and the per-message records show exactly where the difference goes: writing the labelled record to Elasticsearch takes about 47 milliseconds, as much as the model itself on the processor and nearly four times as much on the GPU, and that cost is flat across every configuration measured on this machine. The last four words matter, and the cluster measurements later in this section are what put them there: the same Elasticsearch image, the same heap setting and the same client write a record in about 5 milliseconds on the cluster's Linux hosts. The 47 milliseconds is therefore a property of this particular host rather than of Elasticsearch or of the design. The most likely explanation is that Docker Desktop on Windows routes container traffic through a virtual machine and adds a fixed cost to every request; what is certain is the measurement, not its cause, and nothing below depends on which explanation is right. A simple model follows. If each process pays inference plus write on every message, and the two do not overlap, throughput should be the number of processes divided by their sum. That predicts 12.6, 23.7 and 38.9 messages a second for the three CPU rows against 11.7, 21.9 and 35.9 measured, and 14.3, 33.6 and 68.0 for the GPU rows against 13.9, 30.4 and 64.6. The prediction is high every time, by between three and eleven per cent, and what it leaves out is the Kafka hop and the per-message bookkeeping. The pipeline behaves like what it is: one serial per-message cost, repeated across as many processes as the machine can run.
+
+The third is the one worth stating carefully, because it looks better than it is. On the GPU the speed-up is 2.18 at two processes and 4.65 at four, efficiencies of 1.09 and 1.16, which reads as faster than linear. The device is not doing anything magical. The single-process baseline simply wastes it: with one process the card sits idle through tokenisation, the Kafka hop and the 48-millisecond write, and the resource samples confirm it, showing four processes holding 1.6 GB of the card's 4 GB and keeping it only 38 per cent busy. Adding processes overlaps one process's storage wait with another's inference, so the efficiency above one measures how poor the baseline was, not scaling that beats the number of processes.
+
+Throughput says how much the pipeline can absorb. It says nothing about what one message experiences, and for a moderation system that is the more important question. The same workload was therefore replayed at two fixed arrival rates below capacity, 18 and 29 messages a second, half and eighty per cent of the four-processor figure on the processor, and the lower of the two was replayed again with the same four processes on the GPU. Table~\ref{tab:pipeline-latency} reports what a message met.
 
 \begin{longtable}{@{}llllll@{}}
-\caption{End-to-end latency per message with four Tier-1 processors, at two fixed arrival rates below capacity. All figures in milliseconds, steady state, with the start-up window excluded.}\label{tab:pipeline-latency}\tabularnewline
+\caption{End-to-end latency per message with four Tier-1 processors, at fixed arrival rates below capacity. Medians across runs, four at 18 messages a second on the processor and three for each other row; all figures in milliseconds, with the first tenth of each run discarded as warm-up.}\label{tab:pipeline-latency}\tabularnewline
 \toprule
-Arrival rate & Median & 95th pct & 99th pct & Kafka wait & Inference \\
+Configuration & Median & 95th pct & 99th pct & Kafka wait & Inference \\
 \midrule
 \endfirsthead
 \toprule
-Arrival rate & Median & 95th pct & 99th pct & Kafka wait & Inference \\
+Configuration & Median & 95th pct & 99th pct & Kafka wait & Inference \\
 \midrule
 \endhead
 \bottomrule
 \endlastfoot
-18 msg/s (half load) & 92 & 191 & 295 & 4 & 36 \\
-29 msg/s (80 per cent) & 145 & 382 & 522 & 51 & 44 \\
+\multicolumn{6}{@{}l}{\emph{laptop, four processors}} \\
+CPU, 18 msg/s (half load) & 89 & 167 & 234 & 4 & 33 \\
+CPU, 29 msg/s (80 per cent) & 143 & 399 & 578 & 49 & 42 \\
+GPU, 18 msg/s (half load) & 66 & 155 & 318 & 3 & 13 \\
+\addlinespace[0.4em]
+\multicolumn{6}{@{}l}{\emph{cluster, four processors per machine}} \\
+one machine, 20 msg/s & 96 & 234 & 372 & 6 & 75 \\
+two machines, 30 msg/s & 105 & 261 & 397 & 6 & 83 \\
 \end{longtable}
 
-At half load a message is read, classified and stored in 92 milliseconds at the median, and nineteen messages in twenty are finished within 191. At eighty per cent load the median rises to 145 milliseconds and the queue starts to show: the time a message waits in Kafka grows from 4 to 51 milliseconds at the median, while inference and the write stay where they were, at about 44 and 47 milliseconds. That is what a queueing system approaching capacity looks like, and it marks the honest limit of the real-time claim. The pipeline is real-time for a stream of a few tens of messages a second, and the first thing to degrade is waiting, not processing.
+At half load a message is read, classified and stored in 89 milliseconds at the median, and nineteen messages in twenty are finished within 167. At eighty per cent load the median rises to 143 milliseconds and the queue starts to show: the time a message waits in Kafka grows from 4 to 49 milliseconds at the median, more than twelvefold, while inference rises only from 33 to 42 milliseconds and the write does not move at all, holding at about 47 on this machine. That is what a queueing system approaching capacity looks like, and it marks the honest limit of the real-time claim. The pipeline is real-time for a stream of a few tens of messages a second, and the first thing to degrade is waiting, not processing.
 
-The same instrumentation settles a hardware question that the thesis would otherwise have to leave open. Tier-1 runs on the processor by default, but the device is a configuration value rather than a property of the code, so the identical workload was replayed with the model on the laptop's GPU. Inference fell from 31.6 to 22.0 milliseconds at the median, yet end-to-end throughput rose only from 11.7 to 13.9 messages a second, nineteen per cent, because the Elasticsearch write was untouched and now costs more than twice the model. A spot check on identical inputs returned class probabilities agreeing to within $10^{-7}$, so the device changes speed and not verdicts. For anyone planning to spend money on this pipeline that is a usable finding: a faster classifier is the wrong purchase until the storage path is faster.
+The same rate on the GPU cuts the median to 66 milliseconds, a quarter faster, and the inference column says why: 13 milliseconds against 33. The tail does not follow. The GPU's 99th percentile is the worse of the two, 318 milliseconds against 234, because four processes take turns on one card and a message arriving behind the others waits for them. For a moderation queue that trade is usually worth taking, but it should be stated rather than buried: the GPU improves the typical message and not the worst one.
 
-One reliability figure belongs beside these. Across roughly one hundred thousand replayed messages, in every configuration reported here, no message was lost and none was processed twice, and the work divided evenly: the busiest processor handled at most 1.08 times the load of the quietest.
+That comparison settles a hardware question the thesis would otherwise have to leave open, and it has two readings of which only one is right. Measured at a single process, the GPU looks like a poor investment: inference falls from 32 to 22 milliseconds at the median, yet end-to-end throughput rises only from 11.7 to 13.9 messages a second, nineteen per cent, because the Elasticsearch write is untouched and now costs more than twice the model. Measured at four processes the judgement reverses: 64.6 messages a second against 35.9 on the processor, an eighty per cent gain, because four processes are enough to keep the card working while each of them waits on storage. The useful finding is therefore conditional rather than flat. A faster classifier is not worthless, but on this machine it is worthless on its own: the GPU only pays for itself once enough processes run to hide the write behind it. That conclusion is tied to this machine's storage path, and the cluster shows how tightly. Where the write costs 5 milliseconds instead of 47, nothing needs hiding, and the model becomes the dominant per-message cost again. The transferable lesson is not that storage is the bottleneck but that the bottleneck moves: on a laptop running Docker Desktop it sits in the write, on ordinary Linux hosts it sits back in the model, and a deployment should be measured before anything is bought to make it faster. A spot check on identical inputs returned class probabilities agreeing to within $10^{-7}$, so the device changes speed and not verdicts.
+
+One reliability figure belongs beside these. Across the 280,000 messages replayed in the 28 single-machine runs reported above, on both devices, no message was lost and none was processed twice, and the work divided evenly: the busiest processor handled at most 1.04 times the load of the quietest.
 
 Resource use under a steady load shows where the cost sits. Table~\ref{tab:resource} has the figures, taken while the classifier ran flat out with the full container stack on the same laptop. The processor carries the load, averaging 75 per cent and peaking at 89, while the GPU stays close to idle because Tier-1 runs on the CPU, as it does in the live processor. Memory, not processing, is the real limit on this machine: it sat at about 98 per cent throughout. The containers account for much of that. Together they hold about 3 GB, half of it Elasticsearch, and although their processor use is usually small, about a fifth of one core at the median, Kafka bursts to nearly two cores on its own, and with Elasticsearch the containers together passed two cores at times. That sharing has a measurable price, since the classifier's throughput fell from 35.8 to 27.2 messages a second once the stack was running.
 
 \begin{longtable}{@{}ll@{}}
-\caption{Resource use while Tier-1 runs under sustained load with the full container stack running (27 samples over two minutes).}\label{tab:resource}\tabularnewline
+\caption{Resource use while Tier-1 runs on the processor under sustained load with the full container stack running (27 samples over two minutes). The GPU figures here are the idle card during a CPU run; under the four-process GPU runs of Table~\ref{tab:pipeline-scaling} it held 1.6 GB and ran 38 per cent busy.}\label{tab:resource}\tabularnewline
 \toprule
 Component & Use under load \\
 \midrule
@@ -340,9 +370,86 @@ Host memory & about 98\% \\
 All seven containers & about 3 GB memory; 0.2 cores median, bursts above 2 cores \\
 \end{longtable}
 
-Put next to the latency figures, these answer RQ1 directly. On one modest laptop the pipeline takes a message from the queue, labels it and stores it in 92 milliseconds at the median under half load, and sustains 35.9 messages a second once four classifier processes share the work, against the 4.8 a second the watched streams produced. For the target setting, that is real-time with room to spare.
+Every figure so far was taken on one computer. The architecture claims something larger, that a partitioned log feeding stateless consumers lets the same work spread across separate machines, and testing that needs hardware a laptop cannot supply. The University of Messina provided it: a small cluster of two virtual machines, each with four cores and 31 GB of memory running Ubuntu 22.04, and three Raspberry Pi 4 boards. One virtual machine hosts Kafka, Zookeeper and Elasticsearch; the other is a pure worker. Full specifications are in Appendix~\ref{hardware-and-software-environment}.
 
-One distinction matters here more than anything else in the section, because only half of it has been tested. That throughput grows as classifier processes are added on one machine is a measured result, and Tables~\ref{tab:scaling} and~\ref{tab:pipeline-scaling} are the evidence for it, the first for the classifier alone and the second for the pipeline end to end. That the same would hold across separate machines is not. It follows from the architecture, since a partitioned log feeding stateless consumers is built to spread precisely that way, but a design supporting something and a thesis demonstrating it are different claims. Multi-node scaling is therefore recorded here as a capability the architecture provides and a validation still outstanding, not as a finding. Running that cluster benchmark is the obvious next step, and it belongs to future work rather than to this evaluation.
+Three classes of machine are measured in this chapter, and Table~\ref{tab:machines} sets them side by side so the figures that follow can be read against the hardware that produced them.
+
+\begin{longtable}{@{}lllll@{}}
+\caption{The three classes of machine measured in this chapter. Neither the cluster virtual machines nor the Raspberry Pi boards have an accelerator, so every figure taken on them is a processor figure; the GPU comparison earlier in this section belongs to the laptop alone.}\label{tab:machines}\tabularnewline
+\toprule
+Machine & Cores & Memory & Accelerator & Role here \\
+\midrule
+\endfirsthead
+\toprule
+Machine & Cores & Memory & Accelerator & Role here \\
+\midrule
+\endhead
+\bottomrule
+\endlastfoot
+Development laptop & 4 & 12 GB & GTX 1650, 4 GB & single-machine CPU and GPU runs \\
+Cluster virtual machine ($\times$2) & 4 & 31 GB & none & multi-machine scaling \\
+Raspberry Pi 4 ($\times$3) & 4, aarch64 & 4 GB / 8 GB & none & edge verification \\
+\end{longtable}
+
+The protocol is the one used throughout, deliberately unchanged so the numbers can be set beside the single-machine ones: the same fixed workload of 10,000 collected messages drawn with the same seed from the same day, three runs per configuration, the first tenth of each discarded as warm-up, and every run checked for lost or duplicated messages. Two things were verified rather than assumed, because a cross-machine comparison is worthless if the inputs differ: the workload file and the model weights were confirmed byte-identical on every machine by checksum, and the library versions were pinned to match. One thing did change. The replay producer runs on a cluster node rather than on the laptop, because end-to-end latency is measured between the sender's clock and the receiver's, and the laptop's clock sits about two and a half seconds away from the cluster's, which would corrupt every cross-machine figure. Between the cluster machines themselves the clocks agreed to within a few milliseconds, and that agreement was checked before each run. One limit of the comparison follows from the hardware rather than the method: the cluster machines carry no accelerator, so every cluster figure below is a processor figure, and the question of what a GPU would add to a multi-machine deployment is not one this evaluation can answer. One of the two virtual machines also hosts Kafka and Elasticsearch, which costs it measurably and is quantified below.
+
+{\small\setlength{\tabcolsep}{3.5pt}
+\begin{longtable}{@{}lllllll@{}}
+\caption{Throughput across machines. Three runs of 10,000 messages per configuration; the median is reported, with the spread across runs. Speed-up is against the single-machine, four-process row. The last two columns are the median time a message spends in the model and in the write to storage, comparable with Table~\ref{tab:pipeline-scaling}. The final row weights the split by giving each virtual machine twelve consumers and each board four, so the faster machines claim a larger share of the partitions.}\label{tab:cluster-scaling}\tabularnewline
+\toprule
+Configuration & Procs & Throughput & Range & Speed-up & Inference & Store \\
+\midrule
+\endfirsthead
+\toprule
+Configuration & Procs & Throughput & Range & Speed-up & Inference & Store \\
+\midrule
+\endhead
+\bottomrule
+\endlastfoot
+one machine, 1 process & 1 & 12.7 msg/s & 12.0--12.8 & 1.00 & 63 ms & 5 ms \\
+one machine, 2 processes & 2 & 23.4 msg/s & 22.8--23.8 & 1.84 & 69 ms & 5 ms \\
+one machine, 4 processes & 4 & 38.8 msg/s & 37.4--39.6 & 3.05 & 83 ms & 5 ms \\
+\addlinespace[0.4em]
+two machines, 4 each & 8 & 61.1 msg/s & 58.2--62.3 & 1.58 & 100 ms & 5 ms \\
+\addlinespace[0.4em]
+all five, equal shares & 20 & 29.7 msg/s & 25.5--30.0 & 0.77 & 133 ms & 6 ms \\
+all five, weighted & 36 & 36.3 msg/s & 32.8--37.5 & 0.94 & --- & --- \\
+\addlinespace[0.4em]
+\multicolumn{7}{@{}l}{\emph{a single board on its own, four processes}} \\
+Raspberry Pi 4, 8 GB & 4 & 6.2 msg/s & 6.15--6.17 & --- & 557 ms & 10 ms \\
+Raspberry Pi 4, 4 GB & 4 & 4.1 msg/s & single run & --- & 821 ms & 11 ms \\
+\end{longtable}
+}
+
+Within a single cluster machine the curve is the familiar one: 12.7 messages a second with one process, 23.4 with two and 38.8 with four, so four cores return just over three times the work of one. Adding a second whole machine then raises throughput to 61.1, a factor of 1.58 rather than 2, and the per-machine figures explain the shortfall rather than leaving it a puzzle. The two machines are identically specified and ran identical software, yet the pure worker sustained 36.4 messages a second while the machine that also hosts Kafka and Elasticsearch managed 29.9, about eighteen per cent less. The cost of co-locating the broker and the store with a worker is therefore a measurable tax rather than a rounding error, and a deployment with a dedicated broker node would be expected to come closer to the ideal. Across every cluster run reported here no message was lost and none was processed twice.
+
+The last row of Table~\ref{tab:cluster-scaling} is the one that repays attention, because it moves in the wrong direction. Adding the three Raspberry Pi boards to the two virtual machines does not raise throughput from 61.1; it cuts it to 29.7, less than half, with five machines and twenty processors working instead of two and eight. Nothing failed: those runs lost no messages either. The per-node timings say exactly what happened. The two virtual machines finished the share they had been given in about 113 seconds and then sat idle, while the boards needed between 207 and 225 seconds for theirs, and the run is not over until the slowest consumer finishes. Kafka assigns partitions to consumers without regard to how fast a consumer is, so a board that classifies at 4 messages a second is handed the same quantity of work as a virtual machine that classifies at 25.
+
+That is worth stating as a result rather than an anomaly, because it is the kind of thing an architecture diagram cannot tell you. Horizontal scaling pays when the machines added are comparable to the machines already there. Add slower ones under an assignment policy that treats all consumers alike, and the fast machines spend most of the run waiting, so the cluster performs worse than its fast subset alone.
+
+Because Kafka divides partitions equally between consumers, the share a machine receives can be weighted by giving it more consumers. The final row of Table~\ref{tab:cluster-scaling} does exactly that: twelve processes on each virtual machine against four on each board, so the two fast machines claim twenty-four of the thirty-six partitions. Throughput rises from 29.7 to 36.3 messages a second, a gain of a fifth, with nothing lost or duplicated. The principle holds, and it is the one the supervisor's suggestion of distributing work across hardware tiers depends on.
+
+The gain is real but partial, and the per-node figures say why. The pure worker reached 34.2 messages a second under the weighted split, but the machine that also hosts Kafka and Elasticsearch managed only 11.7, because twelve classifier processes on four cores now compete with the broker and the store for the same hardware. Weighting by process count is therefore a blunt instrument: it buys a larger share of the work at the cost of over-subscribing the machine that receives it. A scheduler that assigned partitions in proportion to measured throughput, without multiplying consumers, would capture the gain without the contention. Even then the honest reading of the last three rows is that five unequal machines, however the work is divided, did not beat two matched ones: 36.3 against 61.1. Heterogeneous scale-out is worth engineering when the slow devices are what you have, not when faster ones are already available.
+
+Two further observations are worth recording. A single cluster machine with four processors reaches 38.8 messages a second against the laptop's 35.9 with the same number of processors, so the two four-core machines are close. And the headline comparison answers the question the architecture had only asserted: the ceiling rises when machines are added, not merely when processes are added to one machine.
+
+Those two machines reach almost the same throughput by opposite routes, and the per-stage timings show it plainly. The laptop classifies a message in 56 milliseconds and then spends 47 storing it; the cluster machine classifies in 83 and stores in 5. The model is slower on the virtual machine and the write is an order of magnitude faster, and the two differences nearly cancel. Since the Elasticsearch version, its heap setting, the client library and the index mapping are identical in both places, the difference is the host environment and not the database: on Windows the container traffic passes through Docker Desktop's virtual machine, on the cluster it does not. The practical consequence was stated above where the GPU was discussed, and it is worth repeating because it is easy to generalise wrongly from a single machine. Which stage dominates is a property of the deployment, not of the pipeline.
+
+The three Raspberry Pi boards were prepared exactly as the virtual machines were, with the same pinned libraries and the same checksum-verified model weights, and reaching them took one piece of debugging worth recording because it is a trap any multi-node deployment of this kind can fall into. The boards could not open a connection to the broker at all, in either direction, although the virtual machines could reach the boards. The cause was not a firewall but an address collision: Docker's default bridge network on the broker's host occupies 172.17.0.0/16, which is exactly the subnet the boards sit on, so the host treated every board address as local to its own container network and the replies never left the machine. Moving the bridge to a different range resolved it.
+
+With that fixed, each board was also measured on its own under the full protocol, and the last two rows of Table~\ref{tab:cluster-scaling} are the result. The 8 GB board sustains 6.2 messages a second across two runs that agree to within 0.02, and the 4 GB board 4.1, with nothing lost or duplicated in either case. The difference between them is memory rather than cores, since both have four, and it shows up in the model: 557 milliseconds a message on the larger board against 821 on the smaller. Both are roughly an order of magnitude slower than a virtual machine, which needs 83. Set against the 4.8 messages a second the watched streams actually produced, one 8 GB board keeps up with the observed load with about a quarter in hand, and the 4 GB board does not quite.
+
+Dedicated runs on a single board, three repeats of the full 10,000-message workload, were also attempted. Every one of them failed to finish, on both the 4 GB and the 8 GB board, and the way they failed is more instructive than a throughput figure would have been. The boards were not idle and nothing crashed: across one such run the four processes performed 10,081 classifications, which is the whole workload, yet only 3,521 distinct messages were ever completed. Three and a half thousand messages were classified more than once, several of them five times over, and the run made no net progress through the backlog.
+
+The cause is a default. A Kafka consumer is evicted from its group if it does not return for more messages within \texttt{max.poll.interval.ms}, five minutes as shipped, and it fetches up to five hundred records in one go. A virtual machine classifying in 83 milliseconds works through five hundred records in about forty seconds and is never close to the limit. A board classifying in roughly 800 milliseconds needs around four hundred seconds for the same batch, overruns the limit, and is declared dead by the broker. Its partition is reassigned, the records it had not yet committed are delivered again, and the cycle repeats. Nothing in the pipeline reports an error while this happens, which is what makes it worth recording: the symptom is a cluster that stays busy and never finishes.
+
+The five-machine runs did not hit this because the work was spread more thinly. With twenty consumers over the same workload each board held roughly 360 messages, finished them inside the five-minute window, and committed normally, which is why those runs completed with nothing lost and are the ones the per-board figures above come from. The lesson generalises past this hardware. Stream-processing defaults encode an assumption about how fast a consumer works, and constrained devices violate it; deploying this pipeline to edge hardware is a matter of configuration, smaller fetch batches or a longer poll interval, before it is a matter of capacity. That is a cheaper fix than more machines, and it would not have been visible without running the workload on a slow device.
+
+One distinction still matters, because only part of this has been tested. That throughput grows as classifier processes are added on one machine is a measured result, and Tables~\ref{tab:scaling} and~\ref{tab:pipeline-scaling} are the evidence for it, the first for the classifier alone and the second for the pipeline end to end. That it also grows when whole machines are added is now measured too, on two machines, and Table~\ref{tab:cluster-scaling} is the evidence. What remains untested is the shape of that curve beyond two: whether a third and fourth machine keep paying, and where the broker itself becomes the ceiling. Two points establish a direction, not a limit. Nor has the pipeline been measured on constrained edge hardware, for the network reason given above. Those are the honest boundaries of the scaling claim, and both are recorded as future work rather than inferred here.
+
+Latency on the cluster was measured the same way as on the laptop, by replaying at fixed arrival rates below capacity, and Table~\ref{tab:pipeline-latency} carries both. A message crosses the two-machine deployment in 105 milliseconds at the median against the laptop's 89, slower despite the cluster's far higher throughput, and the inference column explains it: the virtual machine's processor needs 83 milliseconds for the model where the laptop needs 33. The cluster buys capacity, not per-message speed. What the cluster evaluation still lacks is host-level resource sampling: the probe records the containers' footprint on the broker node, where Elasticsearch holds 2.2 GB and Kafka 1.1 GB of the 31 GB available, but processor and memory utilisation of the hosts themselves was captured only on the laptop. That gap does not touch any result reported here.
+
+Put next to the latency figures, these answer RQ1 directly. On one modest laptop the pipeline takes a message from the queue, labels it and stores it in 89 milliseconds at the median under half load, and sustains 35.9 messages a second once four classifier processes share the work, or 64.6 with those same four processes on the GPU. Across two machines of the university cluster it reaches 61.1. Every one of those figures sits far above the 4.8 messages a second the watched streams actually produced, and the lowest of them is more than twice it. For the target setting, that is real-time with room to spare, on a laptop and on a cluster alike.
 
 \section{Answering the research questions}\label{rq-summary}
 
@@ -368,7 +475,7 @@ The evidence in this chapter lines up with the three research questions, one row
 \bottomrule
 \endlastfoot
 
-\textbf{RQ1} & Partitioned Kafka log, decoupled tiers, per-platform adapters & Latency, throughput, scaling, resources (Sections~\ref{latency-and-computational-cost} and~\ref{throughput-scalability}) & 92 ms median end to end at half load, 35.9 msg/s with four processors (11.7 to 35.9 as processes are added, efficiency 0.94 then 0.77); two platforms, eleven domains; new context modules and a second retrieval backend added without changing the layers beneath & \textbf{Yes.} Real-time, multi-platform, and extended without redesign \\
+\textbf{RQ1} & Partitioned Kafka log, decoupled tiers, per-platform adapters & Latency, throughput, scaling, resources (Sections~\ref{latency-and-computational-cost} and~\ref{throughput-scalability}) & 89 ms median end to end at half load, 35.9 msg/s with four processors on the CPU and 64.6 on the GPU (11.7 to 35.9 as processes are added, efficiency 0.94 then 0.77), and 61.1 msg/s across two machines against 38.8 on one, falling to 29.7 on five unequal machines and recovering to 36.3 when the split is weighted (Table~\ref{tab:cluster-scaling}); two platforms, eleven domains; new context modules and a second retrieval backend added without changing the layers beneath & \textbf{Yes.} Real-time, multi-platform, and extended without redesign \\
 \addlinespace[1em]
 
 \textbf{RQ2} & Fast DistilBERT with a 0.80 confidence gate and a selective LLM judge & Tier-1 vs Tier-2 baseline (Table~\ref{tab:headline}) & Toxic F1 from 0.13 to 0.37, precision from 0.07 to 0.27 & \textbf{Yes.} The study's largest effect \\

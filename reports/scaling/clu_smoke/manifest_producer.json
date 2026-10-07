@@ -1,0 +1,31 @@
+{
+  "status": "done",
+  "run_id": "clu_smoke",
+  "started_at": "2026-10-02T11:58:05.396389",
+  "topic": "perf_clu_smoke",
+  "partitions": 1,
+  "n": 100,
+  "seed": 42,
+  "date": "2026-06-13",
+  "mode": "preload",
+  "rate": null,
+  "brokers": "172.16.10.94:9093",
+  "source": "F:\\hate-speech-pipeline\\data\\stream_log.csv",
+  "workload_platforms": {
+    "YouTube": 97,
+    "Twitch": 3
+  },
+  "host": "wix",
+  "git_commit": "1e0af24",
+  "python": "3.10.11",
+  "finished_at": "2026-10-02T11:58:05.688402",
+  "sent_ok": 100,
+  "send_errors": 0,
+  "first_errors": [],
+  "per_partition": {
+    "0": 100
+  },
+  "send_seconds": 0.175,
+  "achieved_rate": 572.66,
+  "max_schedule_lag_ms": null
+}

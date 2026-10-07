@@ -1,0 +1,4 @@
+EXCLUDED: run did not complete. Of 10,000 messages sent, only about a third were
+processed before the run stalled and was stopped. Cause not established: no
+out-of-memory record and no consumer-rebalance messages in the logs. Valid
+per-board throughput comes instead from the five-machine runs, which lost nothing.

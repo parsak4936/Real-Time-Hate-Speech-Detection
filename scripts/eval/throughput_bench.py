@@ -16,6 +16,11 @@ Run 1, then 2, then 4 workers and record the aggregate rate each time:
     python scripts/eval/throughput_bench.py --n 2000 --workers 1
     python scripts/eval/throughput_bench.py --n 2000 --workers 2
     python scripts/eval/throughput_bench.py --n 2000 --workers 4
+
+The same corpus on the GPU, for the device comparison (the processor takes the
+same switch through DEVICE):
+
+    python scripts/eval/throughput_bench.py --n 2000 --workers 1 --device cuda
 """
 import argparse
 import csv
@@ -23,9 +28,9 @@ import os
 import time
 from pathlib import Path
 
-# Match the processor: it runs DistilBERT on CPU (no .to(cuda)). Forcing CPU also
-# avoids GPU contention when several workers run at once.
-os.environ.setdefault("CUDA_VISIBLE_DEVICES", "")
+# The processor defaults to CPU and takes a DEVICE switch; this mirrors it.
+# With --device cpu the GPU is hidden outright, which is what kept the earlier
+# measurements honest and free of GPU contention between workers.
 
 ROOT = Path(__file__).resolve().parents[2]
 MODEL_DIR = ROOT / "models" / "bert_final"
@@ -47,12 +52,16 @@ def load_texts(n):
     return out
 
 
-_THREADS = 0  # set per-process by the pool initializer
+_THREADS = 0    # set per-process by the pool initializer
+_DEVICE = "cpu"
 
 
-def _init_worker(threads):
-    global _THREADS
-    _THREADS = threads
+def _init_worker(threads, device="cpu"):
+    global _THREADS, _DEVICE
+    _THREADS, _DEVICE = threads, device
+    if device != "cuda":
+        # Set before any worker imports torch, so the GPU is genuinely invisible.
+        os.environ["CUDA_VISIBLE_DEVICES"] = ""
 
 
 def worker(texts):
@@ -64,11 +73,20 @@ def worker(texts):
     tok = DistilBertTokenizer.from_pretrained(str(MODEL_DIR))
     mdl = DistilBertForSequenceClassification.from_pretrained(str(MODEL_DIR))
     mdl.eval()
+    cuda = _DEVICE == "cuda"
+    if cuda and not torch.cuda.is_available():
+        raise SystemExit("--device cuda was asked for, but torch reports no CUDA device.")
+    if cuda:
+        mdl.to("cuda")
 
     def classify(t):
         inp = tok(str(t), return_tensors="pt", truncation=True, padding=True, max_length=128)
+        if cuda:
+            inp = {k: v.to("cuda") for k, v in inp.items()}
         with torch.no_grad():
             mdl(**inp)
+        if cuda:
+            torch.cuda.synchronize()   # kernels are asynchronous; time them honestly
 
     for t in texts[:10]:          # warm-up (not timed)
         classify(t)
@@ -84,6 +102,8 @@ def main():
     ap.add_argument("--workers", type=int, default=1, help="parallel classifier processes")
     ap.add_argument("--threads", type=int, default=0,
                     help="torch threads per worker (0=all cores; use 1 for a clean per-core scaling curve)")
+    ap.add_argument("--device", choices=["cpu", "cuda"], default="cpu",
+                    help="where the model runs (default cpu, matching the deployed processor)")
     args = ap.parse_args()
 
     if not MODEL_DIR.exists():
@@ -91,17 +111,17 @@ def main():
         return
 
     texts = load_texts(args.n)
-    print(f"Benchmarking {len(texts)} messages across {args.workers} worker(s)...")
+    print(f"Benchmarking {len(texts)} messages across {args.workers} worker(s) on {args.device}...")
 
     t_start = time.time()
     if args.workers == 1:
-        _init_worker(args.threads)
+        _init_worker(args.threads, args.device)
         per_worker = [worker(texts)]
     else:
         from concurrent.futures import ProcessPoolExecutor
         shards = [texts[i::args.workers] for i in range(args.workers)]
         with ProcessPoolExecutor(max_workers=args.workers,
-                                 initializer=_init_worker, initargs=(args.threads,)) as ex:
+                                 initializer=_init_worker, initargs=(args.threads, args.device)) as ex:
             per_worker = list(ex.map(worker, shards))
     wall = time.time() - t_start
 
@@ -109,13 +129,13 @@ def main():
     max_infer = max(s for _, s in per_worker)     # steady-state = parallel inference, excludes model load
     steady = total / max_infer if max_infer else 0
     agg_wall = total / wall
-    print(f"\n  workers          : {args.workers}  (threads/worker: {args.threads or 'all cores'})")
+    print(f"\n  workers          : {args.workers}  (threads/worker: {args.threads or 'all cores'}, device: {args.device})")
     for i, (c, s) in enumerate(per_worker):
         print(f"  worker {i}         : {c} msgs in {s:.1f}s -> {c/s:.1f} msg/s")
     print(f"  STEADY-STATE     : {total} msgs / {max_infer:.1f}s inference -> {steady:.1f} msg/s "
           f"(~{steady*60:,.0f} msg/min)   <-- use this for the scaling curve")
     print(f"  incl. model load : {agg_wall:.1f} msg/s over {wall:.1f}s wall")
-    print(f"\nRecord:  workers={args.workers}  threads={args.threads or 'all'}  "
+    print(f"\nRecord:  device={args.device}  workers={args.workers}  threads={args.threads or 'all'}  "
           f"steady_state={steady:.1f} msg/s")
 
 

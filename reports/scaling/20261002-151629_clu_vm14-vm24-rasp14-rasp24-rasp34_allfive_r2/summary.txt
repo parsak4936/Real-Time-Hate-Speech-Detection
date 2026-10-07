@@ -1,0 +1,25 @@
+Run 20261002-151629_clu_vm14-vm24-rasp14-rasp24-rasp34_allfive_r2
+  mode=preload  partitions=20  sent=10000  processed_rows=10000  bench files=['bench_rasp1_1.csv', 'bench_rasp1_2.csv', 'bench_rasp1_3.csv', 'bench_rasp1_4.csv', 'bench_rasp2_1.csv', 'bench_rasp2_2.csv', 'bench_rasp2_3.csv', 'bench_rasp2_4.csv', 'bench_rasp3_1.csv', 'bench_rasp3_2.csv', 'bench_rasp3_3.csv', 'bench_rasp3_4.csv', 'bench_vm1_1.csv', 'bench_vm1_2.csv', 'bench_vm1_3.csv', 'bench_vm1_4.csv', 'bench_vm2_1.csv', 'bench_vm2_2.csv', 'bench_vm2_3.csv', 'bench_vm2_4.csv']
+
+Throughput (steady, first 10% dropped): 29.65 msg/s over 303.499s
+  rasp1: 3.36 msg/s (540 messages)
+  rasp2: 5.69 msg/s (1422 messages)
+  rasp3: 4.83 msg/s (1040 messages)
+  vm1: 22.82 msg/s (3023 messages)
+  vm2: 31.07 msg/s (3975 messages)
+
+Latency (preload mode: end-to-end includes backlog wait, so only the
+  model and Elasticsearch columns are meaningful; use a rate run for latency)
+  end_to_end     p50  105723.6 | p95  269392.0 | p99  312191.1 | max  333070.5
+  kafka_wait     p50  105555.5 | p95  268773.0 | p99  311710.7 | max  332792.3
+  inference      p50     126.3 | p95     520.5 | p99     937.9 | max    3139.0
+  elasticsearch  p50       5.3 | p95      10.1 | p99      16.4 | max      84.4
+  (including the warm-up, end-to-end p95 would be 264778.4 ms and p99 310327.9 ms: the consumer group is still being assigned)
+
+Balance: per processor {'rasp1#31194': 18, 'rasp1#31193': 7, 'rasp1#31195': 515, 'rasp2#25992': 488, 'rasp2#25994': 480, 'rasp2#25995': 454, 'rasp3#30156': 7, 'rasp3#30159': 505, 'rasp3#30158': 528, 'vm1#319095': 984, 'vm1#319094': 500, 'vm1#319096': 500, 'vm1#319097': 1039, 'vm2#128204': 985, 'vm2#128205': 1000, 'vm2#128207': 969, 'vm2#128206': 1021} (max/min 148.43)
+         per partition {0: 487, 1: 498, 2: 539, 3: 485, 4: 503, 5: 505, 6: 507, 7: 528, 8: 521, 9: 482, 10: 487, 11: 500, 12: 497, 13: 457, 14: 495, 15: 485, 16: 518, 17: 484, 18: 507, 19: 515}
+
+PASS delivery: 10000/10000 processed
+PASS duplicates: 0
+PASS no unknown extras: 0
+PASS clock sanity across machines: min Kafka wait per node {'rasp1': 82456.1, 'rasp2': 84877.4, 'rasp3': 82464.9, 'vm1': 14891.8, 'vm2': 14899.0}

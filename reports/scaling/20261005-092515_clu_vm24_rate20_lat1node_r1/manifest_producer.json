@@ -1,0 +1,34 @@
+{
+  "status": "done",
+  "run_id": "20261005-092515_clu_vm24_rate20_lat1node_r1",
+  "started_at": "2026-10-05T09:25:32.500639",
+  "topic": "perf_20261005-092515_clu_vm24_rate20_lat1node_r1",
+  "partitions": 4,
+  "n": 10000,
+  "seed": 42,
+  "date": "2026-06-13",
+  "mode": "rate",
+  "rate": 20.0,
+  "brokers": "172.16.10.94:9093",
+  "source": "/home/ubuntu/hsp/data/stream_log.csv",
+  "workload_platforms": {
+    "YouTube": 9729,
+    "Twitch": 271
+  },
+  "host": "msgingest1",
+  "git_commit": "1e0af24",
+  "python": "3.10.12",
+  "finished_at": "2026-10-05T09:33:52.510506",
+  "sent_ok": 10000,
+  "send_errors": 0,
+  "first_errors": [],
+  "per_partition": {
+    "0": 2526,
+    "1": 2426,
+    "2": 2535,
+    "3": 2513
+  },
+  "send_seconds": 499.954,
+  "achieved_rate": 20.0,
+  "max_schedule_lag_ms": 56.7
+}

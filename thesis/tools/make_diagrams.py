@@ -147,7 +147,170 @@ def architecture():
     save(fig, "architecture")
 
 
-FIGURES = {"architecture": architecture}
+# ---------------------------------------------------------------------------
+def two_tier():
+    """The gate is a query on storage, not a branch in the hot path.
+
+    src/agents/xai_batch_judge.py builds {"range": {"model_confidence": {"lt": 0.80}}}
+    against Elasticsearch; the Tier-1 processor stores every message unconditionally.
+    """
+    fig, ax = canvas(4.0)
+
+    band(ax, 0.02, 0.560, 0.96, 0.425, "the hot path   every message, milliseconds")
+    box(ax, 0.035, 0.760, 0.16, 0.090, "message\nfrom Kafka", FILL_CORE)
+    box(ax, 0.235, 0.745, 0.28, 0.120, "Tier-1 - fine-tuned DistilBERT\nlabel + confidence\n~31 ms, CPU by default", FILL_MODEL)
+    box(ax, 0.560, 0.745, 0.405, 0.120, "Elasticsearch - real_time_analysis\nevery message stored with its label\nand the confidence behind it", FILL_STORE)
+    arrow(ax, (0.195, 0.805), (0.235, 0.805))
+    arrow(ax, (0.515, 0.805), (0.560, 0.805))
+    ax.text(0.33, 0.655, "Nothing on this path waits for the judge.",
+            ha="center", va="center", fontsize=6.8, style="italic", color="#666666")
+
+    band(ax, 0.02, 0.030, 0.96, 0.500, "off the hot path   the uncertain minority, seconds")
+    box(ax, 0.535, 0.395, 0.25, 0.095, "the gate is a query:\nmodel_confidence < 0.80", FILL_MODEL)
+    box(ax, 0.280, 0.230, 0.44, 0.120, "Tier-2 - gpt-oss:120b through Ollama\ntemperature 0, JSON only, one retry\n~5.3 s per message", FILL_MODEL)
+    box(ax, 0.035, 0.230, 0.21, 0.120, "context injected:\nmemory - retrieval -\nmulti-agent chain", FILL_CORE)
+    box(ax, 0.280, 0.075, 0.44, 0.105, "verdict: Tier-1 correct, false positive\nor false negative, with a written\nexplanation a moderator can read", FILL_MODEL)
+    arrow(ax, (0.675, 0.745), (0.675, 0.490), "read back later", label_pos=0.80)
+    arrow(ax, (0.600, 0.395), (0.560, 0.350))
+    arrow(ax, (0.245, 0.290), (0.280, 0.290))
+    arrow(ax, (0.500, 0.230), (0.500, 0.180))
+    arrow(ax, (0.722, 0.140), (0.905, 0.745), rad=-0.22)
+    ax.text(0.890, 0.290, "verdict written\nback beside\nthe record", ha="center", va="center", fontsize=6.6,
+            color="#444444", linespacing=1.3)
+
+    ax.legend(handles=[Patch(facecolor=FILL_CORE, edgecolor=INK, label="infrastructure and context modules"),
+                       Patch(facecolor=FILL_MODEL, edgecolor=INK, label="models and decisions"),
+                       Patch(facecolor=FILL_STORE, edgecolor=INK, label="storage")],
+              loc="lower center", bbox_to_anchor=(0.5, -0.015), ncol=3, frameon=False, fontsize=6.6,
+              handlelength=1.4, handleheight=0.9, columnspacing=1.2)
+    save(fig, "two_tier_flow")
+
+
+# ---------------------------------------------------------------------------
+def context_agent():
+    fig, ax = canvas(4.0)
+
+    box(ax, 0.055, 0.830, 0.25, 0.145, "stream metadata\ntitle - channel -\ndescription", FILL_SOURCE)
+    box(ax, 0.365, 0.830, 0.36, 0.145, "LLM, asked in free text:\nwhat is this stream about,\nand how strictly should it\nbe moderated?", FILL_MODEL)
+    box(ax, 0.775, 0.830, 0.19, 0.145, "a live esports final\ncomes back gaming,\nlow strictness;\na political broadcast\ncomes back high", FILL_SOURCE, fontsize=6.2)
+    arrow(ax, (0.305, 0.902), (0.365, 0.902))
+    arrow(ax, (0.725, 0.902), (0.775, 0.902))
+
+    box(ax, 0.230, 0.640, 0.44, 0.120, "normalised onto the canonical domains in\nconfig/taxonomy.yaml, an operator-editable file", FILL_CORE)
+    box(ax, 0.720, 0.650, 0.25, 0.100, "if the call fails, safe defaults;\ningestion is never blocked", FILL_OFF, dashed=True)
+    arrow(ax, (0.450, 0.830), (0.450, 0.760))
+    arrow(ax, (0.670, 0.700), (0.720, 0.700), dashed=True)
+
+    box(ax, 0.230, 0.420, 0.28, 0.140, "canonical domain\nand strictness, into\nevery judge prompt", FILL_MODEL)
+    box(ax, 0.550, 0.420, 0.20, 0.140, "the wording the\nmodel chose, kept\nbeside it, auditable", FILL_STORE)
+    box(ax, 0.790, 0.420, 0.18, 0.140, "off-taxonomy\nproposals logged:\n628 of 1,748\nrecords, 36 per cent", FILL_STORE, fontsize=6.2)
+    arrow(ax, (0.370, 0.640), (0.370, 0.560))
+    arrow(ax, (0.520, 0.640), (0.650, 0.560))
+    arrow(ax, (0.620, 0.640), (0.880, 0.560))
+
+    box(ax, 0.430, 0.230, 0.54, 0.100, "an operator watches a proposal accumulate and promotes it\ninto the taxonomy, without touching a line of Python", FILL_CORE)
+    arrow(ax, (0.880, 0.420), (0.880, 0.330))
+    arrow(ax, (0.430, 0.280), (0.230, 0.640), rad=-0.35, dashed=True)
+    ax.text(0.105, 0.445, "the taxonomy grows\nwith the platforms\nit watches", ha="center", va="center",
+            fontsize=6.6, color="#444444", linespacing=1.3)
+
+    ax.text(0.50, 0.115, "Discovery first, normalisation second: nothing is forced into a category that does not fit,\nand what does not fit becomes the record that grows the taxonomy.",
+            ha="center", va="center", fontsize=6.8, style="italic", color="#666666")
+    save(fig, "contextAgent")
+
+
+# ---------------------------------------------------------------------------
+def temporal_memory():
+    fig, ax = canvas(3.3)
+
+    box(ax, 0.030, 0.360, 0.235, 0.520, "Elasticsearch\nreal_time_analysis\n\nevery message already\nstored, with its label\nand its verdict", FILL_STORE)
+
+    box(ax, 0.345, 0.730, 0.350, 0.150, "author history\nthe author's last 10 messages\nfrom the past 24 hours", FILL_CORE)
+    box(ax, 0.345, 0.545, 0.350, 0.150, "thread context\nthe 5 messages that came just before\nthis one in the same thread", FILL_CORE)
+    box(ax, 0.345, 0.360, 0.350, 0.150, "behavioural fingerprint\nhow often normal, offensive or hateful across\nthe author's last 20 labelled messages, 24 hours", FILL_CORE, fontsize=6.4)
+
+    arrow(ax, (0.265, 0.750), (0.345, 0.805), rad=-0.15)
+    arrow(ax, (0.265, 0.620), (0.345, 0.620))
+    arrow(ax, (0.265, 0.490), (0.345, 0.435), rad=0.15)
+
+    box(ax, 0.775, 0.360, 0.195, 0.520, "the Tier-2 judge\nprompt,\n\nbeside the message\nitself", FILL_MODEL)
+    arrow(ax, (0.695, 0.805), (0.775, 0.750), rad=0.15)
+    arrow(ax, (0.695, 0.620), (0.775, 0.620))
+    arrow(ax, (0.695, 0.435), (0.775, 0.490), rad=-0.15)
+
+    ax.text(0.50, 0.255, "All four windows, 10, 5, 20 and 24 hours, are configuration values, not constants in the code.",
+            ha="center", va="center", fontsize=6.8, color="#555555")
+    ax.text(0.50, 0.150, "A regular who has posted a hundred harmless messages and then writes something borderline\nis probably joking. The same line from an account flagged twice this week reads differently.",
+            ha="center", va="center", fontsize=6.8, style="italic", color="#777777")
+    save(fig, "temporal_memory")
+
+
+# ---------------------------------------------------------------------------
+def retrieval_backends():
+    fig, ax = canvas(4.0)
+
+    box(ax, 0.345, 0.890, 0.310, 0.075, "the message to be judged", FILL_SOURCE)
+    box(ax, 0.280, 0.745, 0.440, 0.100, "retrieval.py - one interface\nRETRIEVAL_BACKEND = rag | wiki | none", FILL_MODEL)
+    arrow(ax, (0.500, 0.890), (0.500, 0.845))
+
+    band(ax, 0.020, 0.300, 0.468, 0.385, "RAG   nearest past cases")
+    box(ax, 0.055, 0.545, 0.400, 0.095, "all-MiniLM-L6-v2 encoder\n384-dimensional vector", FILL_CORE)
+    box(ax, 0.055, 0.325, 0.400, 0.175, "Qdrant vector store\nthe 5 nearest past messages,\ncosine similarity at least 0.55,\nwith the verdicts they received\n(leave-one-out in the evaluation)", FILL_STORE, fontsize=6.4)
+    arrow(ax, (0.255, 0.545), (0.255, 0.500))
+
+    band(ax, 0.512, 0.300, 0.468, 0.385, "LLM-Wiki   curated rules")
+    box(ax, 0.545, 0.545, 0.400, 0.095, "the same MiniLM encoder,\nheld constant on purpose", FILL_CORE)
+    box(ax, 0.545, 0.325, 0.400, 0.175, "wiki/ - 8 content pages split at every\nsecond-level heading into 34 entries\nthe core policy page and the message's\ndomain page always included, plus the\n4 best entries above 0.15", FILL_STORE, fontsize=6.4)
+    arrow(ax, (0.745, 0.545), (0.745, 0.500))
+
+    arrow(ax, (0.420, 0.745), (0.255, 0.640), "rag", rad=0.10, label_pos=0.55)
+    arrow(ax, (0.580, 0.745), (0.745, 0.640), "wiki", rad=-0.10, label_pos=0.55)
+
+    box(ax, 0.300, 0.140, 0.400, 0.085, "the same slot in the judge prompt", FILL_MODEL)
+    box(ax, 0.725, 0.140, 0.255, 0.085, "with none, the slot is left\nempty: the baseline variant", FILL_OFF, dashed=True)
+    arrow(ax, (0.255, 0.325), (0.360, 0.225), rad=-0.12)
+    arrow(ax, (0.745, 0.325), (0.640, 0.225), rad=0.12)
+
+    ax.text(0.50, 0.060, "One backend is active at a time, and switching the live pipeline between them is a single flag.\nSame encoder, same prompt slot, so the corpus is what the comparison varies.",
+            ha="center", va="center", fontsize=6.8, style="italic", color="#666666")
+    save(fig, "retrieval_backends")
+
+
+# ---------------------------------------------------------------------------
+def multi_agent():
+    fig, ax = canvas(4.0)
+
+    box(ax, 0.055, 0.880, 0.40, 0.080, "the message, nothing else", FILL_SOURCE)
+    box(ax, 0.545, 0.880, 0.40, 0.080, "the author's history, nothing else", FILL_SOURCE)
+
+    box(ax, 0.055, 0.685, 0.40, 0.150, "1 - Risk Scorer\nrates the toxicity of the content\nfrom 0 to 1, without knowing\nwho sent it", FILL_MODEL)
+    box(ax, 0.545, 0.685, 0.40, 0.150, "2 - Behaviour Profiler\nrates the account low, medium\nor high risk, without seeing\nthe current message", FILL_MODEL)
+    arrow(ax, (0.255, 0.880), (0.255, 0.835))
+    arrow(ax, (0.745, 0.880), (0.745, 0.835))
+
+    box(ax, 0.185, 0.460, 0.63, 0.150, "3 - Escalator\ntakes those two signals and decides how to route the case:\nclear it automatically, flag it automatically,\nor send it to a human", FILL_MODEL)
+    arrow(ax, (0.255, 0.685), (0.330, 0.610), "risk score", rad=0.10, label_pos=0.55)
+    arrow(ax, (0.745, 0.685), (0.670, 0.610), "account risk", rad=-0.10, label_pos=0.55)
+
+    box(ax, 0.185, 0.235, 0.63, 0.150, "4 - Supervisor\nreads everything the others produced and issues the final\nverdict in the same three-way format as every other\nvariant, so the comparison stays direct", FILL_MODEL)
+    arrow(ax, (0.500, 0.460), (0.500, 0.385), "routing decision", label_pos=0.5)
+
+    box(ax, 0.185, 0.110, 0.63, 0.075, "Tier-1 correct  |  false positive  |  false negative", FILL_STORE)
+    arrow(ax, (0.500, 0.235), (0.500, 0.185))
+
+    ax.text(0.50, 0.045, "Every step is stored, not just the answer, so a wrong verdict can be traced to the step that went astray.\nFour LLM calls per message instead of one, affordable only because this runs on the flagged minority alone.",
+            ha="center", va="center", fontsize=6.8, style="italic", color="#666666")
+    save(fig, "Multi-agent")
+
+
+FIGURES = {
+    "architecture": architecture,
+    "two_tier_flow": two_tier,
+    "contextAgent": context_agent,
+    "temporal_memory": temporal_memory,
+    "retrieval_backends": retrieval_backends,
+    "multi_agent": multi_agent,
+}
 
 if __name__ == "__main__":
     wanted = sys.argv[1:] or list(FIGURES)

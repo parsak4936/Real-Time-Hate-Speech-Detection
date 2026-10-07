@@ -1,0 +1,9 @@
+Benchmarking 2000 messages across 2 worker(s) on cuda...
+
+  workers          : 2  (threads/worker: 1, device: cuda)
+  worker 0         : 1000 msgs in 16.9s -> 59.3 msg/s
+  worker 1         : 1000 msgs in 16.9s -> 59.3 msg/s
+  STEADY-STATE     : 2000 msgs / 16.9s inference -> 118.6 msg/s (~7,116 msg/min)   <-- use this for the scaling curve
+  incl. model load : 63.1 msg/s over 31.7s wall
+
+Record:  device=cuda  workers=2  threads=1  steady_state=118.6 msg/s

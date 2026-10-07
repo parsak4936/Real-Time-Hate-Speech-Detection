@@ -68,7 +68,7 @@ There is a further consequence, and it is the reason this design was chosen over
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.9\linewidth,height=0.85\textheight,keepaspectratio]{figures/contextAgent.png}
+\includegraphics[width=\linewidth]{figures/fig_contextAgent.pdf}
 \caption{The Context Agent: agentic discovery of domain and strictness, then normalisation onto the operator-extensible taxonomy.}\label{fig:context-agent}
 \end{figure}
 
@@ -88,8 +88,8 @@ Every prompt used here is reproduced verbatim in Appendix~\ref{prompt-library}.
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.95\linewidth,height=0.85\textheight,keepaspectratio]{figures/two_tier_flow.png}
-\caption{The two-tier design: a fast static classifier with a confidence gate that escalates only the uncertain minority to the slow LLM judge, asynchronously.}\label{fig:two-tier}
+\includegraphics[width=\linewidth]{figures/fig_two_tier_flow.pdf}
+\caption{The two-tier design. Tier-1 labels and stores every message on the hot path; the 0.80 gate is applied afterwards, as a query over the stored records, so only the uncertain minority ever reaches the slow LLM judge, and it reaches it asynchronously.}\label{fig:two-tier}
 \end{figure}
 
 \section{Temporal memory}\label{temporal-memory}
@@ -106,7 +106,7 @@ It is bounded on purpose, so the prompt stays a sensible size and old behaviour 
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.9\linewidth,height=0.85\textheight,keepaspectratio]{figures/temporal_memory.pdf}
+\includegraphics[width=\linewidth]{figures/fig_temporal_memory.pdf}
 \caption{Temporal memory: the user history, thread context, and behavioural fingerprint pulled from Elasticsearch into the judge prompt.}\label{fig:temporal-memory}
 \end{figure}
 
@@ -132,7 +132,7 @@ Both sit behind a single interface, \texttt{retrieval.py}, and one configuration
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.9\linewidth,height=0.85\textheight,keepaspectratio]{figures/retrieval_backends.png}
+\includegraphics[width=\linewidth]{figures/fig_retrieval_backends.pdf}
 \caption{The switchable retrieval backend: a single flag selects RAG (nearest past cases) or the LLM-Wiki (curated knowledge), feeding the same judge prompt slot.}\label{fig:retrieval-backends}
 \end{figure}
 
@@ -153,7 +153,7 @@ Why split a job one prompt could do? For the same reason a newsroom separates th
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.9\linewidth,height=0.85\textheight,keepaspectratio]{figures/Multi-agent.png}
+\includegraphics[width=\linewidth]{figures/fig_Multi-agent.pdf}
 \caption{The multi-agent chain: the Risk Scorer and Behaviour Profiler feed an Escalator and a Supervisor that issues the final verdict.}\label{fig:multi-agent}
 \end{figure}
 

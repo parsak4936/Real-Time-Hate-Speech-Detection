@@ -11,7 +11,7 @@ scikit-learn>=1.3        # classical LR / SVM baselines (saved as .pkl)
 
 # -- Data plane --
 kafka-python>=2.0
-elasticsearch==8.10.2    # match the docker-compose image version
+elasticsearch==7.17.9    # PYTHON CLIENT version (the server image is 8.10.2)
 pandas>=2.0
 
 # -- Ingestion adapters --
@@ -35,7 +35,6 @@ pyyaml>=6.0              # config/taxonomy.yaml, config/rag.yaml
 # -- Operator dashboard + analytics (Streamlit + Plotly) --
 streamlit>=1.30          # scripts/operator_dashboard.py, scripts/analytics_dashboard.py
 plotly>=5.18             # charts for scripts/ui/dashboard.py
-streamlit-autorefresh>=1.0   # optional live auto-refresh for the dashboard
 
 # -- Additional ingestion adapters --
 praw>=7.7                # Reddit comment streaming (src/ingestion/adapters/reddit_adapter.py)

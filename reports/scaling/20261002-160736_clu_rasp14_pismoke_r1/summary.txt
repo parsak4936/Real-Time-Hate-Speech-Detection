@@ -1,0 +1,21 @@
+Run 20261002-160736_clu_rasp14_pismoke_r1
+  mode=preload  partitions=4  sent=200  processed_rows=200  bench files=['bench_rasp1_1.csv', 'bench_rasp1_2.csv', 'bench_rasp1_3.csv', 'bench_rasp1_4.csv']
+
+Throughput (steady, first 10% dropped): 5.33 msg/s over 33.567s
+  rasp1: 5.33 msg/s (200 messages)
+
+Latency (preload mode: end-to-end includes backlog wait, so only the
+  model and Elasticsearch columns are meaningful; use a rate run for latency)
+  end_to_end     p50   55705.9 | p95   70642.3 | p99   72195.7 | max   72757.4
+  kafka_wait     p50   55085.0 | p95   70235.4 | p99   71986.8 | max   72434.2
+  inference      p50     535.8 | p95    1208.4 | p99    3666.4 | max    3743.6
+  elasticsearch  p50       9.1 | p95      15.5 | p99      20.3 | max      28.4
+  (including the warm-up, end-to-end p95 would be 70234.9 ms and p99 72195.7 ms: the consumer group is still being assigned)
+
+Balance: per processor {'rasp1#28171': 54, 'rasp1#28186': 42, 'rasp1#28184': 45, 'rasp1#28181': 59} (max/min 1.4)
+         per partition {0: 59, 1: 42, 2: 45, 3: 54}
+
+PASS delivery: 200/200 processed
+PASS duplicates: 0
+PASS no unknown extras: 0
+n/a  clock sanity: single machine

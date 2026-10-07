@@ -1,0 +1,20 @@
+Run 20261005-094315_clu_vm24_rate20_lat1node_r3
+  mode=rate  partitions=4  sent=10000  processed_rows=10000  bench files=['bench_vm2_1.csv', 'bench_vm2_2.csv', 'bench_vm2_3.csv', 'bench_vm2_4.csv']
+
+Throughput (steady, first 10% dropped): 20.0 msg/s over 449.957s
+  vm2: 20.0 msg/s (10000 messages)
+
+Latency in ms (steady window, first 10% dropped)
+  end_to_end     p50      96.1 | p95     234.1 | p99     369.1 | max     896.4
+  kafka_wait     p50       5.7 | p95     116.3 | p99     236.1 | max     819.4
+  inference      p50      74.5 | p95     142.1 | p99     254.3 | max     388.3
+  elasticsearch  p50       5.2 | p95       6.3 | p99       8.4 | max      25.4
+  (including the warm-up, end-to-end p95 would be 232.7 ms and p99 368.0 ms: the consumer group is still being assigned)
+
+Balance: per processor {'vm2#147741': 2426, 'vm2#147735': 2526, 'vm2#147742': 2535, 'vm2#147743': 2513} (max/min 1.04)
+         per partition {0: 2526, 1: 2426, 2: 2535, 3: 2513}
+
+PASS delivery: 10000/10000 processed
+PASS duplicates: 0
+PASS no unknown extras: 0
+n/a  clock sanity: single machine

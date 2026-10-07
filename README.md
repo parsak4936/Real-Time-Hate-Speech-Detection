@@ -3,13 +3,42 @@
 **Big Data Management's Project — Parsa Kazemi**
 **University of Messina · FCRLAB**
 
-A scalable, real-time moderation pipeline for live social-media chat. A Tier-1 DistilBERT static classifier (~36 ms inference) provides high-throughput labelling; a Tier-2 LLM-based agentic auditor (`gpt-oss:120b-cloud` via Ollama) resolves contextual edge cases. Ingests from **YouTube, Twitch, Reddit, and Trustpilot** through a common schema.
+A real-time moderation pipeline for live social-media chat, built for a Master's thesis at the University of Messina. A Tier-1 DistilBERT classifier labels every message in about 31 ms on a laptop processor; a Tier-2 LLM auditor (`gpt-oss:120b` via Ollama) re-examines only the cases Tier-1 was unsure about, reading them from storage so it never sits in the live path.
+
+Ingestion runs from **YouTube and Twitch** through one Universal Schema. Reddit and Trustpilot adapters exist against the same contract but were never exercised: Reddit's API requires an aged account and Trustpilot refuses automated collection.
+
+**Status: complete.** The thesis was submitted in October 2026. Everything here is the final state, including the data, the measurement tooling and the raw results behind every number.
 
 > **Setting up for the first time?** Follow [`docs/INSTALL.md`](docs/INSTALL.md) — a complete step-by-step guide from a fresh machine to a live dashboard.
 
 Beyond the internship baseline, the pipeline adds four agentic capabilities, each measured against a hand-labelled benchmark: an **agentic Context Agent** (discovers the content domain in free text), **temporal memory** (judge sees user/thread history), **retrieval-augmented moderation** (Qdrant precedents), and a **four-agent decomposition** (risk scorer + behaviour profiler + escalator + supervisor). The multi-agent variant currently leads on toxic-class F1.
 
-The full architectural rationale lives in `Internship_report_Draft_1 (1).pdf`. This README is the operator's quick-start. For thesis-level documentation see [`docs/`](docs/). **New here? Read [`docs/PROJECT_REFERENCE.md`](docs/PROJECT_REFERENCE.md) and [`docs/STATUS.md`](docs/STATUS.md) first.**
+The earlier internship report is at [`docs/internship_report.pdf`](docs/internship_report.pdf); the thesis itself is in [`thesis/`](thesis/). This README is the operator's quick-start. **New here? Read [`docs/PROJECT_REFERENCE.md`](docs/PROJECT_REFERENCE.md) first, then [`thesis/THESIS_STATE.md`](thesis/THESIS_STATE.md), which is the authoritative record of what was measured and how.**
+
+## Headline results
+
+Measured on a hand-labelled benchmark of 1,748 live messages, 80 of them toxic:
+
+| | toxic-class F1 | binary accuracy |
+|---|---|---|
+| Tier-1 alone | 0.13 | 72.0% |
+| Tier-2 baseline | 0.37 | 91.0% |
+| **Tier-2, multi-agent** | **0.39** | **93.2%** |
+
+Adding context helped only when it gave the decision structure: the four-agent chain is significant under McNemar's test, while temporal memory and retrieval are not, on this data.
+
+Throughput, over a fixed 10,000-message replay with no messages lost or duplicated:
+
+| | |
+|---|---|
+| laptop, 4 processes | 35.9 msg/s on the CPU, 64.6 on the GPU |
+| one cluster machine | 38.8 msg/s |
+| **two cluster machines** | **61.1 msg/s** |
+| five machines, equal shares | 29.7 — *worse*, the fast nodes wait for the slow ones |
+| five machines, weighted shares | 36.3 |
+| Raspberry Pi 4, 8 GB | 6.2 msg/s |
+
+The watched streams produced 4.8 messages a second, so a single laptop has roughly seven times the headroom it needs. See [`CLUSTER_RUNBOOK.md`](CLUSTER_RUNBOOK.md) for how the multi-node measurements were run.
 
 ## Documentation index
 
@@ -172,4 +201,23 @@ Kibana (<http://localhost:5601>) is available for ad-hoc ES exploration; import 
 
 ## Project status
 
-Stages 0–5 implemented (consolidation, agentic context, evaluation harness, temporal memory, RAG, multi-agent decomposition, explainability visualisation). Current state, results, and the canonical re-run flow are in [`docs/STATUS.md`](docs/STATUS.md). The full stage plan is in [`docs/ROADMAP.md`](docs/ROADMAP.md).
+**Finished.** The thesis was written, measured, verified and submitted in October 2026.
+
+Everything needed to re-derive its numbers is in the repository:
+
+| what | where |
+|---|---|
+| the thesis source | [`thesis/Thesis Draft 1/`](thesis/) |
+| the authoritative record of every measurement | [`thesis/THESIS_STATE.md`](thesis/THESIS_STATE.md) |
+| the benchmark the results table comes from | `thesis_benchmark_eval.csv` (1,748 rows) |
+| raw output of every performance run | `reports/scaling/` |
+| the measurement tooling | [`scripts/eval/`](scripts/eval/) |
+| how the university cluster was built and used | [`CLUSTER_RUNBOOK.md`](CLUSTER_RUNBOOK.md) |
+
+Regenerate the performance comparison with:
+
+```bash
+python scripts/eval/compare_runs.py --min-n 9000
+```
+
+Earlier planning documents in `docs/` (`ROADMAP.md`, `STATUS.md`, `IMPROVEMENTS.md`) describe the project while it was in progress and are kept for history rather than as current guidance.

@@ -1,0 +1,177 @@
+{
+  "run_id": "20261002-151629_clu_vm14-vm24-rasp14-rasp24-rasp34_allfive_r2",
+  "mode": "preload",
+  "partitions": 20,
+  "warmup": {
+    "fraction_dropped": 0.1,
+    "seconds_dropped": 0.0,
+    "messages_in_steady_window": 9000
+  },
+  "sent": 10000,
+  "processed_unique": 10000,
+  "processed_rows": 10000,
+  "missing": 0,
+  "duplicates": 0,
+  "extras": 0,
+  "throughput": {
+    "messages_steady": 9000,
+    "window_seconds": 303.499,
+    "msgs_per_sec": 29.65
+  },
+  "throughput_by_node": {
+    "rasp1": {
+      "messages_steady": 486,
+      "window_seconds": 144.483,
+      "msgs_per_sec": 3.36
+    },
+    "rasp2": {
+      "messages_steady": 1280,
+      "window_seconds": 224.909,
+      "msgs_per_sec": 5.69
+    },
+    "rasp3": {
+      "messages_steady": 936,
+      "window_seconds": 193.471,
+      "msgs_per_sec": 4.83
+    },
+    "vm1": {
+      "messages_steady": 2721,
+      "window_seconds": 119.179,
+      "msgs_per_sec": 22.82
+    },
+    "vm2": {
+      "messages_steady": 3578,
+      "window_seconds": 115.126,
+      "msgs_per_sec": 31.07
+    }
+  },
+  "latency_ms": {
+    "end_to_end": {
+      "n": 9000,
+      "p50": 105723.6,
+      "p95": 269392.0,
+      "p99": 312191.1,
+      "max": 333070.5,
+      "mean": 119253.5
+    },
+    "kafka_wait": {
+      "n": 9000,
+      "p50": 105555.5,
+      "p95": 268773.0,
+      "p99": 311710.7,
+      "max": 332792.3,
+      "mean": 119028.6
+    },
+    "inference": {
+      "n": 9000,
+      "p50": 126.3,
+      "p95": 520.5,
+      "p99": 937.9,
+      "max": 3139.0,
+      "mean": 218.4
+    },
+    "elasticsearch": {
+      "n": 9000,
+      "p50": 5.3,
+      "p95": 10.1,
+      "p99": 16.4,
+      "max": 84.4,
+      "mean": 6.1
+    }
+  },
+  "latency_ms_including_warmup": {
+    "end_to_end": {
+      "n": 10000,
+      "p50": 98605.1,
+      "p95": 264778.4,
+      "p99": 310327.9,
+      "max": 333070.5,
+      "mean": 109634.3
+    },
+    "kafka_wait": {
+      "n": 10000,
+      "p50": 98384.0,
+      "p95": 264353.7,
+      "p99": 310039.3,
+      "max": 332792.3,
+      "mean": 109418.5
+    },
+    "inference": {
+      "n": 10000,
+      "p50": 124.9,
+      "p95": 508.0,
+      "p99": 902.8,
+      "max": 3139.0,
+      "mean": 209.3
+    },
+    "elasticsearch": {
+      "n": 10000,
+      "p50": 5.2,
+      "p95": 10.1,
+      "p99": 16.7,
+      "max": 189.2,
+      "mean": 6.2
+    }
+  },
+  "balance": {
+    "per_node": {
+      "rasp1": 540,
+      "rasp2": 1422,
+      "rasp3": 1040,
+      "vm1": 3023,
+      "vm2": 3975
+    },
+    "per_processor": {
+      "rasp1#31194": 18,
+      "rasp1#31193": 7,
+      "rasp1#31195": 515,
+      "rasp2#25992": 488,
+      "rasp2#25994": 480,
+      "rasp2#25995": 454,
+      "rasp3#30156": 7,
+      "rasp3#30159": 505,
+      "rasp3#30158": 528,
+      "vm1#319095": 984,
+      "vm1#319094": 500,
+      "vm1#319096": 500,
+      "vm1#319097": 1039,
+      "vm2#128204": 985,
+      "vm2#128205": 1000,
+      "vm2#128207": 969,
+      "vm2#128206": 1021
+    },
+    "per_partition": {
+      "0": 487,
+      "1": 498,
+      "2": 539,
+      "3": 485,
+      "4": 503,
+      "5": 505,
+      "6": 507,
+      "7": 528,
+      "8": 521,
+      "9": 482,
+      "10": 487,
+      "11": 500,
+      "12": 497,
+      "13": 457,
+      "14": 495,
+      "15": 485,
+      "16": 518,
+      "17": 484,
+      "18": 507,
+      "19": 515
+    },
+    "processor_max_min_ratio": 148.43
+  },
+  "clock": {
+    "min_kafka_wait_ms_by_node": {
+      "rasp1": 82456.1,
+      "rasp2": 84877.4,
+      "rasp3": 82464.9,
+      "vm1": 14891.8,
+      "vm2": 14899.0
+    },
+    "skewed_nodes": []
+  }
+}

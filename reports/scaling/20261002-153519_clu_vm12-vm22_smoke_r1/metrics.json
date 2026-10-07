@@ -1,0 +1,127 @@
+{
+  "run_id": "20261002-153519_clu_vm12-vm22_smoke_r1",
+  "mode": "preload",
+  "partitions": 4,
+  "warmup": {
+    "fraction_dropped": 0.1,
+    "seconds_dropped": 0.0,
+    "messages_in_steady_window": 180
+  },
+  "sent": 200,
+  "processed_unique": 200,
+  "processed_rows": 200,
+  "missing": 0,
+  "duplicates": 0,
+  "extras": 0,
+  "throughput": {
+    "messages_steady": 180,
+    "window_seconds": 4.954,
+    "msgs_per_sec": 36.13
+  },
+  "throughput_by_node": {
+    "vm1": {
+      "messages_steady": 79,
+      "window_seconds": 4.159,
+      "msgs_per_sec": 18.75
+    },
+    "vm2": {
+      "messages_steady": 102,
+      "window_seconds": 4.874,
+      "msgs_per_sec": 20.72
+    }
+  },
+  "latency_ms": {
+    "end_to_end": {
+      "n": 180,
+      "p50": 14557.1,
+      "p95": 16700.5,
+      "p99": 17040.1,
+      "max": 17153.9,
+      "mean": 14585.0
+    },
+    "kafka_wait": {
+      "n": 180,
+      "p50": 14435.4,
+      "p95": 16624.4,
+      "p99": 16981.3,
+      "max": 17097.1,
+      "mean": 14486.7
+    },
+    "inference": {
+      "n": 180,
+      "p50": 82.1,
+      "p95": 164.7,
+      "p99": 362.4,
+      "max": 400.1,
+      "mean": 92.5
+    },
+    "elasticsearch": {
+      "n": 180,
+      "p50": 5.1,
+      "p95": 7.9,
+      "p99": 18.1,
+      "max": 27.2,
+      "mean": 5.6
+    }
+  },
+  "latency_ms_including_warmup": {
+    "end_to_end": {
+      "n": 200,
+      "p50": 14284.2,
+      "p95": 16657.8,
+      "p99": 17040.1,
+      "max": 17153.9,
+      "mean": 14329.6
+    },
+    "kafka_wait": {
+      "n": 200,
+      "p50": 14218.5,
+      "p95": 16605.7,
+      "p99": 16981.3,
+      "max": 17097.1,
+      "mean": 14227.0
+    },
+    "inference": {
+      "n": 200,
+      "p50": 82.5,
+      "p95": 159.9,
+      "p99": 362.4,
+      "max": 400.1,
+      "mean": 92.9
+    },
+    "elasticsearch": {
+      "n": 200,
+      "p50": 5.1,
+      "p95": 8.8,
+      "p99": 199.9,
+      "max": 215.9,
+      "mean": 9.6
+    }
+  },
+  "balance": {
+    "per_node": {
+      "vm1": 87,
+      "vm2": 113
+    },
+    "per_processor": {
+      "vm1#236460": 45,
+      "vm1#236459": 42,
+      "vm2#91171": 59,
+      "vm2#91172": 54
+    },
+    "per_partition": {
+      "0": 59,
+      "1": 42,
+      "2": 45,
+      "3": 54
+    },
+    "processor_max_min_ratio": 1.4
+  },
+  "clock": {
+    "min_kafka_wait_ms_by_node": {
+      "vm1": 11504.4,
+      "vm2": 11517.3
+    },
+    "skewed_nodes": []
+  }
+}

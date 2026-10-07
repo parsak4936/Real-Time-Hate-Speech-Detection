@@ -1,0 +1,14 @@
+{
+  "run_id": "20260926-180110_p2_c2_cuda_r3",
+  "mode": "preload",
+  "host": "WIX",
+  "rate": null,
+  "model_dir": "models/bert_final (default)",
+  "messages": 10000,
+  "threads_per_process": 1,
+  "processors": 2,
+  "device": "cuda",
+  "python": "F:\\hate-speech-pipeline\\Hate_speach_env\\Scripts\\python.exe",
+  "started_at": "2026-09-26T18:01:14",
+  "partitions": 2
+}

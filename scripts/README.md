@@ -36,3 +36,24 @@ home. This is the standard Python layout — see [`../src/README.md`](../src/REA
 
 The canonical end-to-end run order is in [`../docs/STATUS.md`](../docs/STATUS.md)
 ("CANONICAL RE-RUN FLOW") and [`../docs/RUNBOOK.md`](../docs/RUNBOOK.md).
+
+
+## Measurement tooling (`eval/`)
+
+These produced every performance figure in Chapter 5 of the thesis. They are
+read-only with respect to the live system: each run uses its own `perf_<run id>`
+Kafka topic and its own Elasticsearch index, never `universal_stream` or
+`real_time_analysis`.
+
+| script | what it does |
+|---|---|
+| `replay_producer.py` | Sends a fixed, seeded workload into a `perf_` topic. `--mode preload` fills the queue first (measures throughput); `--mode rate` sends at a steady rate (measures latency). `--create-topic-only` makes the topic with the right partition count before any consumer subscribes, which matters because Kafka would otherwise auto-create it with one. |
+| `run_scaling_local.ps1` / `.sh` | One configuration end to end on this machine: topic, processors, producer, wait, collect, analyse. |
+| `run_scaling_cluster.py` | The same across several machines over SSH, described by `config/cluster.json`. Runs the producer on a cluster node, never the laptop, because latency is measured between the sender's clock and the receiver's. |
+| `analyze_scaling.py` | Turns one run's raw logs into `metrics.json`: throughput, percentiles, per-node breakdown, delivery and duplicate checks, and a clock-skew check across machines. |
+| `compare_runs.py` | Merges every run into one comparison table. Use `--min-n 9000` so smoke tests and excluded runs cannot reach a median. |
+| `throughput_bench.py` | The classifier alone, with Kafka and Elasticsearch out of the path. `--device cpu\|cuda`. |
+| `resource_snapshot.py` | Samples CPU, memory, GPU and container stats during a run. |
+
+A full worked example, including how the university cluster was set up, is in
+[`../CLUSTER_RUNBOOK.md`](../CLUSTER_RUNBOOK.md).

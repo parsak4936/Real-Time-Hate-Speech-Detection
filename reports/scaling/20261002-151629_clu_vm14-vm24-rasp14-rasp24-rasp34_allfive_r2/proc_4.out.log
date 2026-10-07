@@ -1,0 +1,8 @@
+---- STARTING OMNI-PROCESSOR ----
+-> Connected to Elasticsearch at http://172.16.10.94:9200 | Index: perf_20261002-151629_clu_vm14-vm24-rasp14-rasp24-rasp34_allfive_r2
+-> Loading model from /home/rasp3/hsp/src/../models/bert_final on cpu...
+-> BERT Model Loaded successfully.
+-> Benchmark log: /home/rasp3/hsp/reports/scaling/20261002-151629_clu_vm14-vm24-rasp14-rasp24-rasp34_allfive_r2/bench_rasp3_4.csv | node rasp3 | group g_20261002-151629_clu_vm14-vm24-rasp14-rasp24-rasp34_allfive_r2
+------------------------------------------------------------------------------------------------------------------------
+DOMAIN       | SOURCE   | PREDICTION   | CONF.  | LATENCY  | TEXT
+------------------------------------------------------------------------------------------------------------------------

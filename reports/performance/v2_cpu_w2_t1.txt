@@ -1,0 +1,9 @@
+Benchmarking 2000 messages across 2 worker(s) on cpu...
+
+  workers          : 2  (threads/worker: 1, device: cpu)
+  worker 0         : 1000 msgs in 61.9s -> 16.1 msg/s
+  worker 1         : 1000 msgs in 62.1s -> 16.1 msg/s
+  STEADY-STATE     : 2000 msgs / 62.1s inference -> 32.2 msg/s (~1,931 msg/min)   <-- use this for the scaling curve
+  incl. model load : 25.9 msg/s over 77.1s wall
+
+Record:  device=cpu  workers=2  threads=1  steady_state=32.2 msg/s

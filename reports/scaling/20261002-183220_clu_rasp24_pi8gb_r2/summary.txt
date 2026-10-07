@@ -1,0 +1,21 @@
+Run 20261002-183220_clu_rasp24_pi8gb_r2
+  mode=preload  partitions=4  sent=10000  processed_rows=10074  bench files=['bench_rasp2_1.csv', 'bench_rasp2_2.csv', 'bench_rasp2_3.csv', 'bench_rasp2_4.csv']
+
+Throughput (steady, first 10% dropped): 2.17 msg/s over 1658.045s
+  rasp2: 2.17 msg/s (4000 messages)
+
+Latency (preload mode: end-to-end includes backlog wait, so only the
+  model and Elasticsearch columns are meaningful; use a rate run for latency)
+  end_to_end     p50  598054.1 | p95 1689791.3 | p99 1733927.4 | max 1754726.5
+  kafka_wait     p50  596445.3 | p95 1689149.6 | p99 1733479.6 | max 1754064.0
+  inference      p50     555.7 | p95    1027.5 | p99    2044.2 | max    3536.7
+  elasticsearch  p50       9.7 | p95      13.8 | p99      19.5 | max      34.7
+  (including the warm-up, end-to-end p95 would be 1682692.6 ms and p99 1733080.7 ms: the consumer group is still being assigned)
+
+Balance: per processor {'rasp2#38590': 1000, 'rasp2#38594': 1500, 'rasp2#38593': 500, 'rasp2#38595': 1000} (max/min 3.0)
+         per partition {0: 1000, 1: 500, 2: 1500, 3: 1000}
+
+FAIL delivery: 4000/10000 processed, missing [2192, 2193, 2198, 2202, 2212, 2218, 2220, 2222, 2223, 2232]…
+WARN duplicates: 3049 (Kafka at-least-once; e.g. [0, 2, 11, 17, 18])
+PASS no unknown extras: 0
+n/a  clock sanity: single machine

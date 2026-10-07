@@ -1,0 +1,32 @@
+{
+  "status": "done",
+  "run_id": "20261002-150058_clu_vm22_base2_r3",
+  "started_at": "2026-10-02T15:01:00.965365",
+  "topic": "perf_20261002-150058_clu_vm22_base2_r3",
+  "partitions": 2,
+  "n": 10000,
+  "seed": 42,
+  "date": "2026-06-13",
+  "mode": "preload",
+  "rate": null,
+  "brokers": "172.16.10.94:9093",
+  "source": "/home/ubuntu/hsp/data/stream_log.csv",
+  "workload_platforms": {
+    "YouTube": 9729,
+    "Twitch": 271
+  },
+  "host": "msgingest1",
+  "git_commit": "1e0af24",
+  "python": "3.10.12",
+  "finished_at": "2026-10-02T15:01:05.182254",
+  "sent_ok": 10000,
+  "send_errors": 0,
+  "first_errors": [],
+  "per_partition": {
+    "0": 5061,
+    "1": 4939
+  },
+  "send_seconds": 4.161,
+  "achieved_rate": 2403.18,
+  "max_schedule_lag_ms": null
+}

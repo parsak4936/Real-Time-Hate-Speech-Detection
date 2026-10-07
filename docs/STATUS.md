@@ -1,5 +1,15 @@
 # Project status — read this first
 
+> ## This document is history, not current state.
+>
+> The project **finished in October 2026**. This file was last meaningful in
+> September 2026, before the evaluation chapter and the whole multi-node cluster
+> study. It is kept because it records how the work looked while it was running.
+>
+> For the real final state read **[`../thesis/THESIS_STATE.md`](../thesis/THESIS_STATE.md)**,
+> which carries every measurement, every parameter, and the reasoning behind each
+> result, and **[`../CLUSTER_RUNBOOK.md`](../CLUSTER_RUNBOOK.md)** for the cluster.
+
 A one-page snapshot of where the codebase is right now. Updated whenever a milestone lands. If anything in this file disagrees with the code, the code wins and this file is stale — open an issue.
 
 > **Latest direction (2026-06-18 supervisor meeting):** consolidate + strengthen

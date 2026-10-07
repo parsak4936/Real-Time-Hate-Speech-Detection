@@ -1,0 +1,34 @@
+{
+  "status": "done",
+  "run_id": "20261002-183220_clu_rasp24_pi8gb_r2",
+  "started_at": "2026-10-02T18:32:24.293768",
+  "topic": "perf_20261002-183220_clu_rasp24_pi8gb_r2",
+  "partitions": 4,
+  "n": 10000,
+  "seed": 42,
+  "date": "2026-06-13",
+  "mode": "preload",
+  "rate": null,
+  "brokers": "172.16.10.94:9093",
+  "source": "/home/ubuntu/hsp/data/stream_log.csv",
+  "workload_platforms": {
+    "YouTube": 9729,
+    "Twitch": 271
+  },
+  "host": "msgingest1",
+  "git_commit": "1e0af24",
+  "python": "3.10.12",
+  "finished_at": "2026-10-02T18:32:28.291435",
+  "sent_ok": 10000,
+  "send_errors": 0,
+  "first_errors": [],
+  "per_partition": {
+    "0": 2526,
+    "1": 2426,
+    "2": 2535,
+    "3": 2513
+  },
+  "send_seconds": 3.937,
+  "achieved_rate": 2540.15,
+  "max_schedule_lag_ms": null
+}

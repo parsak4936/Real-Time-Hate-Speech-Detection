@@ -1,0 +1,120 @@
+{
+  "run_id": "20260926-183739_p4_c4_cuda_r1",
+  "mode": "rate",
+  "partitions": 4,
+  "warmup": {
+    "fraction_dropped": 0.1,
+    "seconds_dropped": 0.0,
+    "messages_in_steady_window": 9000
+  },
+  "sent": 10000,
+  "processed_unique": 10000,
+  "processed_rows": 10000,
+  "missing": 0,
+  "duplicates": 0,
+  "extras": 0,
+  "throughput": {
+    "messages_steady": 9000,
+    "window_seconds": 499.992,
+    "msgs_per_sec": 18.0
+  },
+  "throughput_by_node": {
+    "WIX": {
+      "messages_steady": 9000,
+      "window_seconds": 499.992,
+      "msgs_per_sec": 18.0
+    }
+  },
+  "latency_ms": {
+    "end_to_end": {
+      "n": 9000,
+      "p50": 66.2,
+      "p95": 154.2,
+      "p99": 320.0,
+      "max": 469.6,
+      "mean": 78.6
+    },
+    "kafka_wait": {
+      "n": 9000,
+      "p50": 3.2,
+      "p95": 36.8,
+      "p99": 175.1,
+      "max": 379.5,
+      "mean": 10.9
+    },
+    "inference": {
+      "n": 9000,
+      "p50": 13.0,
+      "p95": 29.0,
+      "p99": 230.5,
+      "max": 347.1,
+      "mean": 20.4
+    },
+    "elasticsearch": {
+      "n": 9000,
+      "p50": 46.5,
+      "p95": 50.4,
+      "p99": 52.6,
+      "max": 72.5,
+      "mean": 46.7
+    }
+  },
+  "latency_ms_including_warmup": {
+    "end_to_end": {
+      "n": 10000,
+      "p50": 66.7,
+      "p95": 163.9,
+      "p99": 332.1,
+      "max": 1180.0,
+      "mean": 80.4
+    },
+    "kafka_wait": {
+      "n": 10000,
+      "p50": 3.3,
+      "p95": 37.8,
+      "p99": 194.1,
+      "max": 1150.6,
+      "mean": 12.3
+    },
+    "inference": {
+      "n": 10000,
+      "p50": 13.0,
+      "p95": 29.0,
+      "p99": 228.8,
+      "max": 730.3,
+      "mean": 20.7
+    },
+    "elasticsearch": {
+      "n": 10000,
+      "p50": 46.5,
+      "p95": 50.4,
+      "p99": 52.7,
+      "max": 311.1,
+      "mean": 46.8
+    }
+  },
+  "balance": {
+    "per_node": {
+      "WIX": 10000
+    },
+    "per_processor": {
+      "WIX#11440": 2526,
+      "WIX#1860": 2535,
+      "WIX#5384": 2426,
+      "WIX#15928": 2513
+    },
+    "per_partition": {
+      "0": 2526,
+      "1": 2426,
+      "2": 2535,
+      "3": 2513
+    },
+    "processor_max_min_ratio": 1.04
+  },
+  "clock": {
+    "min_kafka_wait_ms_by_node": {
+      "WIX": 0.8
+    },
+    "skewed_nodes": []
+  }
+}

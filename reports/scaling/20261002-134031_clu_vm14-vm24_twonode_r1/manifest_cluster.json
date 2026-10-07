@@ -1,0 +1,31 @@
+{
+  "run_id": "20261002-134031_clu_vm14-vm24_twonode_r1",
+  "cluster": true,
+  "broker": "172.16.10.94:9093",
+  "es": "http://172.16.10.94:9200",
+  "producer_node": "vm1",
+  "nodes": {
+    "vm1": {
+      "processors": 4,
+      "arch": "x86_64",
+      "cores": 4,
+      "ram_gb": 31,
+      "note": "also hosts Kafka, Elasticsearch and Kibana, so it carries more load than a pure worker"
+    },
+    "vm2": {
+      "processors": 4,
+      "arch": "x86_64",
+      "cores": 4,
+      "ram_gb": 31,
+      "note": "pure worker"
+    }
+  },
+  "processors_total": 8,
+  "partitions": 8,
+  "messages": 10000,
+  "mode": "preload",
+  "rate": null,
+  "threads_per_process": 1,
+  "device": "cpu",
+  "finished_at": "2026-10-02T13:43:52"
+}

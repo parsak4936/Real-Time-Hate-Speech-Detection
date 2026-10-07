@@ -1,0 +1,69 @@
+{
+  "_comment": [
+    "The UniME cluster. See CLUSTER_RUNBOOK.md for how it was set up.",
+    "'broker' and 'es' run on vm1. 'producer_node' must share a clock with the",
+    "workers, so it is a cluster node and never the laptop (~2.5 s off).",
+    "The Pis were unreachable until 2026-10-02, when the Docker bridge on vm1 was",
+    "moved off 172.17.0.0/16 - it collided with the Pi subnet."
+  ],
+  "broker": "172.16.10.94:9093",
+  "es": "http://172.16.10.94:9200",
+  "producer_node": "vm1",
+  "nodes": {
+    "vm1": {
+      "enabled": true,
+      "ssh": "ubuntu@172.16.10.94",
+      "key": "~/.ssh/LaRosa.pem",
+      "repo": "~/hsp",
+      "python": "~/hsp/.venv/bin/python",
+      "cores": 4,
+      "ram_gb": 31,
+      "arch": "x86_64",
+      "note": "also hosts Kafka, Elasticsearch and Kibana, so it carries more load than a pure worker"
+    },
+    "vm2": {
+      "enabled": true,
+      "ssh": "ubuntu@172.16.10.95",
+      "key": "~/.ssh/LaRosa.pem",
+      "repo": "~/hsp",
+      "python": "~/hsp/.venv/bin/python",
+      "cores": 4,
+      "ram_gb": 31,
+      "arch": "x86_64",
+      "note": "pure worker"
+    },
+    "rasp1": {
+      "enabled": true,
+      "ssh": "rasp1@172.17.6.95",
+      "key": "~/.ssh/cluster_hsp",
+      "repo": "~/hsp",
+      "python": "~/hsp/.venv/bin/python",
+      "cores": 4,
+      "ram_gb": 3.8,
+      "arch": "aarch64",
+      "note": "Raspberry Pi 4 worker; reachable since the docker0 bridge on vm1 was moved off 172.17.0.0/16"
+    },
+    "rasp2": {
+      "enabled": true,
+      "ssh": "rasp2@172.17.2.72",
+      "key": "~/.ssh/cluster_hsp",
+      "repo": "~/hsp",
+      "python": "~/hsp/.venv/bin/python",
+      "cores": 4,
+      "ram_gb": 7.8,
+      "arch": "aarch64",
+      "note": "Raspberry Pi 4 worker; reachable since the docker0 bridge on vm1 was moved off 172.17.0.0/16"
+    },
+    "rasp3": {
+      "enabled": true,
+      "ssh": "rasp3@172.17.1.72",
+      "key": "~/.ssh/cluster_hsp",
+      "repo": "~/hsp",
+      "python": "~/hsp/.venv/bin/python",
+      "cores": 4,
+      "ram_gb": 7.8,
+      "arch": "aarch64",
+      "note": "Raspberry Pi 4 worker; reachable since the docker0 bridge on vm1 was moved off 172.17.0.0/16"
+    }
+  }
+}

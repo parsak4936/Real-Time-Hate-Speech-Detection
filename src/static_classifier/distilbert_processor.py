@@ -115,6 +115,11 @@ consumer = KafkaConsumer(
     enable_auto_commit=True,
     group_id=GROUP_ID,
     value_deserializer=lambda x: json.loads(x.decode("utf-8")),
+    # Slow hardware needs smaller fetches: a consumer is evicted if it cannot work
+    # through a batch within max.poll.interval.ms (5 min). A Raspberry Pi at ~800 ms
+    # a message cannot clear the default 500 records in time, so the group rebalances
+    # forever. Default is unchanged; set the env var on constrained devices.
+    max_poll_records=int(os.getenv("KAFKA_MAX_POLL_RECORDS", "500")),
 )
 
 # ---------------------------------------------------------------------------
